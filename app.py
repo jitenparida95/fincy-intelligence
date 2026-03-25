@@ -220,17 +220,19 @@ st.write(f"Margin: {new_margin:.2f}%")
 
 from openai import OpenAI
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=st.secrets["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"])
 
 st.markdown("## 🧠 Ask AI CFO")
 
 user_question = st.text_input("Ask any CFO-level question")
 
-if st.button("Ask AI CFO", key="ask_ai"):
+ask_clicked = st.button("Ask AI CFO")
 
-    if not user_question:
-        st.warning("Please enter a question")
-    
+if ask_clicked:
+
+    if user_question.strip() == "":
+        st.warning("Enter a question bro 👀")
+
     else:
         with st.spinner("Thinking like a CFO..."):
 
@@ -255,7 +257,8 @@ if st.button("Ask AI CFO", key="ask_ai"):
 
                 answer = response.choices[0].message.content
 
+                st.markdown("### 💡 CFO Insight")
                 st.success(answer)
 
             except Exception as e:
-                st.error(f"Error: {e}")
+                st.error(f"API Error: {e}")
