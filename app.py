@@ -1,5 +1,12 @@
 import os
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from openai import OpenAI
+
+api_key = os.getenv("OPENAI_API_KEY")
+
+if api_key:
+    client = OpenAI(api_key=api_key)
+else:
+    client = None
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -251,31 +258,35 @@ def rule_based_cfo(q, df):
 # -------------------------------
 
 def ai_cfo_answer(question, df):
+    if client is None:
+        return "⚠️ AI not configured. Showing rule-based answer."
+
     try:
-        # Convert dataframe to summary (important)
         summary = df.groupby("Market")[["Net_Revenue_AUD000","Gross_Profit_AUD000"]].sum().to_string()
 
         prompt = f"""
-        You are a CFO.
+        You are a CFO analyzing business performance.
 
-        Here is the business data:
+        Data:
         {summary}
 
         Question: {question}
 
-        Give a sharp, executive-level insight in 2-3 lines.
+        Give concise, sharp business insight in 2-3 lines.
         """
 
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
             temperature=0.3
         )
 
         return response.choices[0].message.content
 
     except Exception as e:
-        return "⚠️ AI temporarily unavailable. Showing rule-based insight."
+        return "⚠️ AI error. Showing rule-based answer."
 
 # -------------------------------
 # EXECUTION (ENTER KEY ENABLED)
