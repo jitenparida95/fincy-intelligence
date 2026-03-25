@@ -120,7 +120,9 @@ if len(yearly_full) >= 2:
     profit_change = yearly_full.iloc[-1][profit_col] - yearly_full.iloc[-2][profit_col]
 
     st.write(f"Revenue Change: {rev_change:,.0f}")
-    st.write(f"Profit Change: {profit_change:,.0f}")st.markdown("## 🧾 Board Commentary")
+    st.write(f"Profit Change: {profit_change:,.0f}")
+
+st.markdown("## 🧾 Board Commentary")
 
 if st.button("Generate Board Report"):
 
