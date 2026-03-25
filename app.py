@@ -12,7 +12,7 @@ uploaded_file = st.file_uploader("Upload your CSV", type=["csv"])
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 else:
-    st.stop()
+    df = pd.read_csv("unilever_fpna.csv")  # default demo data
 
 # Auto-detect columns
 revenue_col = [col for col in df.columns if "Revenue" in col][0]
