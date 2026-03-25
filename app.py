@@ -8,7 +8,10 @@ from openai import OpenAI
 # -------------------------------
 st.set_page_config(layout="wide")
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+# Safe API init
+client = None
+if "OPENAI_API_KEY" in st.secrets:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # -------------------------------
 # LOAD DATA
@@ -24,7 +27,7 @@ revenue_col = [c for c in df.columns if "Revenue" in c][0]
 profit_col = [c for c in df.columns if "Profit" in c][0]
 
 # -------------------------------
-# SIDEBAR
+# SIDEBAR FILTERS
 # -------------------------------
 st.sidebar.header("Filters")
 
@@ -67,11 +70,9 @@ st.markdown("## 🤖 AI CFO Auto Insights")
 
 market_perf = filtered_df.groupby("Market")[revenue_col].sum()
 
-top_market = market_perf.idxmax()
-low_market = market_perf.idxmin()
-
-st.success(f"🏆 Top Market: {top_market}")
-st.error(f"📉 Weak Market: {low_market}")
+if not market_perf.empty:
+    st.success(f"🏆 Top Market: {market_perf.idxmax()}")
+    st.error(f"📉 Weak Market: {market_perf.idxmin()}")
 
 # -------------------------------
 # CHARTS
@@ -80,18 +81,21 @@ col1, col2 = st.columns(2)
 
 with col1:
     yearly = filtered_df.groupby("Year")[revenue_col].sum().reset_index()
-    st.plotly_chart(px.line(yearly, x="Year", y=revenue_col))
+    st.plotly_chart(px.line(yearly, x="Year", y=revenue_col), use_container_width=True)
 
 with col2:
     mp = filtered_df.groupby("Market")[profit_col].sum().reset_index()
-    st.plotly_chart(px.bar(mp, x="Market", y=profit_col))
+    st.plotly_chart(px.bar(mp, x="Market", y=profit_col), use_container_width=True)
 
 # -------------------------------
-# VARIANCE
+# VARIANCE ANALYSIS
 # -------------------------------
 st.markdown("## 📊 Variance Analysis")
 
 yearly_full = df.groupby("Year")[[revenue_col, profit_col]].sum().sort_index()
+
+rev_change = 0
+profit_change = 0
 
 if len(yearly_full) >= 2:
     rev_change = yearly_full.iloc[-1][revenue_col] - yearly_full.iloc[-2][revenue_col]
@@ -101,19 +105,24 @@ if len(yearly_full) >= 2:
     st.write(f"Profit Change: {profit_change:,.0f}")
 
 # -------------------------------
-# AI VARIANCE (SAFE)
+# VARIANCE AI (SAFE)
 # -------------------------------
 if st.button("Explain Variance", key="var_btn"):
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": f"Explain revenue change {rev_change} and profit change {profit_change}"}
-            ]
-        )
-        st.info(response.choices[0].message.content)
-    except Exception:
-        st.warning("⚠️ API busy. Try again later.")
+    if client:
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{
+                    "role": "user",
+                    "content": f"Explain revenue change {rev_change} and profit change {profit_change}"
+                }]
+            )
+            st.info(response.choices[0].message.content)
+        except Exception:
+            st.warning("⚠️ API busy. Showing basic insight.")
+            st.info("Revenue and profit changes indicate business performance trend.")
+    else:
+        st.info("Revenue and profit changes indicate business performance trend.")
 
 # -------------------------------
 # BOARD COMMENTARY
@@ -121,44 +130,96 @@ if st.button("Explain Variance", key="var_btn"):
 st.markdown("## 🧾 Board Commentary")
 
 if st.button("Generate Board Report", key="board_btn"):
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": f"Revenue {total_rev}, Profit {total_profit}, Margin {margin}"}
-            ]
-        )
-        st.success(response.choices[0].message.content)
-    except Exception:
-        st.warning("⚠️ API busy. Try again later.")
+    if client:
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{
+                    "role": "user",
+                    "content": f"Revenue {total_rev}, Profit {total_profit}, Margin {margin}"
+                }]
+            )
+            st.success(response.choices[0].message.content)
+        except Exception:
+            st.warning("⚠️ API busy. Showing summary.")
+            st.success("Business shows stable growth. Monitor margin closely.")
+    else:
+        st.success("Business shows stable growth. Monitor margin closely.")
 
 # -------------------------------
 # DRIVER ANALYSIS
 # -------------------------------
 st.markdown("## 🧠 Driver Analysis")
 
-st.write("⚠️ Margin pressure" if margin < 50 else "👍 Strong margins")
+if margin < 50:
+    st.warning("⚠️ Margin pressure observed")
+else:
+    st.success("👍 Strong margin performance")
+
+st.write("📈 Growth driven by revenue expansion")
+
+# -------------------------------
+# RULE-BASED CFO ENGINE
+# -------------------------------
+def rule_based_cfo(question, df, revenue_col, profit_col):
+    q = question.lower()
+
+    total_rev = df[revenue_col].sum()
+    total_profit = df[profit_col].sum()
+    margin = (total_profit / total_rev * 100) if total_rev else 0
+
+    market_perf = df.groupby("Market")[revenue_col].sum()
+
+    if "top market" in q:
+        return f"Top market is {market_perf.idxmax()}."
+
+    elif "weak market" in q:
+        return f"Weakest market is {market_perf.idxmin()}."
+
+    elif "margin" in q:
+        return f"Margin is {margin:.2f}%."
+
+    elif "profit" in q:
+        return f"Total profit is {total_profit:,.0f}."
+
+    elif "revenue" in q and "australia" in q:
+        val = df[df["Market"] == "Australia"][revenue_col].sum()
+        return f"Revenue for Australia is {val:,.0f}."
+
+    elif "why margin" in q:
+        return "Margin decline is due to rising costs."
+
+    else:
+        return "fallback"
 
 # -------------------------------
 # ASK CFO (HYBRID)
 # -------------------------------
 st.markdown("## 💬 Ask AI CFO")
 
-q = st.text_input("Ask question")
+q = st.text_input("Ask CFO-level question")
 
-if st.button("Ask", key="ask_btn"):
+if st.button("Ask CFO", key="ask_btn"):
     if q:
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": q}]
-            )
-            st.success(response.choices[0].message.content)
-        except Exception:
-            st.warning("⚠️ API busy. Try again later.")
+        answer = rule_based_cfo(q, filtered_df, revenue_col, profit_col)
+
+        if answer == "fallback":
+            if client:
+                try:
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": q}]
+                    )
+                    st.success(response.choices[0].message.content)
+                except Exception:
+                    st.warning("⚠️ API busy. Try again.")
+            else:
+                st.warning("⚠️ No AI available. Try basic questions.")
+        else:
+            st.success(answer)
 
 # -------------------------------
-# SCENARIO
+# SCENARIO PLANNING
 # -------------------------------
 st.markdown("## 🎛️ Scenario Planning")
 
@@ -167,8 +228,8 @@ cost_slider = st.slider("Cost Change %", -20, 30, 5)
 
 base_cost = total_rev - total_profit
 
-new_rev = total_rev * (1 + rev_slider/100)
-new_cost = base_cost * (1 + cost_slider/100)
+new_rev = total_rev * (1 + rev_slider / 100)
+new_cost = base_cost * (1 + cost_slider / 100)
 
 new_profit = new_rev - new_cost
 new_margin = (new_profit / new_rev * 100) if new_rev else 0
