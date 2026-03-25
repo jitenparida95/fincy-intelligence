@@ -196,37 +196,100 @@ def rule_based_cfo(question):
     return "fallback"
 
 # -------------------------------
-# ASK CFO (FINAL FIX)
+# ASK AI CFO (FIXED VERSION)
 # -------------------------------
-st.markdown("## 💬 Ask AI CFO")
 
-if "cfo_answer" not in st.session_state:
-    st.session_state.cfo_answer = ""
+st.subheader("💬 Ask AI CFO")
 
-question = st.text_input("Ask CFO-level question")
+question = st.text_input("Ask CFO-level question", key="cfo_input")
 
+def rule_based_cfo(q, df):
+    q = q.lower()
+
+    total_revenue = df["Net_Revenue_AUD000"].sum()
+    total_profit = df["Gross_Profit_AUD000"].sum()
+    margin = (total_profit / total_revenue) * 100 if total_revenue != 0 else 0
+
+    # Market aggregation
+    market_rev = df.groupby("Market")["Net_Revenue_AUD000"].sum()
+    market_profit = df.groupby("Market")["Gross_Profit_AUD000"].sum()
+
+    top_market = market_rev.idxmax()
+    weak_market = market_rev.idxmin()
+
+    # -------- BASIC --------
+    if "total revenue" in q or q.strip() == "revenue":
+        return f"Total revenue is {total_revenue:,.0f}"
+
+    if "total profit" in q or q.strip() == "profit":
+        return f"Total profit is {total_profit:,.0f}"
+
+    if "margin" in q:
+        return f"Current margin is {margin:.2f}%"
+
+    # -------- MARKET --------
+    if "australia" in q:
+        val = market_rev.get("Australia", 0)
+        return f"Revenue for Australia is {val:,.0f}"
+
+    if "indonesia" in q:
+        val = market_profit.get("Indonesia", 0)
+        return f"Profit for Indonesia is {val:,.0f}"
+
+    if "top market" in q:
+        return f"Top market by revenue is {top_market}"
+
+    if "weak" in q or "underperform" in q:
+        return f"Weakest market is {weak_market}"
+
+    # -------- VARIANCE --------
+    if "variance" in q or "change" in q:
+        yearly = df.groupby("Year")[["Net_Revenue_AUD000","Gross_Profit_AUD000"]].sum()
+
+        if len(yearly) >= 2:
+            rev_var = yearly.iloc[-1]["Net_Revenue_AUD000"] - yearly.iloc[-2]["Net_Revenue_AUD000"]
+            profit_var = yearly.iloc[-1]["Gross_Profit_AUD000"] - yearly.iloc[-2]["Gross_Profit_AUD000"]
+
+            return f"Revenue change: {rev_var:,.0f}, Profit change: {profit_var:,.0f}"
+
+        return "Not enough data for variance analysis"
+
+    # -------- INSIGHTS --------
+    if "why margin" in q:
+        return "Margin pressure likely due to rising costs or lower pricing."
+
+    if "improve margin" in q:
+        return "Focus on cost optimization, pricing strategy, and high-margin markets."
+
+    if "risk" in q:
+        return f"Key risk: Underperformance in {weak_market} market."
+
+    if "opportunity" in q:
+        return f"Biggest opportunity lies in scaling {top_market} market."
+
+    if "growth" in q:
+        return "Growth is primarily driven by revenue expansion."
+
+    if "where should we focus" in q:
+        return f"Focus on improving performance in {weak_market} and scaling {top_market}"
+
+    if "explain profit" in q:
+        return f"Total profit is {total_profit:,.0f}. Driven by revenue and cost structure."
+
+    # -------- FALLBACK --------
+    return "Try asking: revenue, profit, margin, top market, australia revenue"
+
+
+# ✅ ENTER KEY FIX
+if question:
+    answer = rule_based_cfo(question, df)
+    st.success(answer)
+
+# Optional button (still works)
 if st.button("Ask CFO"):
-    if question.strip() != "":
-
-        answer = rule_based_cfo(question)
-
-        # ALWAYS RETURN SOMETHING
-        if answer != "fallback":
-            st.session_state.cfo_answer = answer
-
-        else:
-            st.session_state.cfo_answer = (
-                "🤖 Try asking:\n"
-                "- total revenue\n"
-                "- total profit\n"
-                "- top market\n"
-                "- margin\n"
-                "- australia revenue"
-            )
-
-# ALWAYS SHOW
-if st.session_state.cfo_answer:
-    st.success(st.session_state.cfo_answer)
+    if question:
+        answer = rule_based_cfo(question, df)
+        st.success(answer)
 
 
 # -------------------------------
