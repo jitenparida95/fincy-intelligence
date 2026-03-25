@@ -238,33 +238,42 @@ def rule_based_cfo(question, df, revenue_col, profit_col):
     return "fallback"
 
 # -------------------------------
-# ASK CFO (SMART HYBRID)
+# ASK CFO (FIXED)
 # -------------------------------
 st.markdown("## 💬 Ask AI CFO")
 
-q = st.text_input("Ask CFO-level question")
+# session state to store answer
+if "cfo_answer" not in st.session_state:
+    st.session_state.cfo_answer = ""
 
-if st.button("Ask CFO", key="ask_btn"):
-    if q:
-        answer = rule_based_cfo(q, filtered_df, revenue_col, profit_col)
+question = st.text_input("Ask CFO-level question")
 
-        # RULE BASED ANSWER
+if st.button("Ask CFO"):
+    if question:
+
+        answer = rule_based_cfo(question)
+
+        # RULE BASED
         if answer != "fallback":
-            st.success(answer)
+            st.session_state.cfo_answer = answer
 
-        # FALLBACK → AI
+        # AI FALLBACK
         else:
             if client:
                 try:
                     response = client.chat.completions.create(
                         model="gpt-4o-mini",
-                        messages=[{"role": "user", "content": q}]
+                        messages=[{"role": "user", "content": question}]
                     )
-                    st.success(response.choices[0].message.content)
-                except Exception:
-                    st.warning("⚠️ AI busy. Try structured questions.")
+                    st.session_state.cfo_answer = response.choices[0].message.content
+                except:
+                    st.session_state.cfo_answer = "⚠️ AI busy. Try again."
             else:
-                st.warning("⚠️ Try asking about revenue, profit, margin, or markets.")
+                st.session_state.cfo_answer = "⚠️ Ask about revenue, profit, margin, markets."
+
+# ✅ ALWAYS DISPLAY ANSWER
+if st.session_state.cfo_answer:
+    st.success(st.session_state.cfo_answer)
 
 
 # -------------------------------
