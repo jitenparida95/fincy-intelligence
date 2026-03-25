@@ -19,23 +19,33 @@ def load_data():
         if uploaded:
             return pd.read_csv(uploaded)
         else:
+            # ✅ UPDATED DATA (Brand + 2025 added)
             return pd.DataFrame({
-                "Year":[2022,2023,2023,2024,2024],
-                "Market":["Australia","Australia","Indonesia","Vietnam","Philippines"],
-                "Net_Revenue_AUD000":[50000,59410,32000,21000,27000],
-                "Gross_Profit_AUD000":[25000,29000,15000,9000,12000]
+                "Year":[2022,2023,2023,2024,2024,2025,2025],
+                "Market":["Australia","Australia","Indonesia","Vietnam","Philippines","Australia","Indonesia"],
+                "Brand":["A","A","B","C","D","A","B"],
+                "Net_Revenue_AUD000":[50000,59410,32000,21000,27000,65000,35000],
+                "Gross_Profit_AUD000":[25000,29000,15000,9000,12000,32000,17000]
             })
 
 df = load_data()
+
+# ------------------ SAFETY (IMPORTANT) ------------------
+if "Brand" not in df.columns:
+    df["Brand"] = "Default"
 
 # ------------------ FILTERS ------------------
 st.sidebar.header("Filters")
 
 market_filter = st.sidebar.selectbox("Market", ["All"] + list(df["Market"].unique()))
-year_filter = st.sidebar.selectbox("Year", ["All"] + list(df["Year"].unique()))
+brand_filter = st.sidebar.selectbox("Brand", ["All"] + list(df["Brand"].unique()))
+year_filter = st.sidebar.selectbox("Year", ["All"] + sorted(df["Year"].unique()))
 
 if market_filter != "All":
     df = df[df["Market"] == market_filter]
+
+if brand_filter != "All":
+    df = df[df["Brand"] == brand_filter]
 
 if year_filter != "All":
     df = df[df["Year"] == year_filter]
@@ -109,18 +119,18 @@ if st.button("Generate Commentary"):
     Margin stands at {margin:.2f}%.
 
     Growth driven by {'revenue expansion' if rev_var>0 else 'decline'}.
-    Focus areas: cost control, market optimization.
+    Focus areas: cost control, pricing strategy, and market optimization.
     """)
 
 # ------------------ RULE BASED CFO ------------------
 def rule_based_cfo(q):
     q = q.lower()
 
-    if "revenue australia" in q:
+    if "australia" in q and "revenue" in q:
         val = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
         return f"Revenue for Australia is {val:,.0f}"
 
-    if "total revenue" in q or "revenue" == q.strip():
+    if "total revenue" in q or q.strip() == "revenue":
         return f"Total revenue is {total_revenue:,.0f}"
 
     if "profit" in q:
@@ -158,7 +168,7 @@ def ai_cfo_answer(question):
 
         Question: {question}
 
-        Answer like a strategic finance leader.
+        Give insights, risks, and actions.
         """
 
         res = client.chat.completions.create(
