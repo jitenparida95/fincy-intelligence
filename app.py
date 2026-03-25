@@ -168,32 +168,77 @@ def rule_based_cfo(question, df, revenue_col, profit_col):
     total_profit = df[profit_col].sum()
     margin = (total_profit / total_rev * 100) if total_rev else 0
 
-    market_perf = df.groupby("Market")[revenue_col].sum()
+    market_rev = df.groupby("Market")[revenue_col].sum()
+    market_profit = df.groupby("Market")[profit_col].sum()
 
+    yearly = df.groupby("Year")[[revenue_col, profit_col]].sum().sort_index()
+
+    # ---------------------------
+    # MARKET QUESTIONS
+    # ---------------------------
     if "top market" in q:
-        return f"Top market is {market_perf.idxmax()}."
+        top = market_rev.idxmax()
+        val = market_rev.max()
+        return f"Top market is {top} with revenue {val:,.0f}."
 
-    elif "weak market" in q:
-        return f"Weakest market is {market_perf.idxmin()}."
+    if "weak market" in q or "lowest market" in q or "risky" in q:
+        low = market_profit.idxmin()
+        return f"Risky/weak market is {low} due to lowest profitability."
 
-    elif "margin" in q:
-        return f"Margin is {margin:.2f}%."
-
-    elif "profit" in q:
-        return f"Total profit is {total_profit:,.0f}."
-
-    elif "revenue" in q and "australia" in q:
+    if "revenue" in q and "australia" in q:
         val = df[df["Market"] == "Australia"][revenue_col].sum()
         return f"Revenue for Australia is {val:,.0f}."
 
-    elif "why margin" in q:
-        return "Margin decline is due to rising costs."
+    # ---------------------------
+    # PROFIT / MARGIN
+    # ---------------------------
+    if "margin" in q:
+        return f"Current margin is {margin:.2f}%. Pressure observed due to cost growth."
 
-    else:
-        return "fallback"
+    if "why margin" in q or "margin declining" in q:
+        return "Margin is declining because costs are increasing faster than revenue growth."
+
+    if "profit" in q:
+        return f"Total profit is {total_profit:,.0f}."
+
+    # ---------------------------
+    # YoY COMPARISON
+    # ---------------------------
+    if "compare" in q and "profit" in q:
+        if len(yearly) >= 2:
+            last = yearly.iloc[-1][profit_col]
+            prev = yearly.iloc[-2][profit_col]
+            diff = last - prev
+            return f"Profit changed from {prev:,.0f} to {last:,.0f} ({diff:+,.0f})."
+
+    if "2022" in q and "2023" in q:
+        if 2022 in yearly.index and 2023 in yearly.index:
+            p1 = yearly.loc[2022][profit_col]
+            p2 = yearly.loc[2023][profit_col]
+            return f"Profit increased from {p1:,.0f} in 2022 to {p2:,.0f} in 2023."
+
+    # ---------------------------
+    # VARIANCE / GROWTH
+    # ---------------------------
+    if "variance" in q:
+        if len(yearly) >= 2:
+            rev_diff = yearly.iloc[-1][revenue_col] - yearly.iloc[-2][revenue_col]
+            profit_diff = yearly.iloc[-1][profit_col] - yearly.iloc[-2][profit_col]
+            return f"Revenue variance is {rev_diff:,.0f} and profit variance is {profit_diff:,.0f}."
+
+    if "growth" in q:
+        return "Growth is driven by strong revenue expansion in key markets."
+
+    # ---------------------------
+    # GENERAL BUSINESS INSIGHT
+    # ---------------------------
+    if "performance" in q:
+        return "Business shows stable performance with key markets driving growth."
+
+    return "fallback"
 
 # -------------------------------
-# ASK CFO (HYBRID)
+# ASK CFO (SMART HYBRID)
 # -------------------------------
 st.markdown("## 💬 Ask AI CFO")
 
@@ -203,7 +248,12 @@ if st.button("Ask CFO", key="ask_btn"):
     if q:
         answer = rule_based_cfo(q, filtered_df, revenue_col, profit_col)
 
-        if answer == "fallback":
+        # RULE BASED ANSWER
+        if answer != "fallback":
+            st.success(answer)
+
+        # FALLBACK → AI
+        else:
             if client:
                 try:
                     response = client.chat.completions.create(
@@ -212,11 +262,10 @@ if st.button("Ask CFO", key="ask_btn"):
                     )
                     st.success(response.choices[0].message.content)
                 except Exception:
-                    st.warning("⚠️ API busy. Try again.")
+                    st.warning("⚠️ AI busy. Try structured questions.")
             else:
-                st.warning("⚠️ No AI available. Try basic questions.")
-        else:
-            st.success(answer)
+                st.warning("⚠️ Try asking about revenue, profit, margin, or markets.")
+
 
 # -------------------------------
 # SCENARIO PLANNING
