@@ -51,12 +51,12 @@ if year_filter != "All":
     df = df[df["Year"] == year_filter]
 
 # ------------------ METRICS ------------------
+# Filters already applied to df
+
 filtered_df = df.copy()
 
-if market_filter != "All":
-    filtered_df = filtered_df[filtered_df["Market"] == market_filter]
-total_revenue = df["Net_Revenue_AUD000"].sum()
-total_profit = df["Gross_Profit_AUD000"].sum()
+total_revenue = filtered_df["Net_Revenue_AUD000"].sum()
+total_profit = filtered_df["Gross_Profit_AUD000"].sum()
 margin = (total_profit / total_revenue) * 100 if total_revenue else 0
 
 # ------------------ DASHBOARD ------------------
