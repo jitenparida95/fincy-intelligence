@@ -218,9 +218,9 @@ st.write(f"Revenue: {new_rev:,.0f}")
 st.write(f"Profit: {new_profit:,.0f}")
 st.write(f"Margin: {new_margin:.2f}%")
 
-import openai
+from openai import OpenAI
 
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.markdown("## 🧠 Ask AI CFO")
 
@@ -237,10 +237,10 @@ if user_question:
 
     Markets: {df['Market'].unique().tolist()}
 
-    Answer like a senior FP&A leader with insights, not generic answers.
+    Answer like a senior FP&A leader with insights.
     """
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": context},
@@ -248,6 +248,6 @@ if user_question:
         ]
     )
 
-    answer = response['choices'][0]['message']['content']
+    answer = response.choices[0].message.content
 
     st.success(answer)
