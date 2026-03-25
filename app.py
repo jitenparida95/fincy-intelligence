@@ -161,117 +161,70 @@ st.write("📈 Growth driven by revenue expansion")
 # -------------------------------
 # RULE-BASED CFO ENGINE
 # -------------------------------
-def rule_based_cfo(question, df, revenue_col, profit_col):
+def rule_based_cfo(question):
     q = question.lower()
 
-    total_rev = df[revenue_col].sum()
-    total_profit = df[profit_col].sum()
-    margin = (total_profit / total_rev * 100) if total_rev else 0
+    market_rev = filtered_df.groupby("Market")[revenue_col].sum()
+    market_profit = filtered_df.groupby("Market")[profit_col].sum()
 
-    market_rev = df.groupby("Market")[revenue_col].sum()
-    market_profit = df.groupby("Market")[profit_col].sum()
+    # 🔥 HANDLE GENERIC QUESTIONS
+    if "revenue" in q and "market" not in q:
+        return f"Total revenue is {total_rev:,.0f}"
 
-    yearly = df.groupby("Year")[[revenue_col, profit_col]].sum().sort_index()
+    if "profit" in q and "compare" not in q:
+        return f"Total profit is {total_profit:,.0f}"
 
-    # ---------------------------
-    # MARKET QUESTIONS
-    # ---------------------------
-    if "top market" in q:
-        top = market_rev.idxmax()
-        val = market_rev.max()
-        return f"Top market is {top} with revenue {val:,.0f}."
-
-    if "weak market" in q or "lowest market" in q or "risky" in q:
-        low = market_profit.idxmin()
-        return f"Risky/weak market is {low} due to lowest profitability."
-
-    if "revenue" in q and "australia" in q:
-        val = df[df["Market"] == "Australia"][revenue_col].sum()
-        return f"Revenue for Australia is {val:,.0f}."
-
-    # ---------------------------
-    # PROFIT / MARGIN
-    # ---------------------------
     if "margin" in q:
-        return f"Current margin is {margin:.2f}%. Pressure observed due to cost growth."
+        return f"Current margin is {margin:.2f}%. Likely impacted by cost increase."
 
-    if "why margin" in q or "margin declining" in q:
-        return "Margin is declining because costs are increasing faster than revenue growth."
+    if "top market" in q:
+        return f"Top market is {market_rev.idxmax()}"
 
-    if "profit" in q:
-        return f"Total profit is {total_profit:,.0f}."
+    if "weak" in q or "risk" in q:
+        return f"Weakest market is {market_profit.idxmin()}"
 
-    # ---------------------------
-    # YoY COMPARISON
-    # ---------------------------
-    if "compare" in q and "profit" in q:
-        if len(yearly) >= 2:
-            last = yearly.iloc[-1][profit_col]
-            prev = yearly.iloc[-2][profit_col]
-            diff = last - prev
-            return f"Profit changed from {prev:,.0f} to {last:,.0f} ({diff:+,.0f})."
-
-    if "2022" in q and "2023" in q:
-        if 2022 in yearly.index and 2023 in yearly.index:
-            p1 = yearly.loc[2022][profit_col]
-            p2 = yearly.loc[2023][profit_col]
-            return f"Profit increased from {p1:,.0f} in 2022 to {p2:,.0f} in 2023."
-
-    # ---------------------------
-    # VARIANCE / GROWTH
-    # ---------------------------
-    if "variance" in q:
-        if len(yearly) >= 2:
-            rev_diff = yearly.iloc[-1][revenue_col] - yearly.iloc[-2][revenue_col]
-            profit_diff = yearly.iloc[-1][profit_col] - yearly.iloc[-2][profit_col]
-            return f"Revenue variance is {rev_diff:,.0f} and profit variance is {profit_diff:,.0f}."
+    if "australia" in q:
+        val = filtered_df[filtered_df["Market"] == "Australia"][revenue_col].sum()
+        return f"Revenue for Australia is {val:,.0f}"
 
     if "growth" in q:
-        return "Growth is driven by strong revenue expansion in key markets."
+        return "Growth is driven by strong revenue expansion."
 
-    # ---------------------------
-    # GENERAL BUSINESS INSIGHT
-    # ---------------------------
-    if "performance" in q:
-        return "Business shows stable performance with key markets driving growth."
+    if "variance" in q:
+        return f"Revenue variance {rev_var:,.0f}, Profit variance {profit_var:,.0f}"
 
     return "fallback"
 
 # -------------------------------
-# ASK CFO (FIXED)
+# ASK CFO (FINAL FIX)
 # -------------------------------
 st.markdown("## 💬 Ask AI CFO")
 
-# session state to store answer
 if "cfo_answer" not in st.session_state:
     st.session_state.cfo_answer = ""
 
 question = st.text_input("Ask CFO-level question")
 
 if st.button("Ask CFO"):
-    if question:
+    if question.strip() != "":
 
         answer = rule_based_cfo(question)
 
-        # RULE BASED
+        # ALWAYS RETURN SOMETHING
         if answer != "fallback":
             st.session_state.cfo_answer = answer
 
-        # AI FALLBACK
         else:
-            if client:
-                try:
-                    response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=[{"role": "user", "content": question}]
-                    )
-                    st.session_state.cfo_answer = response.choices[0].message.content
-                except:
-                    st.session_state.cfo_answer = "⚠️ AI busy. Try again."
-            else:
-                st.session_state.cfo_answer = "⚠️ Ask about revenue, profit, margin, markets."
+            st.session_state.cfo_answer = (
+                "🤖 Try asking:\n"
+                "- total revenue\n"
+                "- total profit\n"
+                "- top market\n"
+                "- margin\n"
+                "- australia revenue"
+            )
 
-# ✅ ALWAYS DISPLAY ANSWER
+# ALWAYS SHOW
 if st.session_state.cfo_answer:
     st.success(st.session_state.cfo_answer)
 
