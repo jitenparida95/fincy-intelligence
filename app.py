@@ -10,7 +10,7 @@ try:
 except:
     client = None
 
-# ------------------ LOAD DATA (SAFE) ------------------
+# ------------------ LOAD DATA ------------------
 def load_data():
     try:
         return pd.read_csv("data.csv")
@@ -45,25 +45,31 @@ total_revenue = df["Net_Revenue_AUD000"].sum()
 total_profit = df["Gross_Profit_AUD000"].sum()
 margin = (total_profit / total_revenue) * 100 if total_revenue else 0
 
-# ------------------ DASHBOARD CHARTS ------------------
+# ------------------ DASHBOARD ------------------
 st.title("📊 AI CFO Dashboard")
 
+col1, col2, col3 = st.columns(3)
+col1.metric("Revenue", f"{total_revenue:,.0f}")
+col2.metric("Profit", f"{total_profit:,.0f}")
+col3.metric("Margin %", f"{margin:.2f}")
+
+# ------------------ CHARTS ------------------
 st.subheader("📊 Revenue by Market")
-rev_chart = df.groupby("Market")["Net_Revenue_AUD000"].sum()
-st.bar_chart(rev_chart)
+st.bar_chart(df.groupby("Market")["Net_Revenue_AUD000"].sum())
 
 st.subheader("💰 Profit by Market")
-profit_chart = df.groupby("Market")["Gross_Profit_AUD000"].sum()
-st.bar_chart(profit_chart)
+st.bar_chart(df.groupby("Market")["Gross_Profit_AUD000"].sum())
 
-st.subheader("📈 Revenue vs Profit Trend")
+st.subheader("📈 Trend")
 trend = df.groupby("Year")[["Net_Revenue_AUD000","Gross_Profit_AUD000"]].sum()
 st.line_chart(trend)
 
-# ------------------ VARIANCE ANALYSIS ------------------
+# ------------------ VARIANCE ------------------
 st.subheader("📉 Variance Analysis")
 
-if "Year" in df.columns and df["Year"].nunique() >= 2:
+rev_var, profit_var = 0, 0
+
+if df["Year"].nunique() >= 2:
     years = sorted(df["Year"].unique())
     prev, curr = years[0], years[-1]
 
@@ -76,10 +82,10 @@ if "Year" in df.columns and df["Year"].nunique() >= 2:
     st.write(f"Revenue Change: {rev_var:,.0f}")
     st.write(f"Profit Change: {profit_var:,.0f}")
 
-    if rev_var > 0:
-        st.success("Revenue increased YoY")
-    else:
-        st.error("Revenue declined YoY")
+    st.bar_chart(pd.DataFrame({
+        "Metric": ["Revenue", "Profit"],
+        "Variance": [rev_var, profit_var]
+    }).set_index("Metric"))
 
 # ------------------ DRIVER ANALYSIS ------------------
 st.subheader("🧠 Driver Analysis")
@@ -87,98 +93,94 @@ st.subheader("🧠 Driver Analysis")
 if margin < 50:
     st.warning("⚠️ Margin pressure observed")
 else:
-    st.success("✅ Healthy margins")
+    st.success("✅ Healthy margin")
 
-st.info("Growth driven by revenue expansion")
+if rev_var > 0:
+    st.info("Growth driven by revenue expansion")
+else:
+    st.error("Revenue decline risk")
+
+# ------------------ BOARD COMMENTARY ------------------
+st.subheader("📋 Board Commentary")
+
+if st.button("Generate Commentary"):
+    st.write(f"""
+    Revenue changed by {rev_var:,.0f} and profit by {profit_var:,.0f}.
+    Margin stands at {margin:.2f}%.
+
+    Growth driven by {'revenue expansion' if rev_var>0 else 'decline'}.
+    Focus areas: cost control, market optimization.
+    """)
 
 # ------------------ RULE BASED CFO ------------------
-def rule_based_cfo(question):
-    q = question.lower()
+def rule_based_cfo(q):
+    q = q.lower()
 
-    if "australia" in q and "revenue" in q:
+    if "revenue australia" in q:
         val = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
         return f"Revenue for Australia is {val:,.0f}"
 
     if "total revenue" in q or "revenue" == q.strip():
         return f"Total revenue is {total_revenue:,.0f}"
 
-    if "total profit" in q:
+    if "profit" in q:
         return f"Total profit is {total_profit:,.0f}"
 
     if "margin" in q:
-        return f"Current margin is {margin:.2f}%"
+        return f"Margin is {margin:.2f}%"
 
     if "top market" in q:
-        top = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
-        return f"Top market is {top}"
+        return df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 
     if "risk" in q:
-        low = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmin()
-        return f"Weakest market is {low}"
-
-    if "where" in q or "focus" in q:
-        return "Focus on improving weak markets and scaling strong ones"
+        return df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmin()
 
     if "variance" in q:
         return f"Revenue variance {rev_var:,.0f}, Profit variance {profit_var:,.0f}"
 
-    return "Try: total revenue, profit, margin, top market"
+    if "focus" in q:
+        return "Focus on improving weak markets and scaling strong ones"
+
+    return "Try: revenue, profit, margin, variance, top market"
 
 # ------------------ AI CFO ------------------
-def ai_cfo_answer(question, df):
+def ai_cfo_answer(question):
     if client is None:
-        return "⚠️ Add OpenAI API key in secrets"
+        return "⚠️ AI unavailable (no API key)"
 
     try:
-        # Build strong business context
-        total_revenue = df["Net_Revenue_AUD000"].sum()
-        total_profit = df["Gross_Profit_AUD000"].sum()
-        margin = (total_profit / total_revenue) * 100 if total_revenue else 0
+        prompt = f"""
+        You are a CFO.
 
-        market_summary = df.groupby("Market")[["Net_Revenue_AUD000","Gross_Profit_AUD000"]].sum()
+        Revenue: {total_revenue}
+        Profit: {total_profit}
+        Margin: {margin:.2f}
 
-        context = f"""
-        You are a WORLD-CLASS CFO (FP&A Leader).
+        Question: {question}
 
-        Financial Summary:
-        - Total Revenue: {total_revenue}
-        - Total Profit: {total_profit}
-        - Margin: {margin:.2f}%
-
-        Market Performance:
-        {market_summary.to_string()}
-
-        Your role:
-        - Explain WHY things are happening
-        - Identify RISKS
-        - Identify OPPORTUNITIES
-        - Suggest ACTIONS
-
-        Be concise, sharp, executive-level.
+        Answer like a strategic finance leader.
         """
-
-        prompt = f"{context}\n\nQuestion: {question}\n\nAnswer like a CFO:"
 
         res = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.4
+            messages=[{"role":"user","content":prompt}],
+            temperature=0.3
         )
 
         return res.choices[0].message.content
 
-    except Exception as e:
-        return f"⚠️ AI error: {e}"
+    except:
+        return "⚠️ AI unavailable (quota exceeded)"
 
 # ------------------ ASK CFO ------------------
 st.subheader("💬 Ask AI CFO")
 
 question = st.text_input("Ask CFO-level question")
-ask = st.button("Ask CFO")
 
-if question:
+if st.button("Ask CFO") or question:
+
     rule_ans = rule_based_cfo(question)
-    ai_ans = ai_cfo_answer(question, df)
+    ai_ans = ai_cfo_answer(question)
 
     st.subheader("📊 Rule-Based Answer")
     st.success(rule_ans)
@@ -186,5 +188,9 @@ if question:
     st.subheader("🤖 AI CFO Insight")
     st.info(ai_ans)
 
-elif ask:
-    st.warning("Enter a question")
+    st.subheader("📌 CFO Action Plan")
+    st.write("""
+    - Improve margin through cost optimization  
+    - Scale high-performing markets  
+    - Fix weak market performance  
+    """)
