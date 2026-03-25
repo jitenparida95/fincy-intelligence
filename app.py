@@ -50,11 +50,17 @@ if brand_filter != "All":
 if year_filter != "All":
     df = df[df["Year"] == year_filter]
 
-# ------------------ METRICS ------------------
+# ---------------------- METRICS ----------------------
 
-# Create filtered dataframe (DO NOT modify original df)
+# ✅ Ensure correct data types
+df["Year"] = df["Year"].astype(str)
+df["Market"] = df["Market"].astype(str)
+df["Brand"] = df["Brand"].astype(str)
+
+# ✅ Start with full data
 filtered_df = df.copy()
 
+# ✅ Apply filters properly (NO overwrite issues)
 if market_filter != "All":
     filtered_df = filtered_df[filtered_df["Market"] == market_filter]
 
@@ -62,12 +68,18 @@ if brand_filter != "All":
     filtered_df = filtered_df[filtered_df["Brand"] == brand_filter]
 
 if year_filter != "All":
-    filtered_df = filtered_df[filtered_df["Year"] == year_filter]
+    filtered_df = filtered_df[filtered_df["Year"] == str(year_filter)]
 
-# Calculate metrics from filtered data
+# ✅ Metrics calculation (ONLY on filtered data)
 total_revenue = filtered_df["Net_Revenue_AUD000"].sum()
 total_profit = filtered_df["Gross_Profit_AUD000"].sum()
-margin = (total_profit / total_revenue) * 100 if total_revenue else 0
+
+# ✅ Safe margin calculation
+margin = (total_profit / total_revenue * 100) if total_revenue != 0 else 0
+
+# ---------------------- DEBUG (REMOVE LATER) ----------------------
+# st.write("Filtered Rows:", filtered_df.shape[0])
+# st.write(filtered_df.head())
 
 # ------------------ DASHBOARD ------------------
 st.title("📊 AI CFO Dashboard")
