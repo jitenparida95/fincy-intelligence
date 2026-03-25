@@ -212,7 +212,17 @@ import openai
 
 st.subheader("💬 Ask AI CFO")
 
-question = st.text_input("Ask CFO-level question", key="cfo_input")
+question = st.text_input("Ask CFO-level question")
+
+if question:
+    rule_ans = rule_based_cfo(question)
+    ai_ans = ai_cfo_answer(question, df)
+
+    st.markdown("### 📊 Rule-Based Answer")
+    st.success(rule_ans)
+
+    st.markdown("### 🤖 AI CFO Insight")
+    st.info(ai_ans)
 
 # -------------------------------
 # RULE BASED FUNCTION (same as before, slightly improved)
@@ -308,17 +318,17 @@ if question:
     st.info(ai_answer)
 
 
-# Button (optional)
-if st.button("Ask CFO"):
+if st.button("Ask CFO") or question:
+
     if question:
-        rule_answer = rule_based_cfo(question, df)
-        ai_answer = ai_cfo_answer(question, df)
+        rule_ans = rule_based_cfo(question)
+        ai_ans = ai_cfo_answer(question, df)
 
-        st.markdown("### 🟢 Rule-Based Answer")
-        st.success(rule_answer)
+        st.markdown("### 📊 Rule-Based Answer")
+        st.success(rule_ans)
 
-        st.markdown("### 🤖 AI CFO Answer")
-        st.info(ai_answer)
+        st.markdown("### 🤖 AI CFO Insight")
+        st.info(ai_ans)
 
 
 # -------------------------------
