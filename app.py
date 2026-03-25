@@ -217,3 +217,37 @@ new_margin = (new_profit / new_rev * 100) if new_rev else 0
 st.write(f"Revenue: {new_rev:,.0f}")
 st.write(f"Profit: {new_profit:,.0f}")
 st.write(f"Margin: {new_margin:.2f}%")
+
+import openai
+
+openai.api_key = st.secrets["OPENAI_API_KEY"]
+
+st.markdown("## 🧠 Ask AI CFO")
+
+user_question = st.text_input("Ask any CFO-level question")
+
+if user_question:
+    context = f"""
+    You are a CFO analyzing business performance.
+
+    Data Summary:
+    Total Revenue: {df[revenue_col].sum()}
+    Total Profit: {df[profit_col].sum()}
+    Avg Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+
+    Markets: {df['Market'].unique().tolist()}
+
+    Answer like a senior FP&A leader with insights, not generic answers.
+    """
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": context},
+            {"role": "user", "content": user_question}
+        ]
+    )
+
+    answer = response['choices'][0]['message']['content']
+
+    st.success(answer)
