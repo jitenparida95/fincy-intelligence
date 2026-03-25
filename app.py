@@ -226,7 +226,7 @@ st.markdown("## 🧠 Ask AI CFO")
 
 user_question = st.text_input("Ask any CFO-level question")
 
-if st.button("Ask AI CFO"):
+if st.button("Ask AI CFO", key="ask_ai"):
 
     if not user_question:
         st.warning("Please enter a question")
