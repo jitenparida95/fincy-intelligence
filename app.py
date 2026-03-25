@@ -226,28 +226,37 @@ st.markdown("## 🧠 Ask AI CFO")
 
 user_question = st.text_input("Ask any CFO-level question")
 
-if user_question:
-    context = f"""
-    You are a CFO analyzing business performance.
+if st.button("Ask AI CFO") and user_question:
 
-    Data Summary:
-    Total Revenue: {df[revenue_col].sum()}
-    Total Profit: {df[profit_col].sum()}
-    Avg Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+    with st.spinner("Analyzing like a CFO..."):
 
-    Markets: {df['Market'].unique().tolist()}
+        context = f"""
+        You are a CFO analyzing business performance.
 
-    Answer like a senior FP&A leader with insights.
-    """
+        Data Summary:
+        Total Revenue: {df[revenue_col].sum()}
+        Total Profit: {df[profit_col].sum()}
+        Avg Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
 
-    response = client.chat.completions.create(
+        Markets: {df['Market'].unique().tolist()}
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": context},
+                {"role": "user", "content": user_question}
+            ]
+        )
+
+        st.success(response.choices[0].message.content)
+
+@st.cache_data(show_spinner=False)
+def ask_ai(question, context):
+    return client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": context},
-            {"role": "user", "content": user_question}
+            {"role": "user", "content": question}
         ]
     )
-
-    answer = response.choices[0].message.content
-
-    st.success(answer)
