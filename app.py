@@ -15,19 +15,18 @@ client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 # -------------------------------
 uploaded_file = st.file_uploader("Upload your CSV", type=["csv"])
 
-if uploaded_file is not None:
+if uploaded_file:
     df = pd.read_csv(uploaded_file)
 else:
     df = pd.read_csv("unilever_fpna.csv")
 
-# Auto-detect columns
-revenue_col = [col for col in df.columns if "Revenue" in col][0]
-profit_col = [col for col in df.columns if "Profit" in col][0]
+revenue_col = [c for c in df.columns if "Revenue" in c][0]
+profit_col = [c for c in df.columns if "Profit" in c][0]
 
 # -------------------------------
-# SIDEBAR FILTERS
+# SIDEBAR
 # -------------------------------
-st.sidebar.header("📊 Filters")
+st.sidebar.header("Filters")
 
 market = st.sidebar.selectbox("Market", ["All"] + list(df["Market"].unique()))
 brand = st.sidebar.selectbox("Brand", ["All"] + list(df["Brand"].unique()))
@@ -62,14 +61,17 @@ c2.metric("Profit", f"{total_profit:,.0f}")
 c3.metric("Margin %", f"{margin:.2f}%")
 
 # -------------------------------
-# AI CFO AUTO INSIGHTS
+# AUTO INSIGHTS (NO API)
 # -------------------------------
 st.markdown("## 🤖 AI CFO Auto Insights")
 
-if st.button("Generate Insights", key="insight_btn"):
-    with st.spinner("Generating insights..."):
-        st.success(f"🏆 Top Market: {filtered_df.groupby('Market')[revenue_col].sum().idxmax()}")
-        st.error(f"📉 Weak Market: {filtered_df.groupby('Market')[revenue_col].sum().idxmin()}")
+market_perf = filtered_df.groupby("Market")[revenue_col].sum()
+
+top_market = market_perf.idxmax()
+low_market = market_perf.idxmin()
+
+st.success(f"🏆 Top Market: {top_market}")
+st.error(f"📉 Weak Market: {low_market}")
 
 # -------------------------------
 # CHARTS
@@ -78,14 +80,14 @@ col1, col2 = st.columns(2)
 
 with col1:
     yearly = filtered_df.groupby("Year")[revenue_col].sum().reset_index()
-    st.plotly_chart(px.line(yearly, x="Year", y=revenue_col, title="Revenue Trend"), use_container_width=True)
+    st.plotly_chart(px.line(yearly, x="Year", y=revenue_col))
 
 with col2:
-    market_profit = filtered_df.groupby("Market")[profit_col].sum().reset_index()
-    st.plotly_chart(px.bar(market_profit, x="Market", y=profit_col, title="Profit by Market"), use_container_width=True)
+    mp = filtered_df.groupby("Market")[profit_col].sum().reset_index()
+    st.plotly_chart(px.bar(mp, x="Market", y=profit_col))
 
 # -------------------------------
-# VARIANCE ANALYSIS
+# VARIANCE
 # -------------------------------
 st.markdown("## 📊 Variance Analysis")
 
@@ -98,16 +100,20 @@ if len(yearly_full) >= 2:
     st.write(f"Revenue Change: {rev_change:,.0f}")
     st.write(f"Profit Change: {profit_change:,.0f}")
 
-if st.button("Explain Variance", key="variance_btn"):
-    with st.spinner("Explaining like CFO..."):
+# -------------------------------
+# AI VARIANCE (SAFE)
+# -------------------------------
+if st.button("Explain Variance", key="var_btn"):
+    try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": f"Revenue change: {rev_change}, Profit change: {profit_change}"},
-                {"role": "user", "content": "Explain variance in CFO style"}
+                {"role": "user", "content": f"Explain revenue change {rev_change} and profit change {profit_change}"}
             ]
         )
         st.info(response.choices[0].message.content)
+    except Exception:
+        st.warning("⚠️ API busy. Try again later.")
 
 # -------------------------------
 # BOARD COMMENTARY
@@ -115,93 +121,54 @@ if st.button("Explain Variance", key="variance_btn"):
 st.markdown("## 🧾 Board Commentary")
 
 if st.button("Generate Board Report", key="board_btn"):
-    with st.spinner("Writing board report..."):
+    try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": f"Revenue: {total_rev}, Profit: {total_profit}, Margin: {margin:.2f}%"},
-                {"role": "user", "content": "Write board-level summary"}
+                {"role": "user", "content": f"Revenue {total_rev}, Profit {total_profit}, Margin {margin}"}
             ]
         )
         st.success(response.choices[0].message.content)
+    except Exception:
+        st.warning("⚠️ API busy. Try again later.")
 
 # -------------------------------
 # DRIVER ANALYSIS
 # -------------------------------
 st.markdown("## 🧠 Driver Analysis")
 
-if margin > 50:
-    st.write("👍 Strong profitability")
-else:
-    st.write("⚠️ Margin pressure observed")
-
-if len(yearly_full) >= 2 and rev_change > 0:
-    st.write("📈 Growth driven by revenue expansion")
+st.write("⚠️ Margin pressure" if margin < 50 else "👍 Strong margins")
 
 # -------------------------------
-# MARKET CONTRIBUTION
-# -------------------------------
-st.markdown("## 🌍 Market Contribution")
-
-market_perf = filtered_df.groupby("Market")[revenue_col].sum()
-
-st.write("Top 3 Markets")
-st.dataframe(market_perf.sort_values(ascending=False).head(3))
-
-st.write("Bottom 3 Markets")
-st.dataframe(market_perf.sort_values().head(3))
-
-# -------------------------------
-# CFO COMMENTARY
-# -------------------------------
-st.markdown("## 📋 CFO Commentary")
-
-top_market = market_perf.idxmax()
-low_market = market_perf.idxmin()
-
-st.write("👉 Business shows stable growth")
-st.write(f"👉 {top_market} driving performance")
-st.write(f"👉 {low_market} needs attention")
-
-# -------------------------------
-# ASK AI CFO
+# ASK CFO (HYBRID)
 # -------------------------------
 st.markdown("## 💬 Ask AI CFO")
 
-question = st.text_input("Ask CFO-level question")
+q = st.text_input("Ask question")
 
-if st.button("Ask AI CFO", key="ask_btn"):
-
-    if question.strip() == "":
-        st.warning("Enter a question")
-
-    else:
-        with st.spinner("Thinking like CFO..."):
-            try:
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[
-                        {"role": "system", "content": f"Revenue: {total_rev}, Profit: {total_profit}, Margin: {margin:.2f}%"},
-                        {"role": "user", "content": question}
-                    ]
-                )
-                st.success(response.choices[0].message.content)
-
-            except Exception as e:
-                st.error(f"API Error: {e}")
+if st.button("Ask", key="ask_btn"):
+    if q:
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": q}]
+            )
+            st.success(response.choices[0].message.content)
+        except Exception:
+            st.warning("⚠️ API busy. Try again later.")
 
 # -------------------------------
-# FORECAST + SCENARIO
+# SCENARIO
 # -------------------------------
 st.markdown("## 🎛️ Scenario Planning")
 
-rev_change_pct = st.slider("Revenue Change %", -20, 30, 5)
-cost_change_pct = st.slider("Cost Change %", -20, 30, 5)
+rev_slider = st.slider("Revenue Change %", -20, 30, 5)
+cost_slider = st.slider("Cost Change %", -20, 30, 5)
 
 base_cost = total_rev - total_profit
 
-new_rev = total_rev * (1 + rev_change_pct/100)
-new_cost = base_cost * (1 + cost_change_pct/100)
+new_rev = total_rev * (1 + rev_slider/100)
+new_cost = base_cost * (1 + cost_slider/100)
 
 new_profit = new_rev - new_cost
 new_margin = (new_profit / new_rev * 100) if new_rev else 0
