@@ -55,6 +55,33 @@ c1.metric("Revenue", f"{total_rev:,.0f}")
 c2.metric("Profit", f"{total_profit:,.0f}")
 c3.metric("Margin %", f"{margin:.2f}%")
 
+st.markdown("## 📊 AI CFO Auto Insights")
+
+if st.button("Generate Insights"):
+
+    with st.spinner("Analyzing business like a CFO..."):
+
+        context = f"""
+        You are a CFO analyzing company performance.
+
+        Revenue: {df[revenue_col].sum()}
+        Profit: {df[profit_col].sum()}
+        Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+
+        Market Performance:
+        {df.groupby('Market')[[revenue_col, profit_col]].sum().to_string()}
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": context},
+                {"role": "user", "content": "Give key business insights, risks, and recommendations"}
+            ]
+        )
+
+        st.success(response.choices[0].message.content)
+
 # -------------------------------
 # TOP / WEAK MARKET
 # -------------------------------
@@ -93,7 +120,27 @@ if len(yearly_full) >= 2:
     profit_change = yearly_full.iloc[-1][profit_col] - yearly_full.iloc[-2][profit_col]
 
     st.write(f"Revenue Change: {rev_change:,.0f}")
-    st.write(f"Profit Change: {profit_change:,.0f}")
+    st.write(f"Profit Change: {profit_change:,.0f}")st.markdown("## 🧾 Board Commentary")
+
+if st.button("Generate Board Report"):
+
+    context = f"""
+    You are a CFO presenting to board members.
+
+    Revenue: {df[revenue_col].sum()}
+    Profit: {df[profit_col].sum()}
+    Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": context},
+            {"role": "user", "content": "Write a professional board-level summary"}
+        ]
+    )
+
+    st.success(response.choices[0].message.content)
 
 # -------------------------------
 # DRIVER ANALYSIS
@@ -202,6 +249,38 @@ if len(yearly_full) >= 2:
 # SCENARIO PLANNING
 # -------------------------------
 st.subheader("🎛️ Scenario Planning")
+
+st.markdown("## 📉 Variance Analysis")
+
+actual_revenue = df[revenue_col].sum()
+
+# make sure this exists in your code already
+# if not, define it earlier
+forecast_revenue = actual_revenue * 0.95  
+
+variance = actual_revenue - forecast_revenue
+
+st.metric("Revenue Variance", f"{variance:,.0f}")
+
+if st.button("Explain Variance"):
+
+    context = f"""
+    You are a CFO.
+
+    Actual Revenue: {actual_revenue}
+    Forecast Revenue: {forecast_revenue}
+    Variance: {variance}
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": context},
+            {"role": "user", "content": "Explain the variance in a CFO style"}
+        ]
+    )
+
+    st.info(response.choices[0].message.content)
 
 rev_change = st.slider("Revenue Change %", -20, 30, 5)
 cost_change = st.slider("Cost Change %", -20, 30, 5)
