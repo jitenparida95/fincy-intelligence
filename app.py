@@ -196,12 +196,18 @@ def rule_based_cfo(question):
     return "fallback"
 
 # -------------------------------
-# ASK AI CFO (FIXED VERSION)
+# ASK AI CFO (DUAL MODE)
 # -------------------------------
+
+import openai
 
 st.subheader("💬 Ask AI CFO")
 
 question = st.text_input("Ask CFO-level question", key="cfo_input")
+
+# -------------------------------
+# RULE BASED FUNCTION (same as before, slightly improved)
+# -------------------------------
 
 def rule_based_cfo(q, df):
     q = q.lower()
@@ -210,86 +216,96 @@ def rule_based_cfo(q, df):
     total_profit = df["Gross_Profit_AUD000"].sum()
     margin = (total_profit / total_revenue) * 100 if total_revenue != 0 else 0
 
-    # Market aggregation
     market_rev = df.groupby("Market")["Net_Revenue_AUD000"].sum()
-    market_profit = df.groupby("Market")["Gross_Profit_AUD000"].sum()
-
     top_market = market_rev.idxmax()
     weak_market = market_rev.idxmin()
 
-    # -------- BASIC --------
-    if "total revenue" in q or q.strip() == "revenue":
+    if "revenue" in q:
         return f"Total revenue is {total_revenue:,.0f}"
 
-    if "total profit" in q or q.strip() == "profit":
+    if "profit" in q:
         return f"Total profit is {total_profit:,.0f}"
 
     if "margin" in q:
         return f"Current margin is {margin:.2f}%"
 
-    # -------- MARKET --------
     if "australia" in q:
         val = market_rev.get("Australia", 0)
         return f"Revenue for Australia is {val:,.0f}"
 
-    if "indonesia" in q:
-        val = market_profit.get("Indonesia", 0)
-        return f"Profit for Indonesia is {val:,.0f}"
-
     if "top market" in q:
-        return f"Top market by revenue is {top_market}"
+        return f"Top market is {top_market}"
 
-    if "weak" in q or "underperform" in q:
+    if "weak" in q or "risk" in q:
         return f"Weakest market is {weak_market}"
 
-    # -------- VARIANCE --------
-    if "variance" in q or "change" in q:
-        yearly = df.groupby("Year")[["Net_Revenue_AUD000","Gross_Profit_AUD000"]].sum()
+    if "focus" in q:
+        return f"Focus on improving {weak_market} and scaling {top_market}"
 
-        if len(yearly) >= 2:
-            rev_var = yearly.iloc[-1]["Net_Revenue_AUD000"] - yearly.iloc[-2]["Net_Revenue_AUD000"]
-            profit_var = yearly.iloc[-1]["Gross_Profit_AUD000"] - yearly.iloc[-2]["Gross_Profit_AUD000"]
+    return "Basic insight: Business performance is stable with growth opportunities."
 
-            return f"Revenue change: {rev_var:,.0f}, Profit change: {profit_var:,.0f}"
+# -------------------------------
+# AI CFO FUNCTION (NEW 🔥)
+# -------------------------------
 
-        return "Not enough data for variance analysis"
+def ai_cfo_answer(question, df):
+    try:
+        # Convert dataframe to summary (important)
+        summary = df.groupby("Market")[["Net_Revenue_AUD000","Gross_Profit_AUD000"]].sum().to_string()
 
-    # -------- INSIGHTS --------
-    if "why margin" in q:
-        return "Margin pressure likely due to rising costs or lower pricing."
+        prompt = f"""
+        You are a CFO.
 
-    if "improve margin" in q:
-        return "Focus on cost optimization, pricing strategy, and high-margin markets."
+        Here is the business data:
+        {summary}
 
-    if "risk" in q:
-        return f"Key risk: Underperformance in {weak_market} market."
+        Question: {question}
 
-    if "opportunity" in q:
-        return f"Biggest opportunity lies in scaling {top_market} market."
+        Give a sharp, executive-level insight in 2-3 lines.
+        """
 
-    if "growth" in q:
-        return "Growth is primarily driven by revenue expansion."
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3
+        )
 
-    if "where should we focus" in q:
-        return f"Focus on improving performance in {weak_market} and scaling {top_market}"
+        return response.choices[0].message.content
 
-    if "explain profit" in q:
-        return f"Total profit is {total_profit:,.0f}. Driven by revenue and cost structure."
+    except Exception as e:
+        return "⚠️ AI temporarily unavailable. Showing rule-based insight."
 
-    # -------- FALLBACK --------
-    return "Try asking: revenue, profit, margin, top market, australia revenue"
+# -------------------------------
+# EXECUTION (ENTER KEY ENABLED)
+# -------------------------------
 
-
-# ✅ ENTER KEY FIX
 if question:
-    answer = rule_based_cfo(question, df)
-    st.success(answer)
 
-# Optional button (still works)
+    # Rule based
+    rule_answer = rule_based_cfo(question, df)
+
+    # AI based
+    ai_answer = ai_cfo_answer(question, df)
+
+    # DISPLAY
+    st.markdown("### 🟢 Rule-Based Answer")
+    st.success(rule_answer)
+
+    st.markdown("### 🤖 AI CFO Answer")
+    st.info(ai_answer)
+
+
+# Button (optional)
 if st.button("Ask CFO"):
     if question:
-        answer = rule_based_cfo(question, df)
-        st.success(answer)
+        rule_answer = rule_based_cfo(question, df)
+        ai_answer = ai_cfo_answer(question, df)
+
+        st.markdown("### 🟢 Rule-Based Answer")
+        st.success(rule_answer)
+
+        st.markdown("### 🤖 AI CFO Answer")
+        st.info(ai_answer)
 
 
 # -------------------------------
