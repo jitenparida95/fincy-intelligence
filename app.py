@@ -61,30 +61,25 @@ c3.metric("Margin %", f"{margin:.2f}%")
 
 st.markdown("## 📊 AI CFO Auto Insights")
 
-if st.button("Generate Insights"):
+if st.button("Generate Board Report"):
 
-    with st.spinner("Analyzing business like a CFO..."):
+    context = f"""
+    You are a CFO presenting to board members.
 
-        context = f"""
-        You are a CFO analyzing company performance.
+    Revenue: {df[revenue_col].sum()}
+    Profit: {df[profit_col].sum()}
+    Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+    """
 
-        Revenue: {df[revenue_col].sum()}
-        Profit: {df[profit_col].sum()}
-        Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": context},
+            {"role": "user", "content": "Write a professional board-level summary"}
+        ]
+    )
 
-        Market Performance:
-        {df.groupby('Market')[[revenue_col, profit_col]].sum().to_string()}
-        """
-
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": context},
-                {"role": "user", "content": "Give key business insights, risks, and recommendations"}
-            ]
-        )
-
-        st.success(response.choices[0].message.content)
+    st.success(response.choices[0].message.content)
 
 # -------------------------------
 # TOP / WEAK MARKET
