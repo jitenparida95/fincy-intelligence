@@ -226,37 +226,36 @@ st.markdown("## 🧠 Ask AI CFO")
 
 user_question = st.text_input("Ask any CFO-level question")
 
-if st.button("Ask AI CFO") and user_question:
+if st.button("Ask AI CFO"):
 
-    with st.spinner("Analyzing like a CFO..."):
+    if not user_question:
+        st.warning("Please enter a question")
+    
+    else:
+        with st.spinner("Thinking like a CFO..."):
 
-        context = f"""
-        You are a CFO analyzing business performance.
+            context = f"""
+            You are a CFO analyzing business performance.
 
-        Data Summary:
-        Total Revenue: {df[revenue_col].sum()}
-        Total Profit: {df[profit_col].sum()}
-        Avg Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
+            Total Revenue: {df[revenue_col].sum()}
+            Total Profit: {df[profit_col].sum()}
+            Margin: {(df[profit_col].sum()/df[revenue_col].sum())*100:.2f}%
 
-        Markets: {df['Market'].unique().tolist()}
-        """
+            Markets: {df['Market'].unique().tolist()}
+            """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": context},
-                {"role": "user", "content": user_question}
-            ]
-        )
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": context},
+                        {"role": "user", "content": user_question}
+                    ]
+                )
 
-        st.success(response.choices[0].message.content)
+                answer = response.choices[0].message.content
 
-@st.cache_data(show_spinner=False)
-def ask_ai(question, context):
-    return client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": context},
-            {"role": "user", "content": question}
-        ]
-    )
+                st.success(answer)
+
+            except Exception as e:
+                st.error(f"Error: {e}")
