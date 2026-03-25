@@ -220,7 +220,7 @@ st.write(f"Margin: {new_margin:.2f}%")
 
 from openai import OpenAI
 
-client = OpenAI(api_key=st.secrets["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"])
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 st.markdown("## 🧠 Ask AI CFO")
 
