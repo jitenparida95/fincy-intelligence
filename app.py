@@ -103,6 +103,17 @@ html, body, [class*="css"] {
   font-size: 0.75rem;
   margin-top: 4px;
 }
+.dash-author {
+  font-size: 0.65rem;
+  margin-top: 6px;
+  letter-spacing: 1px;
+
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  opacity: 0.9;
+}
   /* ── KPI Cards ── */
   .kpi-grid  { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.5rem; }
   .kpi-grid-2{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.8rem; }
@@ -318,7 +329,10 @@ st.components.v1.html(f"""
       <span style="color:#38bdf8;">FP&amp;A Engine</span>
       <span style="color:#64748b;"> | {len(df):,} Transactions</span>
     </div>
-  </div>
+
+  <div class="dash-author">
+      By Jitendra Parida • Founder, Fincy AI & Data Intelligence
+    </div>
 
   <div>
     <span style="font-size:0.6rem; border:1px solid #1e2a3a; padding:3px 8px; border-radius:4px;">
