@@ -86,8 +86,8 @@ html, body, [class*="css"] {
   margin-bottom: 8px;
 
   background: linear-gradient(90deg, #38bdf8, #6366f1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
 }
   /* 🔥 SUB TEXT */
 .dash-sub {
@@ -333,6 +333,32 @@ def fmt_m(v): return f"AUD {v/1000:,.1f}M" if abs(v) >= 1000 else f"AUD {v:,.0f}
 top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
+st.markdown("""
+<div style="
+  text-align:center;
+  margin-top:10px;
+  margin-bottom:20px;
+">
+
+  <div style="
+    font-size:1.8rem;
+    font-weight:700;
+    color:#38bdf8;
+    letter-spacing:1px;
+  ">
+    Data & Intelligence Insights
+  </div>
+
+  <div style="
+    font-size:0.8rem;
+    color:#94a3b8;
+    margin-top:4px;
+  ">
+    Real-time FP&A performance powered by AI
+  </div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # --- KPI ROW 1 ---
 
