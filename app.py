@@ -457,13 +457,30 @@ def rule_cfo(q):
     return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
 
 def ai_cfo(question):
-    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         return None
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key)
-        prompt = f"""You are the CFO of Unilever APAC. Provide concise, incisive financial insights.
+        import google.generativeai as genai
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        prompt = f"""You are the CFO of Unilever APAC.
+KPI Summary:
+- Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:+.1f}%
+- Gross Profit: {fmt_m(gp)} | GP Margin: {gp_margin:.1f}%
+- EBITDA: {fmt_m(ebitda)} | EBITDA Margin: {ebitda_margin:.1f}%
+- COGS % NR: {cogs_pct:.1f}% | OPEX % NR: {opex_pct:.1f}%
+- Budget Achievement: {budget_ach:.1f}% | Variance: {fmt_m(var_nr)}
+- Top Market: {top_market} | At-Risk Market: {risk_mkt}
+- Top Brand: {top_brand}
+
+Question: {question}
+Give 2-3 CFO-level insights with root causes and actions. Be direct and quantitative."""
+        response = model.generate_content(prompt)
+        return response.text
+    except:
+        return None
+```
 
 KPI Summary:
 - Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:+.1f}%
