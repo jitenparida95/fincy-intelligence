@@ -6,6 +6,10 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 
+# --- CHAT MEMORY ---
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
 
 def generate_pdf(text):
     buffer = BytesIO()
@@ -177,26 +181,40 @@ if df_raw.empty:
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
 with st.sidebar:
+
     st.markdown("## ⚙️ Filters")
-    st.caption("Use the **›** arrow on the left edge to reopen if closed.")
+    st.caption("Use the **>** arrow on the left edge to reopen if closed.")
 
     def filt(label, col):
         opts = ["All"] + sorted(df_raw[col].dropna().unique().tolist())
         return st.selectbox(label, opts)
 
-    f_year     = filt("📅 Year",     "Year")
-    f_quarter  = filt("📆 Quarter",  "Quarter")
-    f_market   = filt("🌏 Market",   "Market")
-    f_category = filt("🏷 Category", "Category")
-    f_brand    = filt("💎 Brand",    "Brand")
-    f_channel  = filt("🛒 Channel",  "Channel")
-    f_type     = filt("📋 Type",     "Type")
+    f_year     = filt("🗓️ Year", "Year")
+    f_quarter  = filt("📊 Quarter", "Quarter")
+    f_market   = filt("🌍 Market", "Market")
+    f_category = filt("🏷️ Category", "Category")
+    f_brand    = filt("🔷 Brand", "Brand")
+    f_channel  = filt("🛒 Channel", "Channel")
+    f_type     = filt("📄 Type", "Type")
 
     st.markdown("---")
     st.markdown("### 💬 Ask the AI CFO")
     st.caption("Powered by Google Gemini (free)")
+
     question = st.text_input("", placeholder="e.g. Why is margin declining?")
-    ask_btn  = st.button("🤖 Ask CFO")
+
+    # ✅ BUTTONS MUST BE INSIDE SIDEBAR
+    col1, col2 = st.columns(2)
+
+    with col1:
+        ask_btn = st.button("🤖 Ask CFO")
+
+    with col2:
+        clear_btn = st.button("🗑️ Clear")
+
+    if clear_btn:
+        if "chat_history" in st.session_state:
+        st.session_state.chat_history = []
 
 # ── FILTER ────────────────────────────────────────────────────────────────────
 df = df_raw.copy()
@@ -524,25 +542,44 @@ Give 2-3 CFO-level insights with actions.
     except Exception as e:
         return "Groq error: " + str(e)
 
+# --- CHAT HISTORY DISPLAY ---
+
+if st.session_state.chat_history:
+    st.markdown("## 💬 CFO Chat History")
+
+    for chat in reversed(st.session_state.chat_history):
+        st.markdown(f"""
+        <div style="background:#111827;padding:12px;border-radius:10px;margin-bottom:10px">
+            <b>👤 You:</b> {chat['question']}<br><br>
+            <b>🧠 AI CFO:</b><br>{chat['answer']}
+        </div>
+        """, unsafe_allow_html=True)
+
 # --- AI CFO SECTION ------------------------------------------------------
 
 if ask_btn and question:
 
     st.markdown("### 🤖 AI CFO Insight")
 
-    # Rule-Based Answer
+    # Rule-Based
     st.markdown("📊 Rule-Based Answer")
     st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
 
     # AI CFO
     st.markdown("🧠 AI CFO")
-
     with st.spinner("AI CFO is thinking..."):
         ai_ans = ai_cfo(question)
 
-    # ✅ KEEP EVERYTHING HERE INSIDE
+    # ✅ SHOW ANSWER
     st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
 
+    # ✅ SAVE CHAT (MOVE HERE)
+    st.session_state.chat_history.append({
+        "question": question,
+        "answer": ai_ans
+    })
+
+    # ✅ PDF DOWNLOAD
     if ai_ans:
         pdf = generate_pdf(ai_ans)
 
