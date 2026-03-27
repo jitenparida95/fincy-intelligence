@@ -15,12 +15,14 @@ st.set_page_config(
 # ── CUSTOM CSS ────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
 
-  html, body, [class*="css"] {
-    font-family: 'DM Mono', monospace;
-    background-color: #080c14;
-    color: #e2e8f0;
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
+
+html, body, [class*="css"] {
+  font-family: 'DM Mono', monospace;
+  background-color: #080c14;
+  color: #e2e8f0;
+}
   }
 
   /* ── Sidebar ── */
@@ -43,6 +45,9 @@ st.markdown("""
   button[data-testid="collapsedControl"] svg { fill: #fff !important; }
 
   .main .block-container { padding: 1.5rem 2rem; max-width: 100%; }
+header { visibility: visible !important; }
+
+</style>
 
   /* ── Header ── */
   .dash-header {
