@@ -457,20 +457,20 @@ def rule_cfo(q):
         return "Top category: " + str(top_cat)
     return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
 
-# ——— GEMINI AI CFO ——————————————————————————————
-from groq import Groq
-
+# ——— Groq AI CFO ——————————————————————————————
 def ai_cfo(question):
-    api_key = st.secrets.get("GROQ_API_KEY")
+    import os
+    from groq import Groq
 
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
-        return "Groq API key missing"
+        return "No API key found"
 
     try:
         client = Groq(api_key=api_key)
 
         prompt = f"""
-You are a CFO of a global FMCG company.
+You are the CFO of Unilever APAC. Provide concise, incisive financial insights.
 
 KPI Summary:
 - Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:.1f}%
@@ -488,7 +488,7 @@ Give 2-3 CFO-level insights with actions.
 """
 
         chat = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "user", "content": prompt}
             ],
