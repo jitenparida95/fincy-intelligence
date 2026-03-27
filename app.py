@@ -149,6 +149,27 @@ html, body, [class*="css"] {
   #MainMenu { visibility: hidden; }
   footer { visibility: hidden; }
   header { visibility: visible !important; }
+st.markdown("""
+<style>
+
+/* ALL your existing CSS ABOVE */
+
+/* Ask CFO Button */
+div[data-testid="stSidebar"] button:first-child {
+    background: linear-gradient(135deg, #00c6ff, #0072ff) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+}
+
+/* Clear Button */
+div[data-testid="stSidebar"] button:last-child {
+    background: linear-gradient(135deg, #ff4b2b, #ff416c) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
