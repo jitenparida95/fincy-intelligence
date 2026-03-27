@@ -3,6 +3,23 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
+
+def generate_pdf(text):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+
+    content = []
+    for line in text.split("\n"):
+        content.append(Paragraph(line, styles["Normal"]))
+        content.append(Spacer(1, 8))
+
+    doc.build(content)
+    buffer.seek(0)
+    return buffer
 
 # ── PAGE CONFIG ───────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -510,12 +527,23 @@ if ask_btn and question:
     st.markdown("📊 Rule-Based Answer")
     st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
 
-    # AI CFO (Groq)
+    # AI CFO
     st.markdown("🧠 AI CFO")
     with st.spinner("AI CFO is thinking..."):
         ai_ans = ai_cfo(question)
 
     st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
+
+    # ✅ MOVE THIS INSIDE
+    if ai_ans:
+        pdf = generate_pdf(ai_ans)
+
+        st.download_button(
+            label="📄 Download CFO Report",
+            data=pdf,
+            file_name="CFO_Report.pdf",
+            mime="application/pdf"
+        )
 
 else:
     st.markdown("""
