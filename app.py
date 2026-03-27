@@ -457,20 +457,24 @@ def rule_cfo(q):
         return "Top category: " + str(top_cat)
     return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
 
-# ── GEMINI AI CFO ─────────────────────────────────────────────────────────────
+# ——— GEMINI AI CFO ——————————————————————————————
 def ai_cfo(question):
     api_key = os.getenv("GOOGLE_API_KEY")
+
     if not api_key:
-        return None
+        return "API key missing"
+
     try:
         import google.generativeai as genai
+
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+
+        model = genai.GenerativeModel("gemini-1.5-flash-latest")
 
         prompt = (
             "You are the CFO of Unilever APAC. Provide concise, incisive financial insights.\n\n"
             "KPI Summary:\n"
-            "- Net Revenue: " + fmt_m(nr) + " | YoY: " + "{:+.1f}".format(yoy_growth) + "%\n"
+            "- Net Revenue: " + fmt_m(nr) + " | YoY: " + "{:.1f}".format(yoy_growth) + "%\n"
             "- Gross Profit: " + fmt_m(gp) + " | GP Margin: " + "{:.1f}".format(gp_margin) + "%\n"
             "- EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%\n"
             "- COGS % NR: " + "{:.1f}".format(cogs_pct) + "% | OPEX % NR: " + "{:.1f}".format(opex_pct) + "%\n"
@@ -482,8 +486,13 @@ def ai_cfo(question):
             "Give 2-3 specific CFO-level insights with root causes and recommended actions. Be direct and quantitative."
         )
 
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            generation_config={"temperature": 0.3}
+        )
+
         return response.text
+
     except Exception as e:
         return "Gemini error: " + str(e)
 
