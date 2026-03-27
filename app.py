@@ -501,21 +501,27 @@ Give 2-3 CFO-level insights with actions.
         return "Groq error: " + str(e)
 
 # ── AI CFO SECTION ────────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">AI CFO Insight</div>', unsafe_allow_html=True)
-
 if ask_btn and question:
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown("**📊 Rule-Based Answer**")
-        st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
-    with col_b:
-        st.markdown("**🤖 Gemini AI CFO**")
-        with st.spinner("Gemini is thinking..."):
-            ai_ans = ai_cfo(question)
-        if ai_ans:
-            st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div class="ai-answer">⚠️ Add GOOGLE_API_KEY in Streamlit Secrets to enable AI answers.</div>', unsafe_allow_html=True)
+    st.markdown("### 🤖 AI CFO Insight")
+
+    # Rule-Based Answer
+    st.markdown("📊 Rule-Based Answer")
+    st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
+
+    # AI CFO (Groq)
+    st.markdown("🧠 AI CFO")
+    with st.spinner("AI CFO is thinking..."):
+        ai_ans = ai_cfo(question)
+
+    st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
+
+else:
+    st.markdown("""
+    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
+    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
+    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
+    </div>
+    """, unsafe_allow_html=True) in Streamlit Secrets to enable AI answers.</div>', unsafe_allow_html=True)
 else:
     st.markdown("""
 <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
