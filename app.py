@@ -344,38 +344,32 @@ st.components.v1.html(f"""
 """, height=100)
 
 # --- KPI ROW 1 ---
-arrow = "▲" if yoy_growth > 0 else "▼"
-yoy_text = f"{abs(yoy_growth):.1f}% YoY"
-
-cogs_class = "neg" if cogs_pct > 55 else "pos"
-opex_class = "neg" if opex_pct > 20 else "pos"
-
 st.markdown(f"""
 <div class="kpi-grid">
 
-<div class="kpi-card" style="--accent:#38bdf8">
+  <div class="kpi-card" style="--accent:#38bdf8">
     <div class="kpi-label">Net Revenue</div>
     <div class="kpi-value">{fmt_m(nr)}</div>
     <div class="kpi-delta {dc(yoy_growth)}">
-        {arrow} {yoy_text}
+      {arrow} {yoy_text}
     </div>
-</div>
+  </div>
 
-<div class="kpi-card" style="--accent:#fb923c">
+  <div class="kpi-card" style="--accent:#fb923c">
     <div class="kpi-label">COGS</div>
     <div class="kpi-value">{fmt_m(cogs)}</div>
     <div class="kpi-delta {cogs_class}">
-        COGS % NR {cogs_pct:.1f}%
+      COGS % NR {cogs_pct:.1f}%
     </div>
-</div>
+  </div>
 
-<div class="kpi-card" style="--accent:#f472b6">
+  <div class="kpi-card" style="--accent:#f472b6">
     <div class="kpi-label">OPEX</div>
     <div class="kpi-value">{fmt_m(opex)}</div>
     <div class="kpi-delta {opex_class}">
-        OPEX % NR {opex_pct:.1f}%
+      OPEX % NR {opex_pct:.1f}%
     </div>
-</div>
+  </div>
 
 </div>
 """, unsafe_allow_html=True)
