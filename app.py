@@ -80,9 +80,10 @@ html, body, [class*="css"] {
     border-bottom: 1px solid #1e2a3a; padding-bottom: 1rem; margin-bottom: 1.5rem;
   }
   .dash-title {
-  font-family: 'Syne', sans-serif;
+  font-size: 2.8rem;   /* 🔥 BIG & PREMIUM */
   font-weight: 800;
-  font-size: 2.2rem;
+  letter-spacing: 0.5px;
+}
 
   background: linear-gradient(90deg, #00c6ff, #0072ff);
   -webkit-background-clip: text;
@@ -90,9 +91,9 @@ html, body, [class*="css"] {
 
   letter-spacing: -0.5px;
 }
-  .sub-highlight {
-  color: #38bdf8;
-  font-weight: 600;
+  .dash-sub {
+  font-size: 1rem;     /* 👈 increase from 0.75 */
+  margin-top: 8px;
 }
 
 .sub-muted {
@@ -100,9 +101,10 @@ html, body, [class*="css"] {
   margin-left: 8px;
 }
 .dash-sub {
-  font-size: 0.75rem;
-  margin-top: 4px;
+  font-size: 1rem;     /* 👈 increase from 0.75 */
+  margin-top: 8px;
 }
+
 .dash-author {
   font-size: 0.65rem;
   margin-top: 6px;
