@@ -242,7 +242,7 @@ with st.sidebar:
     <span class="sub-highlight">AI CFO</span> |
     <span class="sub-highlight">Data Intelligence</span> |
     <span class="sub-highlight">FP&A Engine</span> |
-    <span class="sub-muted">{len(df):,} Transactions</span>
+    <span class="sub-muted">{len(df_raw):,} Transactions</span>
   </div>
 
   <div class="dash-author">
@@ -333,35 +333,6 @@ def fmt_m(v): return f"AUD {v/1000:,.1f}M" if abs(v) >= 1000 else f"AUD {v:,.0f}
 top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
-
-# --- HEADER ---
-st.components.v1.html(f"""
-<div style="font-family:DM Mono; padding-bottom:15px; border-bottom:1px solid #1e2a3a; display:flex; justify-content:space-between; align-items:center;">
-
-  <div>
-    <div style="font-size:2.2rem; font-weight:800; background: linear-gradient(90deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-      Fincy Intelligence
-    </div>
-
-    <div style="font-size:0.75rem; margin-top:4px;">
-      <span style="color:#38bdf8;">AI CFO</span> |
-      <span style="color:#38bdf8;">Data Intelligence</span> |
-      <span style="color:#38bdf8;">FP&amp;A Engine</span>
-      <span style="color:#64748b;"> | {len(df):,} Transactions</span>
-    </div>
-
-  <div class="dash-author">
-      By Jitendra Parida • Founder, Fincy AI & Data Intelligence
-    </div>
-
-  <div>
-    <span style="font-size:0.6rem; border:1px solid #1e2a3a; padding:3px 8px; border-radius:4px;">
-      Live Dashboard
-    </span>
-  </div>
-
-</div>
-""", height=100)
 
 # --- KPI ROW 1 ---
 
