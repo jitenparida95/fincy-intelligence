@@ -304,15 +304,8 @@ with c3:
     values = list(wfall.values())
     colors_w = ["#38bdf8" if v > 0 else "#f87171" for v in values]
     fig3 = go.Figure(go.Bar(x=labels, y=values, marker_color=colors_w))
-    fig3.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="DM Mono, monospace", color="#94a3b8", size=11),
-        margin=dict(l=10, r=10, t=30, b=10),
-        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10)),
-        yaxis=dict(gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
-        xaxis=dict(tickangle=-30, gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
-        title="P&L Bridge", height=280
-    )
+    fig3.update_layout(**PLOTLY_LAYOUT, title="P&L Bridge", height=280,
+                       xaxis=dict(tickangle=-30, gridcolor="#1e2a3a"))
     st.plotly_chart(fig3, use_container_width=True)
 
 # ── CHARTS ROW 2 ──────────────────────────────────────────────────────────────
@@ -331,15 +324,8 @@ with c4:
     ):
         fig4.add_scatter(x=trend["Period"], y=trend[col], mode="lines", name=name,
                          line=dict(color=color, width=2))
-    fig4.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="DM Mono, monospace", color="#94a3b8", size=11),
-        margin=dict(l=10, r=10, t=30, b=10),
-        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10)),
-        yaxis=dict(gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
-        xaxis=dict(tickangle=-45, nticks=12, gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
-        title="Monthly Trend: Revenue → EBITDA", height=280
-    )
+    fig4.update_layout(**PLOTLY_LAYOUT, title="Monthly Trend: Revenue → EBITDA", height=280,
+                       xaxis=dict(tickangle=-45, nticks=12, gridcolor="#1e2a3a"))
     st.plotly_chart(fig4, use_container_width=True)
 
 with c5:
@@ -464,45 +450,34 @@ def ai_cfo(question):
         import google.generativeai as genai
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-1.5-flash")
-        prompt = f"""You are the CFO of Unilever APAC.
-KPI Summary:
-- Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:+.1f}%
-- Gross Profit: {fmt_m(gp)} | GP Margin: {gp_margin:.1f}%
-- EBITDA: {fmt_m(ebitda)} | EBITDA Margin: {ebitda_margin:.1f}%
-- COGS % NR: {cogs_pct:.1f}% | OPEX % NR: {opex_pct:.1f}%
-- Budget Achievement: {budget_ach:.1f}% | Variance: {fmt_m(var_nr)}
-- Top Market: {top_market} | At-Risk Market: {risk_mkt}
-- Top Brand: {top_brand}
 
-Question: {question}
-Give 2-3 CFO-level insights with root causes and actions. Be direct and quantitative."""
+        yoy_str    = "{:+.1f}".format(yoy_growth)
+        gp_str     = "{:.1f}".format(gp_margin)
+        ebitda_str = "{:.1f}".format(ebitda_margin)
+        cogs_str   = "{:.1f}".format(cogs_pct)
+        opex_str   = "{:.1f}".format(opex_pct)
+        bdgt_str   = "{:.1f}".format(budget_ach)
+        trade_str  = "{:.1f}".format(trade_pct)
+
+        prompt = (
+            "You are the CFO of Unilever APAC. Provide concise, incisive financial insights.\n\n"
+            "KPI Summary:\n"
+            "- Net Revenue: " + fmt_m(nr) + " | YoY: " + yoy_str + "%\n"
+            "- Gross Profit: " + fmt_m(gp) + " | GP Margin: " + gp_str + "%\n"
+            "- EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + ebitda_str + "%\n"
+            "- COGS % NR: " + cogs_str + "% | OPEX % NR: " + opex_str + "%\n"
+            "- Budget Achievement: " + bdgt_str + "% | Variance: " + fmt_m(var_nr) + "\n"
+            "- Trade Promo Intensity: " + trade_str + "%\n"
+            "- Top Market: " + str(top_market) + " | At-Risk Market: " + str(risk_mkt) + "\n"
+            "- Top Brand: " + str(top_brand) + "\n\n"
+            "Question: " + question + "\n\n"
+            "Give 2-3 specific CFO-level insights with root causes and recommended actions. Be direct and quantitative."
+        )
+
         response = model.generate_content(prompt)
         return response.text
-    except:
-        return None
-```
-
-KPI Summary:
-- Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:+.1f}%
-- Gross Profit: {fmt_m(gp)} | GP Margin: {gp_margin:.1f}%
-- EBITDA: {fmt_m(ebitda)} | EBITDA Margin: {ebitda_margin:.1f}%
-- COGS % NR: {cogs_pct:.1f}% | OPEX % NR: {opex_pct:.1f}%
-- Budget Achievement: {budget_ach:.1f}% | Variance: {fmt_m(var_nr)}
-- Trade Promo Intensity: {trade_pct:.1f}%
-- Top Market: {top_market} | At-Risk Market: {risk_mkt}
-- Top Brand: {top_brand}
-
-Question: {question}
-
-Give 2-3 specific CFO-level insights with root causes and recommended actions. Be direct and quantitative."""
-        res = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role":"user","content":prompt}],
-            temperature=0.3, max_tokens=400
-        )
-        return res.choices[0].message.content
-    except:
-        return None
+    except Exception as e:
+        return "AI unavailable: " + str(e)
 
 if ask_btn and question:
     col_a, col_b = st.columns(2)
