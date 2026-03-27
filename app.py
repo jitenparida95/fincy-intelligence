@@ -458,43 +458,47 @@ def rule_cfo(q):
     return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
 
 # ——— GEMINI AI CFO ——————————————————————————————
+from groq import Groq
+
 def ai_cfo(question):
-    api_key = os.getenv("GOOGLE_API_KEY")
+    api_key = st.secrets.get("GROQ_API_KEY")
 
     if not api_key:
-        return "API key missing"
+        return "Groq API key missing"
 
     try:
-        import google.generativeai as genai
+        client = Groq(api_key=api_key)
 
-        genai.configure(api_key=api_key)
+        prompt = f"""
+You are a CFO of a global FMCG company.
 
-        model = genai.GenerativeModel("gemini-1.5-flash-latest")
+KPI Summary:
+- Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:.1f}%
+- Gross Profit: {fmt_m(gp)} | GP Margin: {gp_margin:.1f}%
+- EBITDA: {fmt_m(ebitda)} | EBITDA Margin: {ebitda_margin:.1f}%
+- COGS % NR: {cogs_pct:.1f}% | OPEX % NR: {opex_pct:.1f}%
+- Budget Achievement: {budget_ach:.1f}% | Variance: {fmt_m(var_nr)}
+- Trade Promo Intensity: {trade_pct:.1f}%
+- Top Market: {top_market} | At-Risk Market: {risk_mkt}
+- Top Brand: {top_brand}
 
-        prompt = (
-            "You are the CFO of Unilever APAC. Provide concise, incisive financial insights.\n\n"
-            "KPI Summary:\n"
-            "- Net Revenue: " + fmt_m(nr) + " | YoY: " + "{:.1f}".format(yoy_growth) + "%\n"
-            "- Gross Profit: " + fmt_m(gp) + " | GP Margin: " + "{:.1f}".format(gp_margin) + "%\n"
-            "- EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%\n"
-            "- COGS % NR: " + "{:.1f}".format(cogs_pct) + "% | OPEX % NR: " + "{:.1f}".format(opex_pct) + "%\n"
-            "- Budget Achievement: " + "{:.1f}".format(budget_ach) + "% | Variance: " + fmt_m(var_nr) + "\n"
-            "- Trade Promo Intensity: " + "{:.1f}".format(trade_pct) + "%\n"
-            "- Top Market: " + str(top_market) + " | At-Risk Market: " + str(risk_mkt) + "\n"
-            "- Top Brand: " + str(top_brand) + "\n\n"
-            "Question: " + question + "\n\n"
-            "Give 2-3 specific CFO-level insights with root causes and recommended actions. Be direct and quantitative."
+Question: {question}
+
+Give 2-3 CFO-level insights with actions.
+"""
+
+        chat = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3
         )
 
-        response = model.generate_content(
-            prompt,
-            generation_config={"temperature": 0.3}
-        )
-
-        return response.text
+        return chat.choices[0].message.content
 
     except Exception as e:
-        return "Gemini error: " + str(e)
+        return "Groq error: " + str(e)
 
 # ── AI CFO SECTION ────────────────────────────────────────────────────────────
 st.markdown('<div class="section-label">AI CFO Insight</div>', unsafe_allow_html=True)
