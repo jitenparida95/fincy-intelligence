@@ -304,17 +304,14 @@ st.markdown(
     <div class="dash-header">
         <div>
             <div class="dash-title">Fincy Intelligence</div>
-            <div class="dash-sub">
-                Unilever APAC | FP&amp;A Intelligence | {len(df):,} Transactions
-            </div>
-        </div>
-        <div style="margin-left:auto">
-            <span class="badge">Live Dashboard</span>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+            st.markdown(f"""
+<div class="dash-sub">
+  <span class="sub-highlight">AI CFO</span> • 
+  <span class="sub-highlight">Data Intelligence</span> • 
+  <span class="sub-highlight">FP&amp;A Decision Engine</span> 
+  <span class="sub-muted">| {len(df):,} Transactions</span>
+</div>
+""", unsafe_allow_html=True)
 
 # ── KPI ROW 1 ─────────────────────────────────────────────────────────────────
 st.markdown('<div class="section-label">P&L Headline</div>', unsafe_allow_html=True)
