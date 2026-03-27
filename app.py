@@ -299,13 +299,36 @@ with c2:
     st.plotly_chart(fig2, use_container_width=True)
 
 with c3:
-    wfall = {"Base NR": base_nr, "Trade Promo": -trade_pr, "Net Revenue": nr, "COGS": -cogs, "Gross Profit": gp, "OPEX": -opex, "EBITDA": ebitda}
+    wfall = {
+        "Base NR": base_nr,
+        "Trade Promo": -trade_pr,
+        "Net Revenue": nr,
+        "COGS": -cogs,
+        "Gross Profit": gp,
+        "OPEX": -opex,
+        "EBITDA": ebitda
+    }
+
     labels = list(wfall.keys())
     values = list(wfall.values())
     colors_w = ["#38bdf8" if v > 0 else "#f87171" for v in values]
-    fig3 = go.Figure(go.Bar(x=labels, y=values, marker_color=colors_w))
-    fig3.update_layout(**PLOTLY_LAYOUT, title="P&L Bridge", height=280,
-                       xaxis=dict(tickangle=-30, gridcolor="#1e2a3a"))
+
+    fig3 = go.Figure(go.Bar(
+        x=labels,
+        y=values,
+        marker_color=colors_w
+    ))
+
+    # ✅ FIXED (removed xaxis conflict)
+    fig3.update_layout(
+        **PLOTLY_LAYOUT,
+        title="P&L Bridge",
+        height=280
+    )
+
+    # ✅ Safe axis modification
+    fig3.update_xaxes(tickangle=-30)
+
     st.plotly_chart(fig3, use_container_width=True)
 
 # ── CHARTS ROW 2 ──────────────────────────────────────────────────────────────
