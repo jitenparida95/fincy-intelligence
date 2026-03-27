@@ -152,8 +152,6 @@ html, body, [class*="css"] {
 st.markdown("""
 <style>
 
-/* ALL your existing CSS ABOVE */
-
 /* Ask CFO Button */
 div[data-testid="stSidebar"] button:first-child {
     background: linear-gradient(135deg, #00c6ff, #0072ff) !important;
