@@ -304,29 +304,30 @@ top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 
 # --- HEADER ---
-st.markdown(
-    f"""
-<div class="dash-header" style="display:flex; align-items:center;">
+st.components.v1.html(f"""
+<div style="font-family:DM Mono; padding-bottom:15px; border-bottom:1px solid #1e2a3a; display:flex; justify-content:space-between; align-items:center;">
 
   <div>
-    <div class="dash-title">Fincy Intelligence</div>
+    <div style="font-size:2.2rem; font-weight:800; background: linear-gradient(90deg, #00c6ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+      Fincy Intelligence
+    </div>
 
-    <div class="dash-sub">
-      <span class="sub-highlight">AI CFO</span> |
-      <span class="sub-highlight">Data Intelligence</span> |
-      <span class="sub-highlight">FP&amp;A Decision Engine</span>
-      <span class="sub-muted"> | {len(df):,} Transactions</span>
+    <div style="font-size:0.75rem; margin-top:4px;">
+      <span style="color:#38bdf8;">AI CFO</span> |
+      <span style="color:#38bdf8;">Data Intelligence</span> |
+      <span style="color:#38bdf8;">FP&amp;A Engine</span>
+      <span style="color:#64748b;"> | {len(df):,} Transactions</span>
     </div>
   </div>
 
-  <div style="margin-left:auto">
-    <span class="badge">Live Dashboard</span>
+  <div>
+    <span style="font-size:0.6rem; border:1px solid #1e2a3a; padding:3px 8px; border-radius:4px;">
+      Live Dashboard
+    </span>
   </div>
 
 </div>
-""",
-    unsafe_allow_html=True
-)
+""", height=100)
 
 # --- KPI ROW 1 ---
 arrow = "▲" if yoy_growth > 0 else "▼"
