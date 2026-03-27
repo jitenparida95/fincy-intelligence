@@ -304,8 +304,15 @@ with c3:
     values = list(wfall.values())
     colors_w = ["#38bdf8" if v > 0 else "#f87171" for v in values]
     fig3 = go.Figure(go.Bar(x=labels, y=values, marker_color=colors_w))
-    fig3.update_layout(**PLOTLY_LAYOUT, title="P&L Bridge", height=280,
-                       xaxis=dict(tickangle=-30, gridcolor="#1e2a3a"))
+    fig3.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="DM Mono, monospace", color="#94a3b8", size=11),
+        margin=dict(l=10, r=10, t=30, b=10),
+        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10)),
+        yaxis=dict(gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
+        xaxis=dict(tickangle=-30, gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
+        title="P&L Bridge", height=280
+    )
     st.plotly_chart(fig3, use_container_width=True)
 
 # ── CHARTS ROW 2 ──────────────────────────────────────────────────────────────
@@ -324,8 +331,15 @@ with c4:
     ):
         fig4.add_scatter(x=trend["Period"], y=trend[col], mode="lines", name=name,
                          line=dict(color=color, width=2))
-    fig4.update_layout(**PLOTLY_LAYOUT, title="Monthly Trend: Revenue → EBITDA", height=280,
-                       xaxis=dict(tickangle=-45, nticks=12, gridcolor="#1e2a3a"))
+    fig4.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="DM Mono, monospace", color="#94a3b8", size=11),
+        margin=dict(l=10, r=10, t=30, b=10),
+        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10)),
+        yaxis=dict(gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
+        xaxis=dict(tickangle=-45, nticks=12, gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
+        title="Monthly Trend: Revenue → EBITDA", height=280
+    )
     st.plotly_chart(fig4, use_container_width=True)
 
 with c5:
