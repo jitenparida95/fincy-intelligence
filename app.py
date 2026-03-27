@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import os
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
+
 
 def generate_pdf(text):
     buffer = BytesIO()
@@ -13,9 +12,16 @@ def generate_pdf(text):
     styles = getSampleStyleSheet()
 
     content = []
+
+    # 🔥 TITLE
+    content.append(Paragraph("<b>Unilever APAC - CFO Report</b>", styles["Title"]))
+    content.append(Spacer(1, 12))
+
+    # 🔥 BODY
     for line in text.split("\n"):
-        content.append(Paragraph(line, styles["Normal"]))
-        content.append(Spacer(1, 8))
+        if line.strip():
+            content.append(Paragraph(line, styles["Normal"]))
+            content.append(Spacer(1, 8))
 
     doc.build(content)
     buffer.seek(0)
@@ -533,17 +539,16 @@ if ask_btn and question:
         ai_ans = ai_cfo(question)
 
     st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
+if ai_ans:
+    pdf = generate_pdf(ai_ans)
 
-    # ✅ MOVE THIS INSIDE
-    if ai_ans:
-        pdf = generate_pdf(ai_ans)
+    st.download_button(
+        label="📄 Download CFO Report",
+        data=pdf,
+        file_name="CFO_Report.pdf",
+        mime="application/pdf"
+    )
 
-        st.download_button(
-            label="📄 Download CFO Report",
-            data=pdf,
-            file_name="CFO_Report.pdf",
-            mime="application/pdf"
-        )
 
 else:
     st.markdown("""
