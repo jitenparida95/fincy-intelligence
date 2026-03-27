@@ -74,48 +74,50 @@ html, body, [class*="css"] {
 
   .main .block-container { padding: 1.5rem 2rem; max-width: 100%; }
 
-  /* ── Header ── */
-  .dash-header {
-    display: flex; align-items: baseline; gap: 16px;
-    border-bottom: 1px solid #1e2a3a; padding-bottom: 1rem; margin-bottom: 1.5rem;
-  }
-  .dash-title {
-  font-size: 2.8rem;   /* 🔥 BIG & PREMIUM */
-  font-weight: 800;
-  letter-spacing: 0.5px;
+  /* 🔥 HEADER CONTAINER */
+.dash-header {
+  text-align: center;   /* ✅ CENTER EVERYTHING */
+  margin-bottom: 25px;
 }
+  /* 🔥 TITLE */
+.dash-title {
+  font-size: 3.2rem;    /* 👈 BIG */
+  font-weight: 800;     /* 👈 BOLD */
+  margin-bottom: 8px;
 
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  letter-spacing: -0.5px;
 }
-  .dash-sub {
-  font-size: 1rem;     /* 👈 increase from 0.75 */
-  margin-top: 8px;
+  /* 🔥 SUB TEXT */
+.dash-sub {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
 }
 
+/* 🔥 MUTED TEXT */
 .sub-muted {
-  color: #64748b;
-  margin-left: 8px;
+  color: #94a3b8;
 }
+
 .dash-sub {
   font-size: 1rem;     /* 👈 increase from 0.75 */
   margin-top: 8px;
 }
 
+/* 🔥 AUTHOR LINE */
 .dash-author {
-  font-size: 0.65rem;
-  margin-top: 6px;
-  letter-spacing: 1px;
-
-  background: linear-gradient(90deg, #38bdf8, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-
-  opacity: 0.9;
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-top: 4px;
 }
+
+/* 🔥 HIGHLIGHT TEXT */
+.sub-highlight {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
   /* ── KPI Cards ── */
   .kpi-grid  { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.5rem; }
   .kpi-grid-2{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.8rem; }
@@ -231,8 +233,24 @@ if df_raw.empty:
 with st.sidebar:
 
     # --- HEADER ---
-    st.markdown("## ⚙️ Filters")
-    st.caption("Use the ◀ arrow on the left edge to reopen if closed.")
+    st.markdown(f"""
+<div class="dash-header">
+
+  <div class="dash-title">Fincy Intelligence</div>
+
+  <div class="dash-sub">
+    <span class="sub-highlight">AI CFO</span> |
+    <span class="sub-highlight">Data Intelligence</span> |
+    <span class="sub-highlight">FP&A Engine</span> |
+    <span class="sub-muted">{len(df):,} Transactions</span>
+  </div>
+
+  <div class="dash-author">
+    By Jitendra Parida • Founder, Fincy AI & Data Intelligence
+  </div>
+
+</div>
+""", unsafe_allow_html=True)
 
     # --- FILTER FUNCTION ---
     def filt(label, col):
