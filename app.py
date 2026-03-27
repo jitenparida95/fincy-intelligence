@@ -23,6 +23,7 @@ html, body, [class*="css"] {
   background-color: #080c14;
   color: #e2e8f0;
 }
+}
   }
 
   /* ── Sidebar ── */
@@ -48,6 +49,7 @@ html, body, [class*="css"] {
 header { visibility: visible !important; }
 
 </style>
+""", unsafe_allow_html=True)
 
   /* ── Header ── */
   .dash-header {
