@@ -315,7 +315,6 @@ st.markdown(f"""
             <span class="sub-highlight">FP&amp;A Decision Engine</span>
             <span class="sub-muted"> | {len(df):,} Transactions</span>
         </div>
-
     </div>
 
     <div style="margin-left:auto">
