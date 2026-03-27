@@ -182,20 +182,21 @@ if df_raw.empty:
 # --- SIDEBAR ---------------------------------------------------------------
 with st.sidebar:
 
+    # --- HEADER ---
     st.markdown("## ⚙️ Filters")
-    st.caption("Use the **>** arrow on the left edge to reopen if closed.")
+    st.caption("Use the ◀ arrow on the left edge to reopen if closed.")
 
-    # --- Filter function ---
+    # --- FILTER FUNCTION ---
     def filt(label, col):
         opts = ["All"] + sorted(df_raw[col].dropna().unique().tolist())
         return st.selectbox(label, opts)
 
-    # --- Filters ---
+    # --- FILTERS ---
     f_year     = filt("🗓️ Year", "Year")
     f_quarter  = filt("📊 Quarter", "Quarter")
     f_market   = filt("🌍 Market", "Market")
     f_category = filt("🏷️ Category", "Category")
-    f_brand    = filt("🔷 Brand", "Brand")
+    f_brand    = filt("💎 Brand", "Brand")
     f_channel  = filt("🛒 Channel", "Channel")
     f_type     = filt("📄 Type", "Type")
 
@@ -204,21 +205,26 @@ with st.sidebar:
     # --- AI CFO INPUT ---
     st.markdown("### 💬 Ask the AI CFO")
     st.caption("Powered by Google Gemini (free)")
+    st.caption("💡 Try: revenue, margin, growth, risk, variance...")
 
-    question = st.text_input("", placeholder="e.g. Why is margin declining?")
+    question = st.text_input(
+        "",
+        placeholder="e.g. Why is margin declining?"
+    )
 
-    # --- BUTTONS ---
-    col1, col2 = st.columns(2)
+    # --- BUTTONS (UX OPTIMIZED) ---
+    col1, col2 = st.columns([2, 1])  # 🔥 Bigger Ask button
 
     with col1:
-        ask_btn = st.button("🤖 Ask CFO")
+        ask_btn = st.button("🚀 Ask CFO", use_container_width=True)
 
     with col2:
-        clear_btn = st.button("🗑️ Clear")
+        clear_btn = st.button("🧹 Clear", use_container_width=True)
 
-    # --- CLEAR CHAT ---
+    # --- CLEAR CHAT SAFELY ---
     if clear_btn:
-        st.session_state.chat_history = []
+        if "chat_history" in st.session_state:
+            st.session_state.chat_history = []
 
 # ── FILTER ────────────────────────────────────────────────────────────────────
 df = df_raw.copy()
