@@ -500,8 +500,10 @@ Give 2-3 CFO-level insights with actions.
     except Exception as e:
         return "Groq error: " + str(e)
 
-# ── AI CFO SECTION ────────────────────────────────────────────────────────────
+# --- AI CFO SECTION ------------------------------------------------------
+
 if ask_btn and question:
+
     st.markdown("### 🤖 AI CFO Insight")
 
     # Rule-Based Answer
@@ -515,13 +517,6 @@ if ask_btn and question:
 
     st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
 
-else:
-    st.markdown("""
-    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
-    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
-    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
-    </div>
-    """, unsafe_allow_html=True) in Streamlit Secrets to enable AI answers.</div>', unsafe_allow_html=True)
 else:
     st.markdown("""
     <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
