@@ -99,7 +99,10 @@ html, body, [class*="css"] {
   color: #64748b;
   margin-left: 8px;
 }
-
+.dash-sub {
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
   /* ── KPI Cards ── */
   .kpi-grid  { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.5rem; }
   .kpi-grid-2{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.8rem; }
@@ -301,17 +304,23 @@ top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 
 # --- HEADER ---
-st.markdown(
-    f"""
-    <div class="dash-header">
-        <div>
-            <div class="dash-title">Fincy Intelligence</div>
-            st.markdown(f"""
-<div class="dash-sub">
-  <span class="sub-highlight">AI CFO</span> &bull;
-  <span class="sub-highlight">Data Intelligence</span> &bull;
-  <span class="sub-highlight">FP&amp;A Decision Engine</span>
-  <span class="sub-muted">| {len(df):,} Transactions</span>
+st.markdown(f"""
+<div class="dash-header">
+    <div>
+        <div class="dash-title">Fincy Intelligence</div>
+
+        <div class="dash-sub">
+            <span class="sub-highlight">AI CFO</span> |
+            <span class="sub-highlight">Data Intelligence</span> |
+            <span class="sub-highlight">FP&amp;A Decision Engine</span>
+            <span class="sub-muted"> | {len(df):,} Transactions</span>
+        </div>
+
+    </div>
+
+    <div style="margin-left:auto">
+        <span class="badge">Live Dashboard</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
