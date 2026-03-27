@@ -179,16 +179,18 @@ if df_raw.empty:
     st.error("⚠️ Please upload unilever_fpna.csv to continue.")
     st.stop()
 
-# ── SIDEBAR ───────────────────────────────────────────────────────────────────
+# --- SIDEBAR ---------------------------------------------------------------
 with st.sidebar:
 
     st.markdown("## ⚙️ Filters")
     st.caption("Use the **>** arrow on the left edge to reopen if closed.")
 
+    # --- Filter function ---
     def filt(label, col):
         opts = ["All"] + sorted(df_raw[col].dropna().unique().tolist())
         return st.selectbox(label, opts)
 
+    # --- Filters ---
     f_year     = filt("🗓️ Year", "Year")
     f_quarter  = filt("📊 Quarter", "Quarter")
     f_market   = filt("🌍 Market", "Market")
@@ -198,12 +200,14 @@ with st.sidebar:
     f_type     = filt("📄 Type", "Type")
 
     st.markdown("---")
+
+    # --- AI CFO INPUT ---
     st.markdown("### 💬 Ask the AI CFO")
     st.caption("Powered by Google Gemini (free)")
 
     question = st.text_input("", placeholder="e.g. Why is margin declining?")
 
-    # ✅ BUTTONS MUST BE INSIDE SIDEBAR
+    # --- BUTTONS ---
     col1, col2 = st.columns(2)
 
     with col1:
@@ -212,8 +216,8 @@ with st.sidebar:
     with col2:
         clear_btn = st.button("🗑️ Clear")
 
+    # --- CLEAR CHAT ---
     if clear_btn:
-        if "chat_history" in st.session_state:
         st.session_state.chat_history = []
 
 # ── FILTER ────────────────────────────────────────────────────────────────────
