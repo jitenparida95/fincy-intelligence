@@ -536,20 +536,22 @@ if ask_btn and question:
 
     # AI CFO
     st.markdown("🧠 AI CFO")
+
     with st.spinner("AI CFO is thinking..."):
         ai_ans = ai_cfo(question)
 
+    # ✅ KEEP EVERYTHING HERE INSIDE
     st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
-if ai_ans:
-    pdf = generate_pdf(ai_ans)
 
-    st.download_button(
-        label="📄 Download CFO Report",
-        data=pdf,
-        file_name="CFO_Report.pdf",
-        mime="application/pdf"
-    )
+    if ai_ans:
+        pdf = generate_pdf(ai_ans)
 
+        st.download_button(
+            label="📄 Download CFO Report",
+            data=pdf,
+            file_name="CFO_Report.pdf",
+            mime="application/pdf"
+        )
 
 else:
     st.markdown("""
