@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -51,8 +52,6 @@ html, body, [class*="css"] {
   background-color: #080c14;
   color: #e2e8f0;
 }
-}
-  }
 
   /* ── Sidebar ── */
   section[data-testid="stSidebar"] {
@@ -167,6 +166,8 @@ div[data-testid="stSidebar"] button:last-child {
     font-weight: 700 !important;
     border-radius: 10px !important;
 }
+</style>
+""", unsafe_allow_html=True)
 
 # ── PLOTLY BASE THEME (no xaxis/yaxis — set per chart) ───────────────────────
 PLOTLY_BASE = dict(
@@ -309,7 +310,9 @@ st.markdown(f"""
   <div class="kpi-card" style="--accent:#38bdf8">
     <div class="kpi-label">Net Revenue</div>
     <div class="kpi-value">{fmt_m(nr)}</div>
-    <div class="kpi-delta {dc(yoy_growth)}">{('▲' if yoy_growth>0 else '▼')} {abs(yoy_growth):.1f}% YoY</div>
+    <div class="kpi-delta {dc(yoy_growth)}">
+    {"▲" if yoy_growth > 0 else "▼"} {abs(yoy_growth):.1f}% YoY
+</div>
   </div>
   <div class="kpi-card" style="--accent:#34d399">
     <div class="kpi-label">Gross Profit</div>
