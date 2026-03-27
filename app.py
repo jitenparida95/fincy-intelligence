@@ -306,20 +306,21 @@ risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 # --- HEADER ---
 st.markdown(f"""
 <div class="dash-header">
-    <div>
-        <div class="dash-title">Fincy Intelligence</div>
+  <div>
+    <div class="dash-title">Fincy Intelligence</div>
 
-        <div class="dash-sub">
-            <span class="sub-highlight">AI CFO</span> |
-            <span class="sub-highlight">Data Intelligence</span> |
-            <span class="sub-highlight">FP&amp;A Decision Engine</span>
-            <span class="sub-muted"> | {len(df):,} Transactions</span>
-        </div>
+    <div class="dash-sub">
+      <span class="sub-highlight">AI CFO</span> |
+      <span class="sub-highlight">Data Intelligence</span> |
+      <span class="sub-highlight">FP&amp;A Decision Engine</span>
+      <span class="sub-muted"> | {len(df):,} Transactions</span>
     </div>
 
-    <div style="margin-left:auto">
-        <span class="badge">Live Dashboard</span>
-    </div>
+  </div>
+
+  <div style="margin-left:auto">
+    <span class="badge">Live Dashboard</span>
+  </div>
 </div>
 """, unsafe_allow_html=True)
 
