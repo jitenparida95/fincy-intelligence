@@ -347,8 +347,17 @@ with c4:
     ):
         fig4.add_scatter(x=trend["Period"], y=trend[col], mode="lines", name=name,
                          line=dict(color=color, width=2))
-    fig4.update_layout(**PLOTLY_LAYOUT, title="Monthly Trend: Revenue → EBITDA", height=280,
-                       xaxis=dict(tickangle=-45, nticks=12, gridcolor="#1e2a3a"))
+    fig4.update_layout(
+    **PLOTLY_LAYOUT,
+    title="Monthly Trend: Revenue → EBITDA",
+    height=280
+)
+
+# ✅ Safe axis updates
+fig4.update_xaxes(
+    tickangle=-45,
+    nticks=12
+)
     st.plotly_chart(fig4, use_container_width=True)
 
 with c5:
