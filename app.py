@@ -149,8 +149,8 @@ html, body, [class*="css"] {
   #MainMenu { visibility: hidden; }
   footer { visibility: hidden; }
   header { visibility: visible !important; }
-st.markdown("""
-<style>
+
+/* ===== BUTTON HIGHLIGHT ===== */
 
 /* Ask CFO Button */
 div[data-testid="stSidebar"] button:first-child {
@@ -167,9 +167,6 @@ div[data-testid="stSidebar"] button:last-child {
     font-weight: 700 !important;
     border-radius: 10px !important;
 }
-
-</style>
-""", unsafe_allow_html=True)
 
 # ── PLOTLY BASE THEME (no xaxis/yaxis — set per chart) ───────────────────────
 PLOTLY_BASE = dict(
