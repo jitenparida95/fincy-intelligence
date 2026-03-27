@@ -80,10 +80,23 @@ html, body, [class*="css"] {
     border-bottom: 1px solid #1e2a3a; padding-bottom: 1rem; margin-bottom: 1.5rem;
   }
   .dash-title {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: 2rem; color: #f0f6ff; letter-spacing: -0.5px;
-  }
-  .dash-sub { font-size: 0.75rem; color: #38bdf8; letter-spacing: 2px; text-transform: uppercase; }
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 2.2rem;
+
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  letter-spacing: -0.5px;
+}
+  .dash-sub {
+  font-size: 0.8rem;
+  color: #38bdf8;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
 
   /* ── KPI Cards ── */
   .kpi-grid  { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.5rem; }
@@ -290,7 +303,7 @@ st.markdown(
     f"""
     <div class="dash-header">
         <div>
-            <div class="dash-title">CFO Command Centre</div>
+            <div class="dash-title">Fincy Intelligence</div>
             <div class="dash-sub">
                 Unilever APAC | FP&amp;A Intelligence | {len(df):,} Transactions
             </div>
