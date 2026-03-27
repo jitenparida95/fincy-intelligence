@@ -46,10 +46,6 @@ html, body, [class*="css"] {
   button[data-testid="collapsedControl"] svg { fill: #fff !important; }
 
   .main .block-container { padding: 1.5rem 2rem; max-width: 100%; }
-header { visibility: visible !important; }
-
-</style>
-""", unsafe_allow_html=True)
 
   /* ── Header ── */
   .dash-header {
@@ -124,7 +120,7 @@ header { visibility: visible !important; }
   div[data-testid="metric-container"] { display: none; }
   #MainMenu { visibility: hidden; }
   footer { visibility: hidden; }
-  header { visibility: hidden; }
+  header { visibility: visible !important; }
 </style>
 """, unsafe_allow_html=True)
 
