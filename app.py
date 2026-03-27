@@ -308,9 +308,9 @@ st.markdown(
             <div class="dash-title">Fincy Intelligence</div>
             st.markdown(f"""
 <div class="dash-sub">
-  <span class="sub-highlight">AI CFO</span> • 
-  <span class="sub-highlight">Data Intelligence</span> • 
-  <span class="sub-highlight">FP&amp;A Decision Engine</span> 
+  <span class="sub-highlight">AI CFO</span> &bull;
+  <span class="sub-highlight">Data Intelligence</span> &bull;
+  <span class="sub-highlight">FP&amp;A Decision Engine</span>
   <span class="sub-muted">| {len(df):,} Transactions</span>
 </div>
 """, unsafe_allow_html=True)
