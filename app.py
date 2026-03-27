@@ -344,13 +344,22 @@ st.components.v1.html(f"""
 """, height=100)
 
 # --- KPI ROW 1 ---
+
+# 👉 Pre-calc (VERY IMPORTANT)
 arrow = "▲" if yoy_growth > 0 else "▼"
 yoy_text = f"{abs(yoy_growth):.1f}% YoY"
 
+cogs_class = "neg" if cogs_pct > 55 else "pos"
+opex_class = "neg" if opex_pct > 20 else "pos"
+
+st.markdown("""
+<div class="section-label">P&L Headline</div>
+""", unsafe_allow_html=True)
+
 st.markdown(f"""
-<div class="kpi-delta {dc(yoy_growth)}">
-  {arrow} {yoy_text}
-</div>
+<div class="kpi-grid">
+
+  <!-- Net Revenue -->
   <div class="kpi-card" style="--accent:#38bdf8">
     <div class="kpi-label">Net Revenue</div>
     <div class="kpi-value">{fmt_m(nr)}</div>
@@ -359,6 +368,25 @@ st.markdown(f"""
     </div>
   </div>
 
+  <!-- Gross Profit -->
+  <div class="kpi-card" style="--accent:#34d399">
+    <div class="kpi-label">Gross Profit</div>
+    <div class="kpi-value">{fmt_m(gp)}</div>
+    <div class="kpi-delta {dc(gp_margin-50)}">
+      GP Margin {gp_margin:.1f}%
+    </div>
+  </div>
+
+  <!-- EBITDA -->
+  <div class="kpi-card" style="--accent:#818cf8">
+    <div class="kpi-label">EBITDA</div>
+    <div class="kpi-value">{fmt_m(ebitda)}</div>
+    <div class="kpi-delta {dc(ebitda_margin-30)}">
+      EBITDA Margin {ebitda_margin:.1f}%
+    </div>
+  </div>
+
+  <!-- COGS -->
   <div class="kpi-card" style="--accent:#fb923c">
     <div class="kpi-label">COGS</div>
     <div class="kpi-value">{fmt_m(cogs)}</div>
@@ -367,6 +395,7 @@ st.markdown(f"""
     </div>
   </div>
 
+  <!-- OPEX -->
   <div class="kpi-card" style="--accent:#f472b6">
     <div class="kpi-label">OPEX</div>
     <div class="kpi-value">{fmt_m(opex)}</div>
