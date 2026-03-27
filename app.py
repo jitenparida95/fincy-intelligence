@@ -1,504 +1,140 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
 
-# ── PAGE CONFIG ──────────────────────────────────────────────────────────────
+# ── PAGE CONFIG ─────────────────────────────
 st.set_page_config(
-    page_title="Unilever APAC | CFO Command Centre",
+    page_title="CFO Command Centre",
     page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="expanded",
+    layout="wide"
 )
 
-# ── CUSTOM CSS ────────────────────────────────────────────────────────────────
+# ── STYLE ─────────────────────────────
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap');
-
-  html, body, [class*="css"] {
-    font-family: 'DM Mono', monospace;
-    background-color: #080c14;
-    color: #e2e8f0;
-  }
-
-  section[data-testid="stSidebar"] {
-    background: #0d1117;
-    border-right: 1px solid #1e2a3a;
-  }
-  section[data-testid="stSidebar"] * { color: #94a3b8 !important; }
-  section[data-testid="stSidebar"] .stSelectbox label,
-  section[data-testid="stSidebar"] h2 { color: #38bdf8 !important; }
-
-  .main .block-container { padding: 1.5rem 2rem; max-width: 100%; }
-
-  .dash-header {
-    display: flex; align-items: baseline; gap: 16px;
-    border-bottom: 1px solid #1e2a3a; padding-bottom: 1rem; margin-bottom: 1.5rem;
-  }
-  .dash-title {
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: 2rem; color: #f0f6ff; letter-spacing: -0.5px;
-  }
-  .dash-sub { font-size: 0.75rem; color: #38bdf8; letter-spacing: 2px; text-transform: uppercase; }
-
-  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.5rem; }
-  .kpi-card {
-    background: #0d1117; border: 1px solid #1e2a3a; border-radius: 10px;
-    padding: 16px 18px; position: relative; overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .kpi-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: var(--accent);
-  }
-  .kpi-card:hover { border-color: var(--accent); }
-  .kpi-label { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
-  .kpi-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700; color: #f0f6ff; }
-  .kpi-delta { font-size: 0.7rem; margin-top: 4px; }
-  .kpi-delta.pos { color: #34d399; }
-  .kpi-delta.neg { color: #f87171; }
-  .kpi-delta.neu { color: #94a3b8; }
-
-  .kpi-grid-2 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.8rem; }
-
-  .section-label {
-    font-family: 'Syne', sans-serif; font-size: 0.7rem;
-    letter-spacing: 3px; text-transform: uppercase; color: #38bdf8;
-    margin: 1.5rem 0 0.75rem; border-left: 3px solid #38bdf8; padding-left: 10px;
-  }
-
-  .commentary-box {
-    background: #0d1117; border: 1px solid #1e2a3a;
-    border-left: 3px solid #38bdf8;
-    border-radius: 10px; padding: 18px 20px;
-    font-size: 0.82rem; line-height: 1.8; color: #cbd5e1;
-  }
-  .commentary-box strong { color: #38bdf8; }
-
-  .ai-answer {
-    background: #0f172a; border: 1px solid #1e3a5f;
-    border-radius: 10px; padding: 16px 20px;
-    font-size: 0.82rem; line-height: 1.8; color: #bae6fd;
-  }
-
-  .badge {
-    display: inline-block; background: #0f172a;
-    border: 1px solid #1e2a3a; border-radius: 4px;
-    padding: 2px 8px; font-size: 0.6rem; letter-spacing: 1.5px;
-    color: #475569; text-transform: uppercase;
-  }
-
-  .stButton > button {
-    background: #0ea5e9; color: #fff; border: none;
-    border-radius: 6px; font-family: 'DM Mono', monospace;
-    font-size: 0.75rem; letter-spacing: 1px;
-    padding: 8px 20px; transition: background 0.2s;
-  }
-  .stButton > button:hover { background: #38bdf8; }
-
-  .stTextInput input {
-    background: #0d1117 !important; border: 1px solid #1e2a3a !important;
-    color: #e2e8f0 !important; border-radius: 6px !important;
-    font-family: 'DM Mono', monospace !important;
-  }
-
-  div[data-testid="metric-container"] { display: none; }
-  #MainMenu { visibility: hidden; }
-  footer { visibility: hidden; }
-  header { visibility: hidden; }
+body {background-color:#0d1117;color:#e6edf3;}
+.kpi {background:#111827;padding:15px;border-radius:10px}
 </style>
 """, unsafe_allow_html=True)
 
-# ── PLOTLY THEME ──────────────────────────────────────────────────────────────
-PLOTLY_LAYOUT = dict(
-    paper_bgcolor="rgba(0,0,0,0)",
-    plot_bgcolor="rgba(0,0,0,0)",
-    font=dict(family="DM Mono, monospace", color="#94a3b8", size=11),
-    margin=dict(l=10, r=10, t=30, b=10),
-    legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10)),
-    xaxis=dict(gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
-    yaxis=dict(gridcolor="#1e2a3a", linecolor="#1e2a3a", tickfont=dict(size=10)),
-)
-PALETTE = ["#38bdf8","#818cf8","#34d399","#fb923c","#f472b6","#a78bfa","#facc15","#2dd4bf"]
-
-# ── DATA LOAD ─────────────────────────────────────────────────────────────────
+# ── LOAD DATA ─────────────────────────────
 @st.cache_data
-def load_data():
-    for path in ["unilever_fpna.csv", "data.csv"]:
-        if os.path.exists(path):
-            return pd.read_csv(path)
-    uploaded = st.file_uploader("Upload unilever_fpna.csv", type=["csv"])
-    if uploaded:
-        return pd.read_csv(uploaded)
+def load():
+    if os.path.exists("unilever_fpna.csv"):
+        return pd.read_csv("unilever_fpna.csv")
     return pd.DataFrame()
 
-df_raw = load_data()
-if df_raw.empty:
-    st.error("⚠️ Please upload unilever_fpna.csv to continue.")
+df = load()
+if df.empty:
+    st.error("Upload CSV")
     st.stop()
 
-# ── SIDEBAR FILTERS ───────────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("## ⚙️ Filters")
-    def filt(label, col):
-        opts = ["All"] + sorted(df_raw[col].dropna().unique().tolist())
-        return st.selectbox(label, opts)
+# ── KPIs ─────────────────────────────
+nr = df["Net_Revenue_AUD000"].sum()
+gp = df["Gross_Profit_AUD000"].sum()
+ebitda = df["EBITDA_AUD000"].sum()
+cogs = df["COGS_AUD000"].sum()
+opex = df["OPEX_AUD000"].sum()
 
-    f_year     = filt("📅 Year",     "Year")
-    f_quarter  = filt("📆 Quarter",  "Quarter")
-    f_market   = filt("🌏 Market",   "Market")
-    f_category = filt("🏷 Category", "Category")
-    f_brand    = filt("💎 Brand",    "Brand")
-    f_channel  = filt("🛒 Channel",  "Channel")
-    f_type     = filt("📋 Type",     "Type")
+# ── HEADER ─────────────────────────────
+st.title("📊 CFO Command Centre")
 
-    st.markdown("---")
-    st.markdown("### 💬 Ask the AI CFO")
-    question = st.text_input("", placeholder="e.g. Why is margin declining?")
-    ask_btn  = st.button("🤖 Ask CFO")
+# ── KPI CARDS ─────────────────────────────
+c1,c2,c3,c4,c5 = st.columns(5)
+c1.metric("Net Revenue", f"AUD {nr:,.0f}")
+c2.metric("Gross Profit", f"AUD {gp:,.0f}")
+c3.metric("EBITDA", f"AUD {ebitda:,.0f}")
+c4.metric("COGS", f"AUD {cogs:,.0f}")
+c5.metric("OPEX", f"AUD {opex:,.0f}")
 
-# ── FILTER DATA ───────────────────────────────────────────────────────────────
-df = df_raw.copy()
-if f_year     != "All": df = df[df["Year"]     == int(f_year)]
-if f_quarter  != "All": df = df[df["Quarter"]  == f_quarter]
-if f_market   != "All": df = df[df["Market"]   == f_market]
-if f_category != "All": df = df[df["Category"] == f_category]
-if f_brand    != "All": df = df[df["Brand"]    == f_brand]
-if f_channel  != "All": df = df[df["Channel"]  == f_channel]
-if f_type     != "All": df = df[df["Type"]     == f_type]
+# ── CHARTS ─────────────────────────────
+st.subheader("Revenue & Profit Breakdown")
+col1,col2,col3 = st.columns(3)
 
-if df.empty:
-    st.warning("No data for selected filters."); st.stop()
-
-# ── KPI CALCS ─────────────────────────────────────────────────────────────────
-nr        = df["Net_Revenue_AUD000"].sum()
-gp        = df["Gross_Profit_AUD000"].sum()
-ebitda    = df["EBITDA_AUD000"].sum()
-cogs      = df["COGS_AUD000"].sum()
-opex      = df["OPEX_AUD000"].sum()
-volume    = df["Volume_Units"].sum()
-base_nr   = df["Base_NR_AUD000"].sum()
-trade_pr  = df["Trade_Promo_AUD000"].sum()
-budget_nr = df["Budget_NR_AUD000"].sum()
-var_nr    = df["Variance_NR_AUD000"].sum()
-py_nr     = df["PY_NR_AUD000"].sum()
-
-gp_margin     = gp / nr * 100      if nr else 0
-ebitda_margin = ebitda / nr * 100  if nr else 0
-cogs_pct      = cogs / nr * 100    if nr else 0
-opex_pct      = opex / nr * 100    if nr else 0
-trade_pct     = trade_pr / base_nr * 100 if base_nr else 0
-yoy_growth    = (nr - py_nr) / py_nr * 100 if py_nr else 0
-budget_ach    = nr / budget_nr * 100 if budget_nr else 0
-var_pct       = var_nr / budget_nr * 100 if budget_nr else 0
-
-def delta_cls(v): return "pos" if v > 0 else ("neg" if v < 0 else "neu")
-def fmt_m(v):     return f"AUD {v/1000:,.1f}M" if abs(v) >= 1000 else f"AUD {v:,.0f}K"
-
-# ── HEADER ────────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div class="dash-header">
-  <div>
-    <div class="dash-title">📊 CFO Command Centre</div>
-    <div class="dash-sub">Unilever APAC · FP&amp;A Intelligence · {len(df):,} Transactions</div>
-  </div>
-  <div style="margin-left:auto">
-    <span class="badge">Live Dashboard</span>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── KPI ROW 1 — P&L Headline ─────────────────────────────────────────────────
-st.markdown('<div class="section-label">P&L Headline</div>', unsafe_allow_html=True)
-st.markdown(f"""
-<div class="kpi-grid">
-  <div class="kpi-card" style="--accent:#38bdf8">
-    <div class="kpi-label">Net Revenue</div>
-    <div class="kpi-value">{fmt_m(nr)}</div>
-    <div class="kpi-delta {delta_cls(yoy_growth)}">{'▲' if yoy_growth>0 else '▼'} {abs(yoy_growth):.1f}% YoY</div>
-  </div>
-  <div class="kpi-card" style="--accent:#34d399">
-    <div class="kpi-label">Gross Profit</div>
-    <div class="kpi-value">{fmt_m(gp)}</div>
-    <div class="kpi-delta {delta_cls(gp_margin-50)}">GP Margin {gp_margin:.1f}%</div>
-  </div>
-  <div class="kpi-card" style="--accent:#818cf8">
-    <div class="kpi-label">EBITDA</div>
-    <div class="kpi-value">{fmt_m(ebitda)}</div>
-    <div class="kpi-delta {delta_cls(ebitda_margin-30)}">EBITDA Margin {ebitda_margin:.1f}%</div>
-  </div>
-  <div class="kpi-card" style="--accent:#fb923c">
-    <div class="kpi-label">COGS</div>
-    <div class="kpi-value">{fmt_m(cogs)}</div>
-    <div class="kpi-delta {'neg' if cogs_pct>55 else 'pos'}">COGS % NR {cogs_pct:.1f}%</div>
-  </div>
-  <div class="kpi-card" style="--accent:#f472b6">
-    <div class="kpi-label">OPEX</div>
-    <div class="kpi-value">{fmt_m(opex)}</div>
-    <div class="kpi-delta {'neg' if opex_pct>20 else 'pos'}">OPEX % NR {opex_pct:.1f}%</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── KPI ROW 2 — Commercial & Budget ──────────────────────────────────────────
-st.markdown('<div class="section-label">Commercial Performance</div>', unsafe_allow_html=True)
-st.markdown(f"""
-<div class="kpi-grid-2">
-  <div class="kpi-card" style="--accent:#facc15">
-    <div class="kpi-label">Volume Units</div>
-    <div class="kpi-value">{volume/1000:,.0f}K</div>
-    <div class="kpi-delta neu">Total sold units</div>
-  </div>
-  <div class="kpi-card" style="--accent:#2dd4bf">
-    <div class="kpi-label">Budget Achievement</div>
-    <div class="kpi-value">{budget_ach:.1f}%</div>
-    <div class="kpi-delta {delta_cls(budget_ach-100)}">vs Budget {fmt_m(budget_nr)}</div>
-  </div>
-  <div class="kpi-card" style="--accent:#a78bfa">
-    <div class="kpi-label">NR Variance vs Bdgt</div>
-    <div class="kpi-value">{fmt_m(var_nr)}</div>
-    <div class="kpi-delta {delta_cls(var_nr)}">{var_pct:+.1f}% vs budget</div>
-  </div>
-  <div class="kpi-card" style="--accent:#f87171">
-    <div class="kpi-label">Trade Promo Spend</div>
-    <div class="kpi-value">{fmt_m(trade_pr)}</div>
-    <div class="kpi-delta {'neg' if trade_pct>10 else 'pos'}">TPR% {trade_pct:.1f}% of Base NR</div>
-  </div>
-  <div class="kpi-card" style="--accent:#38bdf8">
-    <div class="kpi-label">YoY Growth</div>
-    <div class="kpi-value">{yoy_growth:+.1f}%</div>
-    <div class="kpi-delta {delta_cls(yoy_growth)}">PY NR {fmt_m(py_nr)}</div>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ── CHARTS ROW 1 ──────────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">Revenue & Profit Breakdown</div>', unsafe_allow_html=True)
-c1, c2, c3 = st.columns([2, 2, 1.5])
-
-with c1:
-    rev_mkt = df.groupby("Market")[["Net_Revenue_AUD000","Gross_Profit_AUD000","EBITDA_AUD000"]].sum().reset_index()
+# P&L by Market
+with col1:
+    rev = df.groupby("Market")[["Net_Revenue_AUD000","Gross_Profit_AUD000","EBITDA_AUD000"]].sum().reset_index()
     fig = go.Figure()
-    for col, color in zip(["Net_Revenue_AUD000","Gross_Profit_AUD000","EBITDA_AUD000"], ["#38bdf8","#34d399","#818cf8"]):
-        fig.add_bar(x=rev_mkt["Market"], y=rev_mkt[col], name=col.replace("_AUD000","").replace("_"," "), marker_color=color)
-    fig.update_layout(**PLOTLY_LAYOUT, title="P&L by Market", barmode="group", height=280)
+    fig.add_bar(x=rev["Market"], y=rev["Net_Revenue_AUD000"], name="Revenue")
+    fig.add_bar(x=rev["Market"], y=rev["Gross_Profit_AUD000"], name="GP")
+    fig.add_bar(x=rev["Market"], y=rev["EBITDA_AUD000"], name="EBITDA")
+    fig.update_layout(barmode="group")
     st.plotly_chart(fig, use_container_width=True)
 
-with c2:
-    rev_cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().reset_index().sort_values("Net_Revenue_AUD000", ascending=True)
-    fig2 = go.Figure(go.Bar(
-        x=rev_cat["Net_Revenue_AUD000"], y=rev_cat["Category"],
-        orientation="h", marker_color=PALETTE[:len(rev_cat)],
-        text=rev_cat["Net_Revenue_AUD000"].apply(lambda x: fmt_m(x)),
-        textposition="auto", textfont=dict(size=10, color="#fff")
-    ))
-    fig2.update_layout(**PLOTLY_LAYOUT, title="Net Revenue by Category", height=280)
+# Category
+with col2:
+    cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().reset_index()
+    fig2 = go.Figure(go.Bar(x=cat["Net_Revenue_AUD000"], y=cat["Category"], orientation="h"))
     st.plotly_chart(fig2, use_container_width=True)
 
-with c3:
-    wfall = {"Base NR": base_nr, "Trade Promo": -trade_pr, "Net Revenue": nr, "COGS": -cogs, "Gross Profit": gp, "OPEX": -opex, "EBITDA": ebitda}
-    labels = list(wfall.keys())
-    values = list(wfall.values())
-    colors_w = ["#38bdf8" if v > 0 else "#f87171" for v in values]
-    fig3 = go.Figure(go.Bar(x=labels, y=values, marker_color=colors_w))
-    fig3.update_layout(**PLOTLY_LAYOUT, title="P&L Bridge", height=280,
-                       xaxis=dict(tickangle=-30, gridcolor="#1e2a3a"))
+# P&L Bridge (FIXED)
+with col3:
+    wfall = {
+        "Base NR": df["Base_NR_AUD000"].sum(),
+        "Trade Promo": -df["Trade_Promo_AUD000"].sum(),
+        "Net Revenue": nr,
+        "COGS": -cogs,
+        "Gross Profit": gp,
+        "OPEX": -opex,
+        "EBITDA": ebitda,
+    }
+    fig3 = go.Figure(go.Bar(x=list(wfall.keys()), y=list(wfall.values())))
+    fig3.update_xaxes(tickangle=-30)
     st.plotly_chart(fig3, use_container_width=True)
 
-# ── CHARTS ROW 2 ──────────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">Trend & Mix Analysis</div>', unsafe_allow_html=True)
-c4, c5 = st.columns([3, 2])
+# ── TREND (FIXED) ─────────────────────────────
+st.subheader("Trend Analysis")
 
-with c4:
-    trend = df.groupby(["Year","Month_Num","Month"])[["Net_Revenue_AUD000","Gross_Profit_AUD000","EBITDA_AUD000"]].sum().reset_index()
-    trend = trend.sort_values(["Year","Month_Num"])
-    trend["Period"] = trend["Year"].astype(str) + "-" + trend["Month"]
-    fig4 = go.Figure()
-    for col, color, name in zip(
-        ["Net_Revenue_AUD000","Gross_Profit_AUD000","EBITDA_AUD000"],
-        ["#38bdf8","#34d399","#818cf8"],
-        ["Net Revenue","Gross Profit","EBITDA"]
-    ):
-        fig4.add_scatter(x=trend["Period"], y=trend[col], mode="lines", name=name,
-                         line=dict(color=color, width=2))
-    fig4.update_layout(**PLOTLY_LAYOUT, title="Monthly Trend: Revenue → EBITDA", height=280,
-                       xaxis=dict(tickangle=-45, nticks=12, gridcolor="#1e2a3a"))
-    st.plotly_chart(fig4, use_container_width=True)
+trend = df.groupby(["Year","Month_Num","Month"])[["Net_Revenue_AUD000","Gross_Profit_AUD000","EBITDA_AUD000"]].sum().reset_index()
+trend = trend.sort_values(["Year","Month_Num"])
+trend["Period"] = trend["Year"].astype(str) + "-" + trend["Month"]
 
-with c5:
-    ch_mix = df.groupby("Channel")["Net_Revenue_AUD000"].sum().reset_index()
-    fig5 = go.Figure(go.Pie(
-        labels=ch_mix["Channel"], values=ch_mix["Net_Revenue_AUD000"],
-        hole=0.55, marker=dict(colors=PALETTE, line=dict(color="#0d1117", width=2)),
-        textinfo="label+percent", textfont=dict(size=10),
-    ))
-    fig5.update_layout(**PLOTLY_LAYOUT, title="Revenue Mix by Channel", height=280, showlegend=False)
-    st.plotly_chart(fig5, use_container_width=True)
+fig4 = go.Figure()
+fig4.add_scatter(x=trend["Period"], y=trend["Net_Revenue_AUD000"], name="Revenue")
+fig4.add_scatter(x=trend["Period"], y=trend["Gross_Profit_AUD000"], name="GP")
+fig4.add_scatter(x=trend["Period"], y=trend["EBITDA_AUD000"], name="EBITDA")
 
-# ── CHARTS ROW 3 ──────────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">Brand & Variance Intelligence</div>', unsafe_allow_html=True)
-c6, c7 = st.columns([3, 2])
+fig4.update_xaxes(tickangle=-45)
+st.plotly_chart(fig4, use_container_width=True)
 
-with c6:
-    brand_kpi = df.groupby("Brand").agg(
-        NR=("Net_Revenue_AUD000","sum"), GP=("Gross_Profit_AUD000","sum"),
-        Budget=("Budget_NR_AUD000","sum"), Variance=("Variance_NR_AUD000","sum")
-    ).reset_index()
-    brand_kpi["GP_Margin"] = (brand_kpi["GP"] / brand_kpi["NR"] * 100).round(1)
-    brand_kpi["Bdgt_Ach"]  = (brand_kpi["NR"] / brand_kpi["Budget"] * 100).round(1)
-    brand_kpi = brand_kpi.sort_values("NR", ascending=False)
+# ── BRAND SCORECARD ─────────────────────────────
+st.subheader("Brand Scorecard")
 
-    fig6 = make_subplots(specs=[[{"secondary_y": True}]])
-    fig6.add_bar(x=brand_kpi["Brand"], y=brand_kpi["NR"], name="Net Revenue",
-                 marker_color="#38bdf8", secondary_y=False)
-    fig6.add_scatter(x=brand_kpi["Brand"], y=brand_kpi["GP_Margin"], mode="lines+markers",
-                     name="GP Margin %", line=dict(color="#34d399", width=2),
-                     marker=dict(size=8), secondary_y=True)
-    fig6.update_layout(**PLOTLY_LAYOUT, title="Brand: Revenue vs GP Margin", height=300)
-    fig6.update_yaxes(title_text="GP Margin %", secondary_y=True, gridcolor="#1e2a3a")
-    st.plotly_chart(fig6, use_container_width=True)
+brand = df.groupby("Brand").agg(
+    Revenue=("Net_Revenue_AUD000","sum"),
+    GP=("Gross_Profit_AUD000","sum")
+).reset_index()
 
-with c7:
-    var_mkt = df.groupby("Market")["Variance_NR_AUD000"].sum().reset_index().sort_values("Variance_NR_AUD000")
-    colors_var = ["#f87171" if v < 0 else "#34d399" for v in var_mkt["Variance_NR_AUD000"]]
-    fig7 = go.Figure(go.Bar(
-        x=var_mkt["Variance_NR_AUD000"], y=var_mkt["Market"],
-        orientation="h", marker_color=colors_var,
-        text=var_mkt["Variance_NR_AUD000"].apply(lambda x: f"{x:+,.0f}"),
-        textposition="auto", textfont=dict(size=10, color="#fff")
-    ))
-    fig7.update_layout(**PLOTLY_LAYOUT, title="NR Variance vs Budget by Market", height=300)
-    st.plotly_chart(fig7, use_container_width=True)
+st.dataframe(brand, use_container_width=True)
 
-# ── BRAND SCORECARD ───────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">Brand Scorecard</div>', unsafe_allow_html=True)
-scorecard = brand_kpi[["Brand","NR","GP","GP_Margin","Budget","Variance","Bdgt_Ach"]].copy()
-scorecard.columns = ["Brand","Net Rev (K)","Gross Profit (K)","GP Margin %","Budget (K)","Variance (K)","Budget Ach %"]
-for col in ["Net Rev (K)","Gross Profit (K)","Budget (K)","Variance (K)"]:
-    scorecard[col] = scorecard[col].apply(lambda x: f"{x:,.0f}")
-scorecard["GP Margin %"]  = scorecard["GP Margin %"].apply(lambda x: f"{x:.1f}%")
-scorecard["Budget Ach %"] = scorecard["Budget Ach %"].apply(lambda x: f"{x:.1f}%")
-st.dataframe(scorecard, use_container_width=True, hide_index=True)
+# ── AI CFO (GEMINI) ─────────────────────────────
+st.subheader("🤖 AI CFO")
 
-# ── BOARD COMMENTARY ──────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">Board Commentary</div>', unsafe_allow_html=True)
-top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
-top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
-risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
-
-st.markdown(f"""
-<div class="commentary-box">
-  <strong>Executive Summary</strong><br>
-  Net Revenue stands at <strong>{fmt_m(nr)}</strong> with YoY growth of <strong>{yoy_growth:+.1f}%</strong>
-  against a prior year base of {fmt_m(py_nr)}.
-  Budget achievement is <strong>{budget_ach:.1f}%</strong> with an NR variance of <strong>{fmt_m(var_nr)}</strong>.<br><br>
-
-  <strong>Profitability</strong><br>
-  Gross Profit Margin of <strong>{gp_margin:.1f}%</strong> {'exceeds' if gp_margin > 50 else 'is below'} the 50% benchmark.
-  EBITDA Margin at <strong>{ebitda_margin:.1f}%</strong>. COGS represents {cogs_pct:.1f}% of NR;
-  OPEX at {opex_pct:.1f}% of NR. Trade Promo intensity at {trade_pct:.1f}% of Base NR.<br><br>
-
-  <strong>Market & Brand</strong><br>
-  <strong>{top_market}</strong> is the top-performing market. <strong>{top_brand}</strong> leads brand revenue.
-  <strong>{risk_mkt}</strong> shows the highest budget shortfall and requires corrective action.<br><br>
-
-  <strong>Actions Required</strong><br>
-  1. Review trade promo ROI in underperforming markets. &nbsp;
-  2. Accelerate online channel growth — currently highest-margin channel. &nbsp;
-  3. Tighten OPEX in markets below EBITDA threshold.
-</div>
-""", unsafe_allow_html=True)
-
-# ── AI CFO ────────────────────────────────────────────────────────────────────
-st.markdown('<div class="section-label">AI CFO Insight</div>', unsafe_allow_html=True)
-
-def rule_cfo(q):
-    q = q.lower()
-    if "revenue" in q and "australia" in q:
-        v = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
-        return f"Australia Net Revenue: {fmt_m(v)}"
-    if "top market"  in q: return f"Top market by revenue: {top_market}"
-    if "top brand"   in q: return f"Top brand by revenue: {top_brand}"
-    if "risk"        in q: return f"Highest budget risk market: {risk_mkt}"
-    if "revenue"     in q: return f"Total Net Revenue: {fmt_m(nr)}"
-    if "profit"      in q: return f"Gross Profit: {fmt_m(gp)} | GP Margin: {gp_margin:.1f}%"
-    if "ebitda"      in q: return f"EBITDA: {fmt_m(ebitda)} | EBITDA Margin: {ebitda_margin:.1f}%"
-    if "margin"      in q: return f"GP Margin: {gp_margin:.1f}% | EBITDA Margin: {ebitda_margin:.1f}%"
-    if "variance"    in q: return f"NR Variance vs Budget: {fmt_m(var_nr)} ({var_pct:+.1f}%)"
-    if "budget"      in q: return f"Budget Achievement: {budget_ach:.1f}% | Variance: {fmt_m(var_nr)}"
-    if "cogs"        in q: return f"COGS: {fmt_m(cogs)} ({cogs_pct:.1f}% of NR)"
-    if "opex"        in q: return f"OPEX: {fmt_m(opex)} ({opex_pct:.1f}% of NR)"
-    if "trade"       in q: return f"Trade Promo: {fmt_m(trade_pr)} ({trade_pct:.1f}% of Base NR)"
-    if "volume"      in q: return f"Total Volume: {volume/1000:,.0f}K units"
-    if "growth"      in q: return f"YoY Revenue Growth: {yoy_growth:+.1f}%"
-    if "channel"     in q:
-        top_ch = df.groupby("Channel")["Net_Revenue_AUD000"].sum().idxmax()
-        return f"Top channel by revenue: {top_ch}"
-    if "category"    in q:
-        top_cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().idxmax()
-        return f"Top category: {top_cat}"
-    return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
-
-def ai_cfo(question):
+def ai_cfo(q):
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
-        return None
-    try:
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        return "⚠️ Add GOOGLE_API_KEY"
 
-        yoy_str    = "{:+.1f}".format(yoy_growth)
-        gp_str     = "{:.1f}".format(gp_margin)
-        ebitda_str = "{:.1f}".format(ebitda_margin)
-        cogs_str   = "{:.1f}".format(cogs_pct)
-        opex_str   = "{:.1f}".format(opex_pct)
-        bdgt_str   = "{:.1f}".format(budget_ach)
-        trade_str  = "{:.1f}".format(trade_pct)
+    import google.generativeai as genai
+    genai.configure(api_key=api_key)
 
-        prompt = (
-            "You are the CFO of Unilever APAC. Provide concise, incisive financial insights.\n\n"
-            "KPI Summary:\n"
-            "- Net Revenue: " + fmt_m(nr) + " | YoY: " + yoy_str + "%\n"
-            "- Gross Profit: " + fmt_m(gp) + " | GP Margin: " + gp_str + "%\n"
-            "- EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + ebitda_str + "%\n"
-            "- COGS % NR: " + cogs_str + "% | OPEX % NR: " + opex_str + "%\n"
-            "- Budget Achievement: " + bdgt_str + "% | Variance: " + fmt_m(var_nr) + "\n"
-            "- Trade Promo Intensity: " + trade_str + "%\n"
-            "- Top Market: " + str(top_market) + " | At-Risk Market: " + str(risk_mkt) + "\n"
-            "- Top Brand: " + str(top_brand) + "\n\n"
-            "Question: " + question + "\n\n"
-            "Give 2-3 specific CFO-level insights with root causes and recommended actions. Be direct and quantitative."
-        )
+    model = genai.GenerativeModel("gemini-1.5-flash")
 
-        response = model.generate_content(prompt)
-        return response.text
-    except Exception as e:
-        return "AI unavailable: " + str(e)
+    prompt = f"""
+    You are CFO.
+    Revenue: {nr}
+    GP: {gp}
+    EBITDA: {ebitda}
 
-if ask_btn and question:
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.markdown("**📊 Rule-Based Answer**")
-        st.markdown(f'<div class="commentary-box">{rule_cfo(question)}</div>', unsafe_allow_html=True)
-    with col_b:
-        st.markdown("**🤖 AI CFO Insight**")
-        ai_ans = ai_cfo(question)
-        msg = ai_ans if ai_ans else f"AI unavailable. Rule answer: {rule_cfo(question)}"
-        st.markdown(f'<div class="ai-answer">{msg}</div>', unsafe_allow_html=True)
-else:
-    st.markdown("""
-<div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
-  ← Ask any FP&A question in the sidebar: revenue, margins, variance, growth, risk, channel, brand performance…
-</div>""", unsafe_allow_html=True)
+    Question: {q}
+    Give insights.
+    """
 
-# ── FOOTER ────────────────────────────────────────────────────────────────────
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("""
-<div style="text-align:center;font-size:0.6rem;color:#1e2a3a;letter-spacing:2px">
-  UNILEVER APAC · CFO COMMAND CENTRE · CONFIDENTIAL · FP&A INTELLIGENCE PLATFORM
-</div>
-""", unsafe_allow_html=True)
+    res = model.generate_content(prompt)
+    return res.text
+
+q = st.text_input("Ask CFO")
+if st.button("Ask"):
+    st.write(ai_cfo(q))
