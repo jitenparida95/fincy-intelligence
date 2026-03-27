@@ -344,9 +344,13 @@ st.components.v1.html(f"""
 """, height=100)
 
 # --- KPI ROW 1 ---
-st.markdown(f"""
-<div class="kpi-grid">
+arrow = "▲" if yoy_growth > 0 else "▼"
+yoy_text = f"{abs(yoy_growth):.1f}% YoY"
 
+st.markdown(f"""
+<div class="kpi-delta {dc(yoy_growth)}">
+  {arrow} {yoy_text}
+</div>
   <div class="kpi-card" style="--accent:#38bdf8">
     <div class="kpi-label">Net Revenue</div>
     <div class="kpi-value">{fmt_m(nr)}</div>
