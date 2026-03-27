@@ -291,7 +291,7 @@ st.markdown(
         <div>
             <div class="dash-title">CFO Command Centre</div>
             <div class="dash-sub">
-                Unilever APAC · FP&amp;A Intelligence · {len(df):,} Transactions
+                Unilever APAC | FP&amp;A Intelligence | {len(df):,} Transactions
             </div>
         </div>
         <div style="margin-left:auto">
