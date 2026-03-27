@@ -90,12 +90,14 @@ html, body, [class*="css"] {
 
   letter-spacing: -0.5px;
 }
-  .dash-sub {
-  font-size: 0.8rem;
+  .sub-highlight {
   color: #38bdf8;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  opacity: 0.9;
+  font-weight: 600;
+}
+
+.sub-muted {
+  color: #64748b;
+  margin-left: 8px;
 }
 
   /* ── KPI Cards ── */
