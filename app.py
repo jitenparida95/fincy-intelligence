@@ -284,15 +284,20 @@ top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 
-# ── HEADER ────────────────────────────────────────────────────────────────────
+# --- HEADER ---
 st.markdown(f"""
 <div class="dash-header">
-  <div>
-    st.markdown('<div class="dash-title">📊 CFO Command Centre</div>', unsafe_allow_html=True)
-    <div class="dash-sub">Unilever APAC · FP&amp;A Intelligence · {len(df):,} Transactions</div>
-  </div>
-  <div style="margin-left:auto"><span class="badge">Live Dashboard</span></div>
-</div>""", unsafe_allow_html=True)
+    <div>
+        <div class="dash-title">📊 CFO Command Centre</div>
+        <div class="dash-sub">
+            Unilever APAC · FP&amp;A Intelligence · {len(df):,} Transactions
+        </div>
+    </div>
+    <div style="margin-left:auto">
+        <span class="badge">Live Dashboard</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── KPI ROW 1 ─────────────────────────────────────────────────────────────────
 st.markdown('<div class="section-label">P&L Headline</div>', unsafe_allow_html=True)
