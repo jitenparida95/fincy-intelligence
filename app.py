@@ -524,10 +524,11 @@ else:
     """, unsafe_allow_html=True) in Streamlit Secrets to enable AI answers.</div>', unsafe_allow_html=True)
 else:
     st.markdown("""
-<div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
-  ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
-  Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
-</div>""", unsafe_allow_html=True)
+    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
+    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
+    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
+    </div>
+    """, unsafe_allow_html=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)
