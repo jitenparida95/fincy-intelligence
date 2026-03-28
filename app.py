@@ -464,6 +464,59 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
+# --- MAIN HERO HEADER ---
+st.markdown("""
+<div style="
+    text-align:center;
+    margin-top:10px;
+    margin-bottom:25px;
+">
+
+    <div style="
+        font-size:2.4rem;
+        font-weight:800;
+        color:#38bdf8;
+        margin-bottom:6px;
+    ">
+        Fincy Intelligence
+    </div>
+
+    <div style="
+        font-size:0.95rem;
+        color:#94a3b8;
+        font-weight:500;
+        margin-bottom:18px;
+    ">
+        AI CFO • Data Intelligence • FP&A Engine
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div style="
+    text-align:left;
+    margin-bottom:15px;
+    margin-left:5px;
+">
+    <div style="
+        font-size:1.6rem;
+        font-weight:700;
+        color:#38bdf8;
+    ">
+        Data & Intelligence Insights
+    </div>
+
+    <div style="
+        font-size:0.8rem;
+        color:#94a3b8;
+        margin-top:4px;
+    ">
+        Real-time FP&A performance powered by AI
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 # --- KPI ROW 1 ---
 
 # 👉 Pre-calc (VERY IMPORTANT)
