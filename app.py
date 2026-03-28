@@ -328,11 +328,7 @@ top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 st.markdown("""
-<div style="
-    text-align:center;
-    margin-top:10px;
-    margin-bottom:25px;
-">
+<div style="text-align:center; margin-top:10px; margin-bottom:25px;">
 
     <div style="
         font-size:2.4rem;
@@ -347,8 +343,14 @@ st.markdown("""
         font-size:0.95rem;
         color:#94a3b8;
         font-weight:500;
+        margin-bottom:18px;
     ">
         AI CFO • Data Intelligence • FP&A Engine
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
+
 st.markdown("""
 <div style="
     text-align:left;
@@ -372,7 +374,6 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
-    </div>
 
 # --- KPI ROW 1 ---
 
