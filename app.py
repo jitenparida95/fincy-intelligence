@@ -229,28 +229,54 @@ if df_raw.empty:
     st.error("⚠️ Please upload unilever_fpna.csv to continue.")
     st.stop()
 
-# --- SIDEBAR ---------------------------------------------------------------
+# --- SIDEBAR --------------------------------------------------------------
 with st.sidebar:
 
-    # --- HEADER ---
-    st.markdown(f"""
-<div class="dash-header">
+    # --- AI CFO INPUT (TOP) ---
+    st.markdown("### 💬 Ask the AI CFO")
+    st.caption("Powered by Google Gemini (free)")
+    st.caption("💡 Try: revenue, margin, growth, risk, variance...")
 
-  <div class="dash-title">Fincy Intelligence</div>
+    # --- Suggested Questions ---
+    st.markdown("""
+    <div style="
+        font-size:0.82rem;
+        color:#94a3b8;
+        padding:10px;
+        background:#0d1117;
+        border-radius:8px;
+        margin-bottom:12px;
+        line-height:1.8;
+    ">
+    💡 <b>Suggested questions:</b>
+    <br>• Which brand is selling more?
+    <br>• Where is EBITDA declining?
+    <br>• Which market needs attention?
+    </div>
+    """, unsafe_allow_html=True)
 
-  <div class="dash-sub">
-    <span class="sub-highlight">AI CFO</span> |
-    <span class="sub-highlight">Data Intelligence</span> |
-    <span class="sub-highlight">FP&A Engine</span> |
-    <span class="sub-muted">{len(df_raw):,} Transactions</span>
-  </div>
+    # --- INPUT BOX ---
+    question = st.text_input(
+        "",
+        placeholder="e.g. Why is margin declining?"
+    )
 
-  <div class="dash-author">
-    By Jitendra Parida • Founder, Fincy AI & Data Intelligence
-  </div>
+    # --- BUTTONS ---
+    col1, col2 = st.columns([2, 1])
 
-</div>
-""", unsafe_allow_html=True)
+    with col1:
+        ask_btn = st.button("🚀 Ask CFO", use_container_width=True)
+
+    with col2:
+        clear_btn = st.button("🧹 Clear", use_container_width=True)
+
+    # --- CLEAR CHAT ---
+    if clear_btn:
+        if "chat_history" in st.session_state:
+            st.session_state.chat_history = []
+
+    st.markdown("---")
+
 
     # --- FILTER FUNCTION ---
     def filt(label, col):
@@ -267,30 +293,6 @@ with st.sidebar:
     f_type     = filt("📄 Type", "Type")
 
     st.markdown("---")
-
-    # --- AI CFO INPUT ---
-    st.markdown("### 💬 Ask the AI CFO")
-    st.caption("Powered by Google Gemini (free)")
-    st.caption("💡 Try: revenue, margin, growth, risk, variance...")
-
-    question = st.text_input(
-        "",
-        placeholder="e.g. Why is margin declining?"
-    )
-
-    # --- BUTTONS (UX OPTIMIZED) ---
-    col1, col2 = st.columns([2, 1])  # 🔥 Bigger Ask button
-
-    with col1:
-        ask_btn = st.button("🚀 Ask CFO", use_container_width=True)
-
-    with col2:
-        clear_btn = st.button("🧹 Clear", use_container_width=True)
-
-    # --- CLEAR CHAT SAFELY ---
-    if clear_btn:
-        if "chat_history" in st.session_state:
-            st.session_state.chat_history = []
 
 # ── FILTER ────────────────────────────────────────────────────────────────────
 df = df_raw.copy()
@@ -335,30 +337,50 @@ top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 st.markdown("""
 <div style="
-  text-align:center;
-  margin-top:10px;
-  margin-bottom:20px;
+    text-align:center;
+    margin-top:10px;
+    margin-bottom:25px;
 ">
 
-  <div style="
-    font-size:1.8rem;
-    font-weight:700;
-    color:#38bdf8;
-    letter-spacing:1px;
-  ">
-    Data & Intelligence Insights
-  </div>
+    <div style="
+        font-size:2.4rem;
+        font-weight:800;
+        color:#38bdf8;
+        margin-bottom:6px;
+    ">
+        Fincy Intelligence
+    </div>
 
-  <div style="
-    font-size:0.8rem;
-    color:#94a3b8;
-    margin-top:4px;
-  ">
-    Real-time FP&A performance powered by AI
-  </div>
+    <div style="
+        font-size:0.95rem;
+        color:#94a3b8;
+        font-weight:500;
+    ">
+        AI CFO • Data Intelligence • FP&A Engine
+st.markdown("""
+<div style="
+    text-align:left;
+    margin-bottom:15px;
+    margin-left:5px;
+">
+    <div style="
+        font-size:1.6rem;
+        font-weight:700;
+        color:#38bdf8;
+    ">
+        Data & Intelligence Insights
+    </div>
 
+    <div style="
+        font-size:0.8rem;
+        color:#94a3b8;
+        margin-top:4px;
+    ">
+        Real-time FP&A performance powered by AI
+    </div>
 </div>
 """, unsafe_allow_html=True)
+    </div>
 
 # --- KPI ROW 1 ---
 
