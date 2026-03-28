@@ -229,46 +229,28 @@ if df_raw.empty:
     st.error("⚠️ Please upload unilever_fpna.csv to continue.")
     st.stop()
 
-# --- SIDEBAR --------------------------------------------------------------
+# --- SIDEBAR ---------------------------------------------------------------
 with st.sidebar:
 
-    # --- AI CFO INPUT (TOP) ---
-    st.markdown("### 💬 Ask the AI CFO")
-    st.caption("Powered by Groq (free)")
-    st.caption("💡 Try: revenue, margin, growth, risk, variance...")
+    # --- HEADER ---
+    st.markdown(f"""
+<div class="dash-header">
 
-        # --- Suggested Questions ---
-    st.markdown("""
-    <div style="font-size:0.82rem; color:#94a3b8; padding:10px; background:#0d1117; border-radius:8px; margin-bottom:12px; line-height:1.8;">
-    💡 <b>Suggested questions:</b>
-    <br>• Which brand is selling more?
-    <br>• Where is EBITDA declining?
-    <br>• Which market needs attention?
-    </div>
-    """, unsafe_allow_html=True)
+  <div class="dash-title">Fincy Intelligence</div>
 
-    # --- INPUT BOX ---
-    question = st.text_input(
-        "",
-        placeholder="e.g. Why is margin declining?"
-    )
+  <div class="dash-sub">
+    <span class="sub-highlight">AI CFO</span> |
+    <span class="sub-highlight">Data Intelligence</span> |
+    <span class="sub-highlight">FP&A Engine</span> |
+    <span class="sub-muted">{len(df_raw):,} Transactions</span>
+  </div>
 
-    # --- BUTTONS ---
-    col1, col2 = st.columns([2, 1])
+  <div class="dash-author">
+    By Jitendra Parida • Founder, Fincy AI & Data Intelligence
+  </div>
 
-    with col1:
-        ask_btn = st.button("🚀 Ask CFO", use_container_width=True)
-
-    with col2:
-        clear_btn = st.button("🧹 Clear", use_container_width=True)
-
-    # --- CLEAR CHAT ---
-    if clear_btn:
-        if "chat_history" in st.session_state:
-            st.session_state.chat_history = []
-
-    st.markdown("---")
-
+</div>
+""", unsafe_allow_html=True)
 
     # --- FILTER FUNCTION ---
     def filt(label, col):
@@ -285,6 +267,30 @@ with st.sidebar:
     f_type     = filt("📄 Type", "Type")
 
     st.markdown("---")
+
+    # --- AI CFO INPUT ---
+    st.markdown("### 💬 Ask the AI CFO")
+    st.caption("Powered by Google Gemini (free)")
+    st.caption("💡 Try: revenue, margin, growth, risk, variance...")
+
+    question = st.text_input(
+        "",
+        placeholder="e.g. Why is margin declining?"
+    )
+
+    # --- BUTTONS (UX OPTIMIZED) ---
+    col1, col2 = st.columns([2, 1])  # 🔥 Bigger Ask button
+
+    with col1:
+        ask_btn = st.button("🚀 Ask CFO", use_container_width=True)
+
+    with col2:
+        clear_btn = st.button("🧹 Clear", use_container_width=True)
+
+    # --- CLEAR CHAT SAFELY ---
+    if clear_btn:
+        if "chat_history" in st.session_state:
+            st.session_state.chat_history = []
 
 # ── FILTER ────────────────────────────────────────────────────────────────────
 df = df_raw.copy()
@@ -324,196 +330,33 @@ var_pct       = var_nr / budget_nr * 100 if budget_nr else 0
 def dc(v): return "pos" if v > 0 else ("neg" if v < 0 else "neu")
 def fmt_m(v): return f"AUD {v/1000:,.1f}M" if abs(v) >= 1000 else f"AUD {v:,.0f}K"
 
-# ── RULE-BASED CFO ────────────────────────────────────────────────────────────
-def rule_cfo(q):
-    q = q.lower()
-    if "australia" in q and "revenue" in q:
-        v = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
-        return "Australia Net Revenue: " + fmt_m(v)
-    if "top market"  in q: return "Top market by revenue: " + str(top_market)
-    if "top brand"   in q: return "Top brand by revenue: " + str(top_brand)
-    if "risk"        in q: return "Highest budget risk market: " + str(risk_mkt)
-    if "revenue"     in q: return "Total Net Revenue: " + fmt_m(nr)
-    if "profit"      in q: return "Gross Profit: " + fmt_m(gp) + " | GP Margin: " + "{:.1f}".format(gp_margin) + "%"
-    if "ebitda"      in q: return "EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
-    if "margin"      in q: return "GP Margin: " + "{:.1f}".format(gp_margin) + "% | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
-    if "variance"    in q: return "NR Variance vs Budget: " + fmt_m(var_nr) + " (" + "{:+.1f}".format(var_pct) + "%)"
-    if "budget"      in q: return "Budget Achievement: " + "{:.1f}".format(budget_ach) + "% | Variance: " + fmt_m(var_nr)
-    if "cogs"        in q: return "COGS: " + fmt_m(cogs) + " (" + "{:.1f}".format(cogs_pct) + "% of NR)"
-    if "opex"        in q: return "OPEX: " + fmt_m(opex) + " (" + "{:.1f}".format(opex_pct) + "% of NR)"
-    if "trade"       in q: return "Trade Promo: " + fmt_m(trade_pr) + " (" + "{:.1f}".format(trade_pct) + "% of Base NR)"
-    if "volume"      in q: return "Total Volume: " + "{:,.0f}".format(volume/1000) + "K units"
-    if "growth"      in q: return "YoY Revenue Growth: " + "{:+.1f}".format(yoy_growth) + "%"
-    if "channel"     in q:
-        top_ch = df.groupby("Channel")["Net_Revenue_AUD000"].sum().idxmax()
-        return "Top channel by revenue: " + str(top_ch)
-    if "category"    in q:
-        top_cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().idxmax()
-        return "Top category: " + str(top_cat)
-    return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
-
-# ——— Groq AI CFO ——————————————————————————————
-def ai_cfo(question):
-    import os
-    from groq import Groq
-
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        return "No API key found"
-
-    try:
-        client = Groq(api_key=api_key)
-
-        prompt = f"""
-You are the CFO of Unilever APAC. Provide concise, incisive financial insights.
-
 top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
 st.markdown("""
-<div style="text-align:center; margin-top:10px; margin-bottom:25px;">
-
-    <div style="
-        font-size:2.4rem;
-        font-weight:800;
-        color:#38bdf8;
-        margin-bottom:6px;
-    ">
-        Fincy Intelligence
-    </div>
-
-    <div style="
-        font-size:0.95rem;
-        color:#94a3b8;
-        font-weight:500;
-        margin-bottom:18px;
-    ">
-        AI CFO • Data Intelligence • FP&A Engine
-    </div>
-
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
 <div style="
-    text-align:left;
-    margin-bottom:15px;
-    margin-left:5px;
-">
-    <div style="
-        font-size:1.6rem;
-        font-weight:700;
-        color:#38bdf8;
-    ">
-        Data & Intelligence Insights
-    </div>
-
-    <div style="
-        font-size:0.8rem;
-        color:#94a3b8;
-        margin-top:4px;
-    ">
-        Real-time FP&A performance powered by AI
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# --- AI CFO SECTION ------------------------------------------------------
-
-if ask_btn and question:
-
-    st.markdown("### 🤖 AI CFO Insight")
-
-    # Rule-Based
-    st.markdown("📊 Rule-Based Answer")
-    st.markdown(
-    f'<div class="commentary-box">{rule_cfo(question)}</div>',
-    unsafe_allow_html=True
-    )
-
-    # AI CFO
-    st.markdown("🧠 AI CFO")
-    with st.spinner("AI CFO is thinking..."):
-        ai_ans = ai_cfo(question)
-
-    # ✅ SHOW ANSWER
-    st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
-
-    # ✅ SAVE CHAT (MOVE HERE)
-    st.session_state.chat_history.append({
-        "question": question,
-        "answer": ai_ans
-    })
-
-    # ✅ PDF DOWNLOAD
-    if ai_ans:
-        pdf = generate_pdf(ai_ans)
-
-        st.download_button(
-            label="📄 Download CFO Report",
-            data=pdf,
-            file_name="CFO_Report.pdf",
-            mime="application/pdf"
-        )
-
-else:
-    st.markdown("""
-    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
-    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
-    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
-    </div>
-    """, unsafe_allow_html=True)
-
-# --- MAIN HERO HEADER ---
-st.markdown("""
-<div style="
-    text-align:center;
-    margin-top:10px;
-    margin-bottom:25px;
+  text-align:center;
+  margin-top:10px;
+  margin-bottom:20px;
 ">
 
-    <div style="
-        font-size:2.4rem;
-        font-weight:800;
-        color:#38bdf8;
-        margin-bottom:6px;
-    ">
-        Fincy Intelligence
-    </div>
+  <div style="
+    font-size:1.8rem;
+    font-weight:700;
+    color:#38bdf8;
+    letter-spacing:1px;
+  ">
+    Data & Intelligence Insights
+  </div>
 
-    <div style="
-        font-size:0.95rem;
-        color:#94a3b8;
-        font-weight:500;
-        margin-bottom:18px;
-    ">
-        AI CFO • Data Intelligence • FP&A Engine
-    </div>
+  <div style="
+    font-size:0.8rem;
+    color:#94a3b8;
+    margin-top:4px;
+  ">
+    Real-time FP&A performance powered by AI
+  </div>
 
-</div>
-""", unsafe_allow_html=True)
-
-st.markdown("""
-<div style="
-    text-align:left;
-    margin-bottom:15px;
-    margin-left:5px;
-">
-    <div style="
-        font-size:1.6rem;
-        font-weight:700;
-        color:#38bdf8;
-    ">
-        Data & Intelligence Insights
-    </div>
-
-    <div style="
-        font-size:0.8rem;
-        color:#94a3b8;
-        margin-top:4px;
-    ">
-        Real-time FP&A performance powered by AI
-    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -753,6 +596,49 @@ st.markdown(f"""
   3. Tighten OPEX in markets below EBITDA threshold.
 </div>""", unsafe_allow_html=True)
 
+# ── RULE-BASED CFO ────────────────────────────────────────────────────────────
+def rule_cfo(q):
+    q = q.lower()
+    if "australia" in q and "revenue" in q:
+        v = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
+        return "Australia Net Revenue: " + fmt_m(v)
+    if "top market"  in q: return "Top market by revenue: " + str(top_market)
+    if "top brand"   in q: return "Top brand by revenue: " + str(top_brand)
+    if "risk"        in q: return "Highest budget risk market: " + str(risk_mkt)
+    if "revenue"     in q: return "Total Net Revenue: " + fmt_m(nr)
+    if "profit"      in q: return "Gross Profit: " + fmt_m(gp) + " | GP Margin: " + "{:.1f}".format(gp_margin) + "%"
+    if "ebitda"      in q: return "EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
+    if "margin"      in q: return "GP Margin: " + "{:.1f}".format(gp_margin) + "% | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
+    if "variance"    in q: return "NR Variance vs Budget: " + fmt_m(var_nr) + " (" + "{:+.1f}".format(var_pct) + "%)"
+    if "budget"      in q: return "Budget Achievement: " + "{:.1f}".format(budget_ach) + "% | Variance: " + fmt_m(var_nr)
+    if "cogs"        in q: return "COGS: " + fmt_m(cogs) + " (" + "{:.1f}".format(cogs_pct) + "% of NR)"
+    if "opex"        in q: return "OPEX: " + fmt_m(opex) + " (" + "{:.1f}".format(opex_pct) + "% of NR)"
+    if "trade"       in q: return "Trade Promo: " + fmt_m(trade_pr) + " (" + "{:.1f}".format(trade_pct) + "% of Base NR)"
+    if "volume"      in q: return "Total Volume: " + "{:,.0f}".format(volume/1000) + "K units"
+    if "growth"      in q: return "YoY Revenue Growth: " + "{:+.1f}".format(yoy_growth) + "%"
+    if "channel"     in q:
+        top_ch = df.groupby("Channel")["Net_Revenue_AUD000"].sum().idxmax()
+        return "Top channel by revenue: " + str(top_ch)
+    if "category"    in q:
+        top_cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().idxmax()
+        return "Top category: " + str(top_cat)
+    return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
+
+# ——— Groq AI CFO ——————————————————————————————
+def ai_cfo(question):
+    import os
+    from groq import Groq
+
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return "No API key found"
+
+    try:
+        client = Groq(api_key=api_key)
+
+        prompt = f"""
+You are the CFO of Unilever APAC. Provide concise, incisive financial insights.
+
 KPI Summary:
 - Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:.1f}%
 - Gross Profit: {fmt_m(gp)} | GP Margin: {gp_margin:.1f}%
@@ -793,6 +679,49 @@ if st.session_state.chat_history:
             <b>🧠 AI CFO:</b><br>{chat['answer']}
         </div>
         """, unsafe_allow_html=True)
+
+# --- AI CFO SECTION ------------------------------------------------------
+
+if ask_btn and question:
+
+    st.markdown("### 🤖 AI CFO Insight")
+
+    # Rule-Based
+    st.markdown("📊 Rule-Based Answer")
+    st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
+
+    # AI CFO
+    st.markdown("🧠 AI CFO")
+    with st.spinner("AI CFO is thinking..."):
+        ai_ans = ai_cfo(question)
+
+    # ✅ SHOW ANSWER
+    st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
+
+    # ✅ SAVE CHAT (MOVE HERE)
+    st.session_state.chat_history.append({
+        "question": question,
+        "answer": ai_ans
+    })
+
+    # ✅ PDF DOWNLOAD
+    if ai_ans:
+        pdf = generate_pdf(ai_ans)
+
+        st.download_button(
+            label="📄 Download CFO Report",
+            data=pdf,
+            file_name="CFO_Report.pdf",
+            mime="application/pdf"
+        )
+
+else:
+    st.markdown("""
+    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
+    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
+    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
+    </div>
+    """, unsafe_allow_html=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)
