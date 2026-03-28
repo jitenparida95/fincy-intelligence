@@ -375,6 +375,49 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# --- AI CFO SECTION ------------------------------------------------------
+
+if ask_btn and question:
+
+    st.markdown("### 🤖 AI CFO Insight")
+
+    # Rule-Based
+    st.markdown("📊 Rule-Based Answer")
+    st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
+
+    # AI CFO
+    st.markdown("🧠 AI CFO")
+    with st.spinner("AI CFO is thinking..."):
+        ai_ans = ai_cfo(question)
+
+    # ✅ SHOW ANSWER
+    st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
+
+    # ✅ SAVE CHAT (MOVE HERE)
+    st.session_state.chat_history.append({
+        "question": question,
+        "answer": ai_ans
+    })
+
+    # ✅ PDF DOWNLOAD
+    if ai_ans:
+        pdf = generate_pdf(ai_ans)
+
+        st.download_button(
+            label="📄 Download CFO Report",
+            data=pdf,
+            file_name="CFO_Report.pdf",
+            mime="application/pdf"
+        )
+
+else:
+    st.markdown("""
+    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
+    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
+    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
+    </div>
+    """, unsafe_allow_html=True)
+
 # --- KPI ROW 1 ---
 
 # 👉 Pre-calc (VERY IMPORTANT)
@@ -694,49 +737,6 @@ if st.session_state.chat_history:
             <b>🧠 AI CFO:</b><br>{chat['answer']}
         </div>
         """, unsafe_allow_html=True)
-
-# --- AI CFO SECTION ------------------------------------------------------
-
-if ask_btn and question:
-
-    st.markdown("### 🤖 AI CFO Insight")
-
-    # Rule-Based
-    st.markdown("📊 Rule-Based Answer")
-    st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
-
-    # AI CFO
-    st.markdown("🧠 AI CFO")
-    with st.spinner("AI CFO is thinking..."):
-        ai_ans = ai_cfo(question)
-
-    # ✅ SHOW ANSWER
-    st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
-
-    # ✅ SAVE CHAT (MOVE HERE)
-    st.session_state.chat_history.append({
-        "question": question,
-        "answer": ai_ans
-    })
-
-    # ✅ PDF DOWNLOAD
-    if ai_ans:
-        pdf = generate_pdf(ai_ans)
-
-        st.download_button(
-            label="📄 Download CFO Report",
-            data=pdf,
-            file_name="CFO_Report.pdf",
-            mime="application/pdf"
-        )
-
-else:
-    st.markdown("""
-    <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
-    ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
-    Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
-    </div>
-    """, unsafe_allow_html=True)
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)
