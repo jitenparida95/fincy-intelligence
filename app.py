@@ -234,20 +234,12 @@ with st.sidebar:
 
     # --- AI CFO INPUT (TOP) ---
     st.markdown("### 💬 Ask the AI CFO")
-    st.caption("Powered by Google Gemini (free)")
+    st.caption("Powered by Groq (free)")
     st.caption("💡 Try: revenue, margin, growth, risk, variance...")
 
-    # --- Suggested Questions ---
+        # --- Suggested Questions ---
     st.markdown("""
-    <div style="
-        font-size:0.82rem;
-        color:#94a3b8;
-        padding:10px;
-        background:#0d1117;
-        border-radius:8px;
-        margin-bottom:12px;
-        line-height:1.8;
-    ">
+    <div style="font-size:0.82rem; color:#94a3b8; padding:10px; background:#0d1117; border-radius:8px; margin-bottom:12px; line-height:1.8;">
     💡 <b>Suggested questions:</b>
     <br>• Which brand is selling more?
     <br>• Where is EBITDA declining?
