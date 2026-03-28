@@ -324,6 +324,49 @@ var_pct       = var_nr / budget_nr * 100 if budget_nr else 0
 def dc(v): return "pos" if v > 0 else ("neg" if v < 0 else "neu")
 def fmt_m(v): return f"AUD {v/1000:,.1f}M" if abs(v) >= 1000 else f"AUD {v:,.0f}K"
 
+# ── RULE-BASED CFO ────────────────────────────────────────────────────────────
+def rule_cfo(q):
+    q = q.lower()
+    if "australia" in q and "revenue" in q:
+        v = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
+        return "Australia Net Revenue: " + fmt_m(v)
+    if "top market"  in q: return "Top market by revenue: " + str(top_market)
+    if "top brand"   in q: return "Top brand by revenue: " + str(top_brand)
+    if "risk"        in q: return "Highest budget risk market: " + str(risk_mkt)
+    if "revenue"     in q: return "Total Net Revenue: " + fmt_m(nr)
+    if "profit"      in q: return "Gross Profit: " + fmt_m(gp) + " | GP Margin: " + "{:.1f}".format(gp_margin) + "%"
+    if "ebitda"      in q: return "EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
+    if "margin"      in q: return "GP Margin: " + "{:.1f}".format(gp_margin) + "% | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
+    if "variance"    in q: return "NR Variance vs Budget: " + fmt_m(var_nr) + " (" + "{:+.1f}".format(var_pct) + "%)"
+    if "budget"      in q: return "Budget Achievement: " + "{:.1f}".format(budget_ach) + "% | Variance: " + fmt_m(var_nr)
+    if "cogs"        in q: return "COGS: " + fmt_m(cogs) + " (" + "{:.1f}".format(cogs_pct) + "% of NR)"
+    if "opex"        in q: return "OPEX: " + fmt_m(opex) + " (" + "{:.1f}".format(opex_pct) + "% of NR)"
+    if "trade"       in q: return "Trade Promo: " + fmt_m(trade_pr) + " (" + "{:.1f}".format(trade_pct) + "% of Base NR)"
+    if "volume"      in q: return "Total Volume: " + "{:,.0f}".format(volume/1000) + "K units"
+    if "growth"      in q: return "YoY Revenue Growth: " + "{:+.1f}".format(yoy_growth) + "%"
+    if "channel"     in q:
+        top_ch = df.groupby("Channel")["Net_Revenue_AUD000"].sum().idxmax()
+        return "Top channel by revenue: " + str(top_ch)
+    if "category"    in q:
+        top_cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().idxmax()
+        return "Top category: " + str(top_cat)
+    return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
+
+# ——— Groq AI CFO ——————————————————————————————
+def ai_cfo(question):
+    import os
+    from groq import Groq
+
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        return "No API key found"
+
+    try:
+        client = Groq(api_key=api_key)
+
+        prompt = f"""
+You are the CFO of Unilever APAC. Provide concise, incisive financial insights.
+
 top_market = df.groupby("Market")["Net_Revenue_AUD000"].sum().idxmax()
 top_brand  = df.groupby("Brand")["Net_Revenue_AUD000"].sum().idxmax()
 risk_mkt   = df.groupby("Market")["Variance_NR_AUD000"].sum().idxmin()
@@ -383,7 +426,10 @@ if ask_btn and question:
 
     # Rule-Based
     st.markdown("📊 Rule-Based Answer")
-    st.markdown('<div class="commentary-box">' + rule_cfo(question) + '</div>', unsafe_allow_html=True)
+    st.markdown(
+    f'<div class="commentary-box">{rule_cfo(question)}</div>',
+    unsafe_allow_html=True
+    )
 
     # AI CFO
     st.markdown("🧠 AI CFO")
@@ -653,49 +699,6 @@ st.markdown(f"""
   2. Accelerate online channel growth — currently highest-margin channel. &nbsp;
   3. Tighten OPEX in markets below EBITDA threshold.
 </div>""", unsafe_allow_html=True)
-
-# ── RULE-BASED CFO ────────────────────────────────────────────────────────────
-def rule_cfo(q):
-    q = q.lower()
-    if "australia" in q and "revenue" in q:
-        v = df[df["Market"]=="Australia"]["Net_Revenue_AUD000"].sum()
-        return "Australia Net Revenue: " + fmt_m(v)
-    if "top market"  in q: return "Top market by revenue: " + str(top_market)
-    if "top brand"   in q: return "Top brand by revenue: " + str(top_brand)
-    if "risk"        in q: return "Highest budget risk market: " + str(risk_mkt)
-    if "revenue"     in q: return "Total Net Revenue: " + fmt_m(nr)
-    if "profit"      in q: return "Gross Profit: " + fmt_m(gp) + " | GP Margin: " + "{:.1f}".format(gp_margin) + "%"
-    if "ebitda"      in q: return "EBITDA: " + fmt_m(ebitda) + " | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
-    if "margin"      in q: return "GP Margin: " + "{:.1f}".format(gp_margin) + "% | EBITDA Margin: " + "{:.1f}".format(ebitda_margin) + "%"
-    if "variance"    in q: return "NR Variance vs Budget: " + fmt_m(var_nr) + " (" + "{:+.1f}".format(var_pct) + "%)"
-    if "budget"      in q: return "Budget Achievement: " + "{:.1f}".format(budget_ach) + "% | Variance: " + fmt_m(var_nr)
-    if "cogs"        in q: return "COGS: " + fmt_m(cogs) + " (" + "{:.1f}".format(cogs_pct) + "% of NR)"
-    if "opex"        in q: return "OPEX: " + fmt_m(opex) + " (" + "{:.1f}".format(opex_pct) + "% of NR)"
-    if "trade"       in q: return "Trade Promo: " + fmt_m(trade_pr) + " (" + "{:.1f}".format(trade_pct) + "% of Base NR)"
-    if "volume"      in q: return "Total Volume: " + "{:,.0f}".format(volume/1000) + "K units"
-    if "growth"      in q: return "YoY Revenue Growth: " + "{:+.1f}".format(yoy_growth) + "%"
-    if "channel"     in q:
-        top_ch = df.groupby("Channel")["Net_Revenue_AUD000"].sum().idxmax()
-        return "Top channel by revenue: " + str(top_ch)
-    if "category"    in q:
-        top_cat = df.groupby("Category")["Net_Revenue_AUD000"].sum().idxmax()
-        return "Top category: " + str(top_cat)
-    return "Try: revenue, profit, ebitda, margin, variance, budget, cogs, opex, trade, volume, growth, channel, brand, category, top market, risk"
-
-# ——— Groq AI CFO ——————————————————————————————
-def ai_cfo(question):
-    import os
-    from groq import Groq
-
-    api_key = os.getenv("GROQ_API_KEY")
-    if not api_key:
-        return "No API key found"
-
-    try:
-        client = Groq(api_key=api_key)
-
-        prompt = f"""
-You are the CFO of Unilever APAC. Provide concise, incisive financial insights.
 
 KPI Summary:
 - Net Revenue: {fmt_m(nr)} | YoY: {yoy_growth:.1f}%
