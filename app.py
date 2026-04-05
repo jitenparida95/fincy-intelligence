@@ -276,6 +276,7 @@ def show_upload_section():
 
                         st.session_state["fincy_data"] = df_mapped
                         st.session_state["company_name"] = uploaded.name.replace(".csv","").replace(".xlsx","").title()
+                        st.session_state["show_upload"] = False
                         st.rerun()
 
             except Exception as e:
@@ -287,6 +288,7 @@ def show_upload_section():
             if os.path.exists(demo_path):
                 st.session_state["fincy_data"] = pd.read_csv(demo_path)
                 st.session_state["company_name"] = "FMCG Co. APAC"
+                st.session_state["show_upload"] = False
                 st.rerun()
         st.error("⚠️ Demo file not found on server. Please upload your own CSV in the other tab.")
 
@@ -297,7 +299,11 @@ def show_upload_section():
 # ── MAIN APP LOGIC ────────────────────────────────────────────────────────────
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Auto-load demo data on first visit; show upload screen only if no demo file exists
+# Auto-load demo data on first visit; show upload screen if flagged or no demo file
+if st.session_state.get("show_upload", False):
+    show_upload_section()
+    st.stop()
+
 if "fincy_data" not in st.session_state:
     loaded = False
     for demo_path in ["unilever_fpna.csv", "data.csv"]:
@@ -330,9 +336,10 @@ with st.sidebar:
 
     # Reset / Upload new data button
     if st.button("📂 Upload New Data", use_container_width=True):
-        del st.session_state["fincy_data"]
-        if "company_name" in st.session_state:
-            del st.session_state["company_name"]
+        for key in ["fincy_data", "company_name", "chat_history"]:
+            if key in st.session_state:
+                del st.session_state[key]
+        st.session_state["show_upload"] = True
         st.rerun()
 
     st.markdown("---")
