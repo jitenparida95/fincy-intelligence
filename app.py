@@ -283,14 +283,15 @@ def show_upload_section():
                 st.error(f"Error reading file: {e}")
 
     with tab2:
-        # Auto-load demo data immediately — no button needed
-        for demo_path in ["unilever_fpna.csv", "data.csv"]:
-            if os.path.exists(demo_path):
-                st.session_state["fincy_data"] = pd.read_csv(demo_path)
-                st.session_state["company_name"] = "FMCG Co. APAC"
-                st.session_state["show_upload"] = False
-                st.rerun()
-        st.error("⚠️ Demo file not found on server. Please upload your own CSV in the other tab.")
+        st.info("📌 Click below to load the sample FMCG APAC P&L dataset.")
+        if st.button("▶️ Launch Demo Dashboard", use_container_width=True):
+            for demo_path in ["unilever_fpna.csv", "data.csv"]:
+                if os.path.exists(demo_path):
+                    st.session_state["fincy_data"] = pd.read_csv(demo_path)
+                    st.session_state["company_name"] = "FMCG Co. APAC"
+                    st.session_state["show_upload"] = False
+                    st.rerun()
+            st.error("⚠️ Demo file not found on server.")
 
     return None
 
