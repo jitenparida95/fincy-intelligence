@@ -190,7 +190,7 @@ def show_upload_section():
     </div>
     """, unsafe_allow_html=True)
 
-    tab1, tab2 = st.tabs(["📂 Upload Your CSV", "📋 Use Demo Data"])
+    tab2, tab1 = st.tabs(["📋 Use Demo Data", "📂 Upload Your CSV"])
 
     with tab1:
         st.markdown("""
