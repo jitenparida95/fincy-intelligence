@@ -282,15 +282,13 @@ def show_upload_section():
                 st.error(f"Error reading file: {e}")
 
     with tab2:
-        st.info("📌 The demo uses a sample FMCG APAC P&L dataset to showcase Fincy's capabilities.")
-        if st.button("▶️ Launch with Demo Data", use_container_width=True):
-            # Try loading default demo file
-            for path in ["unilever_fpna.csv", "data.csv"]:
-                if os.path.exists(path):
-                    st.session_state["fincy_data"] = pd.read_csv(path)
-                    st.session_state["company_name"] = "FMCG Co. APAC"
-                    st.rerun()
-            st.error("Demo file not found. Please upload your own CSV.")
+        # Auto-load demo data immediately — no button needed
+        for demo_path in ["unilever_fpna.csv", "data.csv"]:
+            if os.path.exists(demo_path):
+                st.session_state["fincy_data"] = pd.read_csv(demo_path)
+                st.session_state["company_name"] = "FMCG Co. APAC"
+                st.rerun()
+        st.error("⚠️ Demo file not found on server. Please upload your own CSV in the other tab.")
 
     return None
 
@@ -299,10 +297,18 @@ def show_upload_section():
 # ── MAIN APP LOGIC ────────────────────────────────────────────────────────────
 # ══════════════════════════════════════════════════════════════════════════════
 
-# Check if data is loaded
+# Auto-load demo data on first visit; show upload screen only if no demo file exists
 if "fincy_data" not in st.session_state:
-    show_upload_section()
-    st.stop()
+    loaded = False
+    for demo_path in ["unilever_fpna.csv", "data.csv"]:
+        if os.path.exists(demo_path):
+            st.session_state["fincy_data"] = pd.read_csv(demo_path)
+            st.session_state["company_name"] = "FMCG Co. APAC"
+            loaded = True
+            break
+    if not loaded:
+        show_upload_section()
+        st.stop()
 
 df_raw = st.session_state["fincy_data"]
 company_name = st.session_state.get("company_name", "Your Company")
