@@ -193,6 +193,48 @@ def show_upload_section():
     tab2, tab1 = st.tabs(["📋 Use Demo Data", "📂 Upload Your CSV"])
 
     with tab1:
+
+        # ── SAMPLE TEMPLATE DOWNLOAD ─────────────────────────────────────
+        sample_data = {
+            "Year": [2024, 2024, 2024],
+            "Quarter": ["Q1", "Q1", "Q2"],
+            "Month": ["Jan", "Feb", "Mar"],
+            "Month_Num": [1, 2, 3],
+            "Market": ["India", "India", "India"],
+            "Category": ["Home Care", "Home Care", "Personal Care"],
+            "Brand": ["Brand A", "Brand B", "Brand A"],
+            "Channel": ["Modern Trade", "E-Commerce", "Modern Trade"],
+            "Type": ["Actual", "Actual", "Actual"],
+            "Net_Revenue_AUD000": [5000, 4200, 5500],
+            "Gross_Profit_AUD000": [2500, 2100, 2750],
+            "EBITDA_AUD000": [1500, 1200, 1650],
+            "COGS_AUD000": [2500, 2100, 2750],
+            "OPEX_AUD000": [1000, 900, 1100],
+            "Volume_Units": [10000, 8500, 11000],
+            "Base_NR_AUD000": [5200, 4400, 5700],
+            "Trade_Promo_AUD000": [200, 200, 200],
+            "Budget_NR_AUD000": [5100, 4300, 5600],
+            "Variance_NR_AUD000": [-100, -100, -100],
+            "PY_NR_AUD000": [4800, 4000, 5200],
+        }
+        import io
+        sample_df = __import__("pandas").DataFrame(sample_data)
+        csv_buffer = io.StringIO()
+        sample_df.to_csv(csv_buffer, index=False)
+        csv_bytes = csv_buffer.getvalue().encode()
+
+        col_dl1, col_dl2, col_dl3 = st.columns([1, 2, 1])
+        with col_dl2:
+            st.download_button(
+                label="📥 Download Sample CSV Template",
+                data=csv_bytes,
+                file_name="fincy_sample_template.csv",
+                mime="text/csv",
+                use_container_width=True,
+                help="Download this template, fill in your data, then upload below"
+            )
+            st.caption("👆 Fill this template with your data, then upload below")
+
         st.markdown("""
         <div class="upload-box">
           <div style="font-size:2rem;">📊</div>
