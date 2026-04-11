@@ -514,7 +514,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
     <a href="https://fincy-intelligence.streamlit.app" target="_blank">App</a>
     <a href="#features">Features</a>
     <a href="#pricing">Pricing</a>
-    <a href="/cdn-cgi/l/email-protection#81cbe8f5e4eff1e0f3e8e5e0b8b4c1e6ece0e8edafe2eeec">Contact</a>
+    <a href="mailto:Jitenparida95@gmail.com">Contact</a>
   </div>
 </footer>
 
@@ -540,14 +540,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
       <div class="form-success-title">You're on the list!</div>
       <div class="form-success-sub">
         Welcome to Fincy Intelligence.<br>
-        Jitendra will reach out to you at <strong style="color:var(--cyan)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="501a3924353e203122393431696510373d31393c7e333f3d">[email&#160;protected]</a></strong><br><br>
+        Jitendra will reach out to you at <strong style="color:var(--cyan)">Jitenparida95@gmail.com</strong><br><br>
         <a href="https://fincy-intelligence.streamlit.app" style="color:var(--cyan)">Launch the app now &#x2192;</a>
       </div>
     </div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // HAMBURGER
 function toggleMenu(){
   var h=document.getElementById('hamburger');
@@ -582,7 +582,7 @@ function submitSignup(){
 
   // Send to Formspree → forwards to Jitenparida95@gmail.com
   // Replace YOUR_FORM_ID below after creating free account at formspree.io
-  fetch('https://formspree.io/f/mvzvybpr',{
+  fetch('https://formspree.io/f/xwkgnjqb',{
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
     body:JSON.stringify({
@@ -606,3 +606,13 @@ function submitSignup(){
 }
 
 // Close mobile menu on resize
+window.addEventListener('resize',function(){
+  if(window.innerWidth>768){
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  }
+});
+</script>
+</body>
+</html>
