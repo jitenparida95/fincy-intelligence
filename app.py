@@ -6,6 +6,11 @@ from plotly.subplots import make_subplots
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
+# 🎯 MODULE ROUTING FROM URL
+query_params = st.query_params
+
+if "module" in query_params:
+    st.session_state.active_module = query_params["module"]
 
 # ── PAGE CONFIG ───────────────────────────────────────────────────────────────
 st.set_page_config(
