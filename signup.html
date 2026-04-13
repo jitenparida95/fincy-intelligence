@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Signup - Fincy</title>
+<title>Signup</title>
 </head>
-<body style="font-family:sans-serif; text-align:center; padding:100px;">
+<body>
 
-<h1>🚀 Start Free Trial</h1>
+<h2>Start Free Trial</h2>
 
-<input placeholder="Enter Email" id="email" style="padding:10px; width:250px;"><br><br>
+<input id="name" placeholder="Name"><br><br>
+<input id="email" placeholder="Email"><br><br>
 
-<button onclick="goApp()" style="padding:10px 20px;">Continue</button>
+<button onclick="goApp()">Start</button>
 
 <script>
-function goApp() {
-  window.location.href = "https://fincy-intelligence.streamlit.app/?module=fpa";
+function getModule(){
+ const p = new URLSearchParams(window.location.search);
+ return p.get("module") || "fpa";
+}
+
+function goApp(){
+ const m = getModule();
+ window.location.href = "https://fincy-intelligence.streamlit.app/?module=" + m;
 }
 </script>
 
