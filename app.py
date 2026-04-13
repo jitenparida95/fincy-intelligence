@@ -380,77 +380,115 @@ def run_fpa():
     # Upload
     if "df_raw" not in st.session_state:
         st.markdown("""
-<div style="text-align:center;padding:48px 20px;">
+<div style="text-align:center;padding:48px 20px 24px;">
   <div class="fin-title">FP&amp;A Intelligence</div>
-  <div class="fin-sub" style="margin-top:8px;">UPLOAD YOUR P&amp;L DATA TO BEGIN</div>
+  <div class="fin-sub" style="margin-top:8px;">UPLOAD YOUR P&amp;L DATA TO BEGIN · OR USE SAMPLE DATA</div>
 </div>""", unsafe_allow_html=True)
-        cl,cc,cr = st.columns([1,2,1])
-        with cc:
-            uploaded = st.file_uploader("📂 Upload Financial Data (CSV)", type=["csv"],
-                help="Upload any P&L CSV. You'll map your columns in the next step.")
-            st.markdown("<div style='text-align:center;margin:12px 0;font-size:0.72rem;color:#5a5648;font-family:\"IBM Plex Mono\",monospace;'>— OR —</div>", unsafe_allow_html=True)
-            use_sample = st.button("📊 Use FMCG Sample Data", use_container_width=True)
 
+        # Sample button FIRST — outside any column block
+        col_l, col_c, col_r = st.columns([1, 2, 1])
+        with col_c:
+            use_sample = st.button("📊 Use FMCG Sample Data (No Upload Needed)", use_container_width=True, key="fpa_sample_btn")
+            st.markdown("<div style='text-align:center;margin:10px 0 6px;font-size:0.7rem;color:#5a5648;font-family:\"IBM Plex Mono\",monospace;letter-spacing:0.1em;'>— OR UPLOAD YOUR OWN —</div>", unsafe_allow_html=True)
+            uploaded = st.file_uploader("📂 Upload Financial Data (CSV)", type=["csv"],
+                help="Upload any P&L CSV. You'll map your columns in the next step.",
+                key="fpa_uploader")
+
+        # Handle sample button
         if use_sample:
             st.session_state.df_raw = pd.read_csv(io.StringIO(SAMPLE_FMCG_CSV))
-            st.session_state.mapping_confirmed = False; st.rerun()
-        if uploaded:
+            st.session_state.mapping_confirmed = False
+            st.session_state.col_map = {}
+            st.rerun()
+
+        # Handle file upload
+        if uploaded is not None:
             st.session_state.df_raw = pd.read_csv(uploaded)
-            st.session_state.mapping_confirmed = False; st.rerun()
+            st.session_state.mapping_confirmed = False
+            st.session_state.col_map = {}
+            st.rerun()
+
         st.stop()
 
     df_raw = st.session_state.df_raw
 
-    # Column mapping
+    # Column mapping step
     if not st.session_state.mapping_confirmed:
-        st.markdown('<div style="text-align:center;padding:20px 0 10px;"><div class="fin-title" style="font-size:1.6rem;">Map Your Columns</div><div class="fin-sub" style="margin-top:6px;">STEP 2 OF 2 · MATCH CSV COLUMNS TO FINCY METRICS</div></div>', unsafe_allow_html=True)
-        st.markdown('<div class="mapper-box"><div style="font-size:0.78rem;color:#a09880;">Match your CSV columns to the metrics Fincy needs.<br><span style="color:#f87171;">★ Required</span> &nbsp;|&nbsp; <span style="color:#5a5648;">○ Optional (enables richer analysis)</span></div></div>', unsafe_allow_html=True)
+        st.markdown("""
+<div style="text-align:center;padding:20px 0 16px;">
+  <div class="fin-title" style="font-size:1.6rem;">Map Your Columns</div>
+  <div class="fin-sub" style="margin-top:6px;">STEP 2 OF 2 · MATCH YOUR CSV COLUMNS TO FINCY METRICS</div>
+  <div style="margin-top:8px;font-size:0.78rem;color:#5a5648;font-family:'IBM Plex Mono',monospace;">
+    {rows} rows loaded · {cols} columns detected
+  </div>
+</div>""".format(rows=f"{len(df_raw):,}", cols=len(df_raw.columns)), unsafe_allow_html=True)
+
+        st.markdown('<div class="mapper-box"><div style="font-size:0.78rem;color:#a09880;line-height:1.7;">Match your CSV columns to the metrics Fincy Intelligence needs.<br><span style="color:#f87171;">★ Required</span> — map as many as you have &nbsp;|&nbsp; <span style="color:#5a5648;">○ Optional</span> — enables richer charts &amp; filters.</div></div>', unsafe_allow_html=True)
+
         csv_cols = ["— skip —"] + list(df_raw.columns)
         col_map = {}
-        st.markdown("**★ Financial Metrics (Required)**")
-        r1,r2,r3 = st.columns(3)
-        for i,(key,label) in enumerate(REQUIRED_COLS.items()):
-            col=[r1,r2,r3][i%3]
+
+        st.markdown("##### ★ Financial Metrics")
+        r1, r2, r3 = st.columns(3)
+        for i, (key, label) in enumerate(REQUIRED_COLS.items()):
+            col = [r1, r2, r3][i % 3]
             with col:
-                guess = next((c for c in df_raw.columns if key.lower().replace("_","") in c.lower().replace("_","")), "— skip —")
+                guess = next(
+                    (c for c in df_raw.columns if key.lower().replace("_","") in c.lower().replace("_","")),
+                    "— skip —"
+                )
                 di = csv_cols.index(guess) if guess in csv_cols else 0
                 col_map[key] = st.selectbox(f"★ {label}", csv_cols, index=di, key=f"map_{key}")
-        st.markdown("**○ Dimensions (Optional but recommended)**")
-        d1,d2,d3 = st.columns(3)
-        for i,(key,label) in enumerate(OPTIONAL_DIMS.items()):
-            col=[d1,d2,d3][i%3]
+
+        st.markdown("##### ○ Dimensions (Optional — enables filters & drill-downs)")
+        d1, d2, d3 = st.columns(3)
+        for i, (key, label) in enumerate(OPTIONAL_DIMS.items()):
+            col = [d1, d2, d3][i % 3]
             with col:
-                guess = next((c for c in df_raw.columns if key.lower() in c.lower()), "— skip —")
+                guess = next(
+                    (c for c in df_raw.columns if key.lower() in c.lower()),
+                    "— skip —"
+                )
                 di = csv_cols.index(guess) if guess in csv_cols else 0
                 col_map[key] = st.selectbox(f"○ {label}", csv_cols, index=di, key=f"map_{key}")
-        if st.button("✅ Confirm Mapping & Launch Dashboard", use_container_width=True):
-            st.session_state.col_map = col_map
-            st.session_state.mapping_confirmed = True; st.rerun()
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        confirm_col1, confirm_col2, confirm_col3 = st.columns([1, 2, 1])
+        with confirm_col2:
+            if st.button("✅ Confirm Mapping & Launch Dashboard →", use_container_width=True, key="confirm_mapping"):
+                st.session_state.col_map = col_map
+                st.session_state.mapping_confirmed = True
+                st.rerun()
         st.stop()
 
-    # Apply mapping and filters
+    # Apply mapping and build full sidebar — only after mapping is confirmed
     col_map = st.session_state.col_map
-    rename = {v:k for k,v in col_map.items() if v and v!="— skip —"}
+    rename = {v: k for k, v in col_map.items() if v and v != "— skip —"}
     df_mapped = df_raw.rename(columns=rename)
 
+    # Full sidebar with filters + AI CFO
     with st.sidebar:
-        def filt(label,key):
-            if key in col_map and col_map[key]!="— skip —" and key in df_mapped.columns:
-                opts=["All"]+sorted(df_mapped[key].dropna().unique().tolist())
-                return st.selectbox(label,opts)
-            return "All"
         st.markdown("### Filters")
-        fy=filt("🗓️ Year","Year"); fq=filt("📊 Quarter","Quarter"); fm=filt("🌍 Market","Market")
-        fc=filt("🏷️ Category","Category"); fb=filt("💎 Brand","Brand")
-        fch=filt("🛒 Channel","Channel"); ft=filt("📄 Type","Type")
+        def filt(label, key):
+            if key in col_map and col_map[key] != "— skip —" and key in df_mapped.columns:
+                opts = ["All"] + sorted(df_mapped[key].dropna().unique().tolist())
+                return st.selectbox(label, opts)
+            return "All"
+        fy  = filt("🗓️ Year",     "Year")
+        fq  = filt("📊 Quarter",  "Quarter")
+        fm  = filt("🌍 Market",   "Market")
+        fc  = filt("🏷️ Category", "Category")
+        fb  = filt("💎 Brand",    "Brand")
+        fch = filt("🛒 Channel",  "Channel")
+        ft  = filt("📄 Type",     "Type")
         st.markdown("---")
         st.markdown("### 💬 Ask the AI CFO")
         st.caption("Powered by Groq · Llama 3.1")
         question = st.text_input("", placeholder="e.g. Why is margin declining?")
-        c1,c2=st.columns([2,1])
-        with c1: ask_btn=st.button("🚀 Ask CFO",use_container_width=True)
-        with c2: clear_btn=st.button("🧹 Clear",use_container_width=True)
-        if clear_btn: st.session_state.chat_history=[]
+        c1, c2 = st.columns([2, 1])
+        with c1: ask_btn = st.button("🚀 Ask CFO", use_container_width=True)
+        with c2: clear_btn = st.button("🧹 Clear", use_container_width=True)
+        if clear_btn: st.session_state.chat_history = []
 
     df=df_mapped.copy()
     if fy!="All" and "Year" in df.columns: df=df[df["Year"]==int(fy)]
