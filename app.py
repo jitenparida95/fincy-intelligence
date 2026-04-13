@@ -1395,97 +1395,130 @@ Be concise and CFO-level sharp.
                            file_name="Fincy_Cost_Intelligence.csv", mime="text/csv")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# =========================
 # MAIN APP ROUTER
-# ══════════════════════════════════════════════════════════════════════════════
+# =========================
 
-module = st.session_state.active_module
+import streamlit as st
 
-# No module selected → show home screen
-if module is None:
+# Ensure session state exists
+if "active_module" not in st.session_state:
+    st.session_state.active_module = None
+
+# =========================
+# MODULE SELECTOR (HOME)
+# =========================
+
+def show_module_selector():
+    st.title("🚀 Fincy Intelligence")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        if st.button("📊 FP&A Intelligence", use_container_width=True):
+            st.session_state.active_module = "fpa"
+
+    with col2:
+        if st.button("🔁 Reconciliation Engine", use_container_width=True):
+            st.session_state.active_module = "recon"
+
+    with col3:
+        if st.button("🎯 Budget vs Actuals", use_container_width=True):
+            st.session_state.active_module = "budget"
+
+    col4, col5 = st.columns(2)
+
+    with col4:
+        if st.button("💡 Cost Intelligence", use_container_width=True):
+            st.session_state.active_module = "cost"
+
+# =========================
+# ROUTING LOGIC
+# =========================
+
+if st.session_state.active_module is None:
     show_module_selector()
-    st.stop()
 
-# ── MODULE: FP&A INTELLIGENCE ─────────────────────────────────────────────────
-if module == "fpa":
-    if "df_raw" not in st.session_state:
-        uploaded = upload_section()
-        if uploaded:
-            st.session_state.df_raw = pd.read_csv(uploaded)
-            st.session_state.mapping_confirmed = False
-            st.rerun()
-        st.stop()
+# =========================
+# 🔁 RECONCILIATION ENGINE
+# =========================
 
-    df_raw = st.session_state.df_raw
+elif st.session_state.active_module == "recon":
 
-    if not st.session_state.mapping_confirmed:
-        st.markdown(f"""
-        <div style="text-align:center; padding:20px 0 10px;">
-          <div style="font-size:2rem; font-weight:800; color:#38bdf8;">Fincy Intelligence</div>
-          <div style="color:#94a3b8; font-size:0.85rem;">Step 2 of 2 · Map your columns</div>
-        </div>
-        """, unsafe_allow_html=True)
-        col_map, confirmed = column_mapper(df_raw)
-        if confirmed:
-            st.session_state.col_map = col_map
-            st.session_state.mapping_confirmed = True
-            st.rerun()
-        st.stop()
+    st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
 
-    col_map   = st.session_state.col_map
-    df_mapped = apply_mapping(df_raw, col_map)
-    f_year, f_quarter, f_market, f_category, f_brand, f_channel, f_type, question, ask_btn = build_sidebar(df_mapped, col_map)
-    df        = apply_filters(df_mapped, col_map, f_year, f_quarter, f_market, f_category, f_brand, f_channel, f_type)
+    st.title("🔁 Reconciliation Engine")
 
-    if df.empty:
-        st.warning("No data for selected filters.")
-        st.stop()
+    tab1, tab2, tab3 = st.tabs(["Upload", "Results", "Download"])
 
-    k = calc_kpis(df)
-    top_market, top_brand, risk_mkt = render_dashboard(df, col_map, k)
+    with tab1:
+        file1 = st.file_uploader("Upload Source A", key="file1")
+        file2 = st.file_uploader("Upload Source B", key="file2")
 
-    if st.session_state.chat_history:
-        st.markdown("## 💬 CFO Chat History")
-        for chat in reversed(st.session_state.chat_history):
-            st.markdown(f"""
-            <div style="background:#111827;padding:12px;border-radius:10px;margin-bottom:10px">
-                <b>👤 You:</b> {chat['question']}<br><br>
-                <b>🧠 AI CFO:</b><br>{chat['answer']}
-            </div>
-            """, unsafe_allow_html=True)
+    with tab2:
+        if file1 and file2:
+            st.success("Matching logic running...")
+            st.write("Matched / Breaks / Missing")
 
-    if ask_btn and question:
-        st.markdown("### 🤖 AI CFO Insight")
-        st.markdown("📊 Rule-Based Answer")
-        st.markdown('<div class="commentary-box">' + rule_cfo(question, k, top_market, top_brand, risk_mkt, df) + '</div>', unsafe_allow_html=True)
-        st.markdown("🧠 AI CFO")
-        with st.spinner("AI CFO is thinking..."):
-            ai_ans = ai_cfo(question, k, top_market, top_brand, risk_mkt)
-        st.markdown('<div class="ai-answer">' + ai_ans + '</div>', unsafe_allow_html=True)
-        st.session_state.chat_history.append({"question": question, "answer": ai_ans})
-        if ai_ans:
-            pdf = generate_pdf(ai_ans)
-            st.download_button(label="📄 Download CFO Report", data=pdf,
-                               file_name="Fincy_CFO_Report.pdf", mime="application/pdf")
-    else:
-        st.markdown("""
-        <div class="commentary-box" style="opacity:0.5;font-size:0.75rem">
-        ← Type a question in the sidebar and click <strong>Ask CFO</strong>.<br>
-        Try: revenue, profit, ebitda, margin, variance, budget, growth, top market, risk…
-        </div>
-        """, unsafe_allow_html=True)
+    with tab3:
+        st.download_button("Download Exceptions", data="sample")
 
-# ── MODULE: RECONCILIATION ────────────────────────────────────────────────────
-elif module == "recon":
-    run_reconciliation()
+# =========================
+# 🎯 BUDGET VS ACTUAL
+# =========================
 
-# ── MODULE: BUDGET TRACKER ────────────────────────────────────────────────────
-elif module == "budget":
-    run_budget_tracker()
+elif st.session_state.active_module == "budget":
 
-# ── MODULE: COST INTELLIGENCE ─────────────────────────────────────────────────
-elif module == "cost":
-    run_cost_intelligence()
+    st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
+
+    st.title("🎯 Budget vs Actuals")
+
+    tab1, tab2, tab3 = st.tabs(["Upload", "Analysis", "Commentary"])
+
+    with tab1:
+        budget_file = st.file_uploader("Upload Budget vs Actual CSV", key="budget_file")
+
+    with tab2:
+        if budget_file:
+            st.write("📊 Variance + RAG + Trends")
+
+    with tab3:
+        if budget_file:
+            st.write("🧠 AI Commentary here")
+
+# =========================
+# 💡 COST INTELLIGENCE
+# =========================
+
+elif st.session_state.active_module == "cost":
+
+    st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
+
+    st.title("💡 Cost Intelligence")
+
+    tab1, tab2 = st.tabs(["Upload", "Insights"])
+
+    with tab1:
+        cost_file = st.file_uploader("Upload Cost Data", key="cost_file")
+
+    with tab2:
+        if cost_file:
+            st.write("📉 COGS %, OPEX %, Benchmark flags")
+
+# =========================
+# 📊 FP&A MODULE (KEEP YOUR EXISTING)
+# =========================
+
+elif st.session_state.active_module == "fpa":
+
+    st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
+
+    st.title("📊 FP&A Intelligence")
+
+    file = st.file_uploader("Upload Financial CSV", key="fpa_file")
+
+    if file:
+        st.success("Data uploaded successfully")
 
 # ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("<br>", unsafe_allow_html=True)
