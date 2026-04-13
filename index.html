@@ -85,11 +85,27 @@ section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24p
 
 /* FEATURES */
 .features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px;}
-.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;transition:border-color 0.3s,transform 0.3s;}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:26px;transition:border-color 0.3s,transform 0.3s;}
 .feat-card:hover{border-color:var(--accent,var(--cyan));transform:translateY(-4px);}
 .feat-icon{font-size:1.5rem;margin-bottom:14px;display:block;}
 .feat-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:#f0f6ff;margin-bottom:8px;}
 .feat-desc{font-size:0.77rem;color:var(--subtle);line-height:1.8;}
+
+/* MODULE CARDS — landing page */
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px;}
+.module-card-lp{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:30px 26px;transition:border-color 0.3s,transform 0.3s;position:relative;overflow:hidden;}
+.module-card-lp::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,var(--cyan));}
+.module-card-lp:hover{border-color:var(--mc,var(--cyan));transform:translateY(-4px);}
+.module-lp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.module-lp-icon{font-size:1.6rem;}
+.module-lp-badge{font-size:0.56rem;letter-spacing:2px;text-transform:uppercase;border:1px solid;padding:2px 8px;border-radius:3px;}
+.module-lp-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:#f0ede8;margin-bottom:10px;}
+.module-lp-desc{font-size:0.76rem;color:var(--subtle);line-height:1.8;margin-bottom:16px;}
+.module-lp-list{list-style:none;margin-bottom:20px;display:flex;flex-direction:column;gap:6px;}
+.module-lp-list li{font-size:0.7rem;color:var(--subtle);padding-left:14px;position:relative;}
+.module-lp-list li::before{content:'→';position:absolute;left:0;color:var(--mc,var(--cyan));font-size:0.65rem;}
+.module-lp-cta{display:inline-block;font-size:0.67rem;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--cyan);padding:7px 14px;border-radius:4px;text-decoration:none;transition:background 0.2s,color 0.2s;}
+.module-lp-cta:hover{background:var(--mc,var(--cyan));color:#0c0e0f;border-color:var(--mc,var(--cyan));}
 
 /* PREVIEW */
 .preview-wrap{margin-top:48px;border:1px solid var(--border);border-radius:20px;overflow:hidden;background:var(--surface);}
@@ -219,6 +235,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
   section{padding:0 16px 56px;}
   .section-title{font-size:1.5rem;}
   .features-grid{grid-template-columns:1fr;}
+  .modules-grid{grid-template-columns:1fr;}
   .mini-kpi-grid{grid-template-columns:repeat(2,1fr);}
   .mini-kpi:last-child{display:none;}
   .mini-charts{grid-template-columns:1fr;}
@@ -324,7 +341,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
 <!-- FEATURES -->
 <section id="features">
   <div class="section-tag">Features</div>
-  <h2 class="section-title">Everything a CFO<br>needs. Instant.</h2>
+  <h2 class="section-title">One platform.<br>Every CFO decision.</h2>
   <p class="section-sub">Built for FP&amp;A teams who need answers now &mdash; not after a week of dashboard builds.</p>
   <div class="features-grid">
     <div class="feat-card" style="--accent:#38bdf8"><span class="feat-icon">&#x1F4CA;</span><div class="feat-title">P&amp;L Intelligence</div><div class="feat-desc">Revenue, Gross Profit, EBITDA, COGS, and OPEX &mdash; all computed instantly from your data with benchmark comparisons.</div></div>
@@ -333,6 +350,80 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
     <div class="feat-card" style="--accent:#fb923c"><span class="feat-icon">&#x1F5C2;&#xFE0F;</span><div class="feat-title">Any CSV, Any Company</div><div class="feat-desc">Upload your own financial data. Map your columns in 60 seconds. No hardcoded templates. Works for any industry.</div></div>
     <div class="feat-card" style="--accent:#f472b6"><span class="feat-icon">&#x1F4C4;</span><div class="feat-title">Board-Ready Reports</div><div class="feat-desc">One-click PDF export of AI CFO insights. Auto-generated executive commentary. Ready for the C-suite.</div></div>
     <div class="feat-card" style="--accent:#facc15"><span class="feat-icon">&#x1F512;</span><div class="feat-title">Session Isolated</div><div class="feat-desc">Your data never leaves your session. No server storage. No cross-tenant leakage. Enterprise-grade privacy by design.</div></div>
+  </div>
+
+  <!-- MODULES -->
+  <div style="margin-top:60px;">
+    <div class="section-tag" style="margin-bottom:12px;">Platform Modules</div>
+    <h3 style="font-family:'Syne',sans-serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:800;color:#f0ede8;margin-bottom:10px;">Four modules. One login.</h3>
+    <p class="section-sub">Each module is a standalone tool. Use one or all four &mdash; your data never leaves your session.</p>
+    <div class="modules-grid">
+
+      <div class="module-card-lp" style="--mc:#38bdf8">
+        <div class="module-lp-top">
+          <span class="module-lp-icon">&#x1F4CA;</span>
+          <span class="module-lp-badge" style="border-color:#38bdf8;color:#38bdf8;">Core</span>
+        </div>
+        <div class="module-lp-title">FP&amp;A Intelligence</div>
+        <div class="module-lp-desc">Upload any P&amp;L CSV and get instant KPI dashboards, market variance heatmaps, brand scorecards, and AI CFO insights &mdash; in under 60 seconds.</div>
+        <ul class="module-lp-list">
+          <li>10+ KPI metrics computed instantly</li>
+          <li>7 interactive Plotly charts</li>
+          <li>AI CFO powered by Llama 3.1</li>
+          <li>Board commentary auto-generated</li>
+        </ul>
+        <a href="https://fincy-intelligence.streamlit.app" class="module-lp-cta" target="_blank">Launch Module &#x2192;</a>
+      </div>
+
+      <div class="module-card-lp" style="--mc:#34d399">
+        <div class="module-lp-top">
+          <span class="module-lp-icon">&#x1F501;</span>
+          <span class="module-lp-badge" style="border-color:#34d399;color:#34d399;">New</span>
+        </div>
+        <div class="module-lp-title">Reconciliation Engine</div>
+        <div class="module-lp-desc">Upload two data sources &mdash; ERP vs Bank, GL vs Sub-ledger, PO vs Invoice &mdash; and auto-match rows, flag breaks, and download exceptions in seconds.</div>
+        <ul class="module-lp-list">
+          <li>Auto-detects match key &amp; amount columns</li>
+          <li>Flags: Matched · Amount Break · Missing</li>
+          <li>Match rate donut chart</li>
+          <li>Downloadable exceptions report (CSV)</li>
+        </ul>
+        <a href="https://fincy-intelligence.streamlit.app" class="module-lp-cta" target="_blank" style="border-color:#34d399;color:#34d399;">Launch Module &#x2192;</a>
+      </div>
+
+      <div class="module-card-lp" style="--mc:#facc15">
+        <div class="module-lp-top">
+          <span class="module-lp-icon">&#x1F3AF;</span>
+          <span class="module-lp-badge" style="border-color:#facc15;color:#facc15;">New</span>
+        </div>
+        <div class="module-lp-title">Budget vs Actuals Tracker</div>
+        <div class="module-lp-desc">RAG-status variance tracker with month-by-month drill-down, traffic light reporting, and AI-generated board commentary &mdash; board-pack ready in minutes.</div>
+        <ul class="module-lp-list">
+          <li>Green / Amber / Red per line item</li>
+          <li>Configurable achievement thresholds</li>
+          <li>Period trend &amp; dimension drill-down</li>
+          <li>Auto board commentary + CSV export</li>
+        </ul>
+        <a href="https://fincy-intelligence.streamlit.app" class="module-lp-cta" target="_blank" style="border-color:#facc15;color:#facc15;">Launch Module &#x2192;</a>
+      </div>
+
+      <div class="module-card-lp" style="--mc:#f472b6">
+        <div class="module-lp-top">
+          <span class="module-lp-icon">&#x1F4A1;</span>
+          <span class="module-lp-badge" style="border-color:#f472b6;color:#f472b6;">New</span>
+        </div>
+        <div class="module-lp-title">Cost Intelligence</div>
+        <div class="module-lp-desc">Deep-dive COGS and OPEX analysis with configurable benchmarks, segment-level cost efficiency scores, and AI-driven cost reduction recommendations.</div>
+        <ul class="module-lp-list">
+          <li>COGS % &amp; OPEX % vs your benchmarks</li>
+          <li>Flags every line above threshold</li>
+          <li>Cost waterfall &amp; segment breakdown</li>
+          <li>AI cost reduction recommendations</li>
+        </ul>
+        <a href="https://fincy-intelligence.streamlit.app" class="module-lp-cta" target="_blank" style="border-color:#f472b6;color:#f472b6;">Launch Module &#x2192;</a>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -514,7 +605,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
     <a href="https://fincy-intelligence.streamlit.app" target="_blank">App</a>
     <a href="#features">Features</a>
     <a href="#pricing">Pricing</a>
-    <a href="mailto:Jitenparida95@gmail.com">Contact</a>
+    <a href="/cdn-cgi/l/email-protection#753f1c01101b0514071c11144c40351218141c195b161a18">Contact</a>
   </div>
 </footer>
 
@@ -540,14 +631,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:32
       <div class="form-success-title">You're on the list!</div>
       <div class="form-success-sub">
         Welcome to Fincy Intelligence.<br>
-        Jitendra will reach out to you at <strong style="color:var(--cyan)">Jitenparida95@gmail.com</strong><br><br>
+        Jitendra will reach out to you at <strong style="color:var(--cyan)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="642e0d10010a1405160d00055d51240309050d084a070b09">[email&#160;protected]</a></strong><br><br>
         <a href="https://fincy-intelligence.streamlit.app" style="color:var(--cyan)">Launch the app now &#x2192;</a>
       </div>
     </div>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // HAMBURGER
 function toggleMenu(){
   var h=document.getElementById('hamburger');
@@ -606,13 +697,4 @@ function submitSignup(){
 }
 
 // Close mobile menu on resize
-window.addEventListener('resize',function(){
-  if(window.innerWidth>768){
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.getElementById('hamburger').classList.remove('open');
-    document.body.style.overflow='';
-  }
-});
-</script>
-</body>
-</html>
+window.add
