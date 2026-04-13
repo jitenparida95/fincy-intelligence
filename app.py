@@ -218,6 +218,8 @@ _defaults = {
     "recon_sample_b": False,
     "budget_use_sample": False,
     "cost_use_sample": False,
+    "budget_results": None,
+    "cost_results": None,
 }
 for k, v in _defaults.items():
     if k not in st.session_state:
@@ -1040,6 +1042,7 @@ def run_budget():
         st.markdown("---")
         if st.button("🏠 Module Home", use_container_width=True, key="budget_home"):
             st.session_state.budget_use_sample = False
+            st.session_state.budget_results    = None
             st.session_state.active_module = None
             st.rerun()
         green_t = st.slider("🟢 Green (%)", 90, 100, 95, key="gt")
@@ -1100,8 +1103,23 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         dim_col  = st.selectbox("Dimension (opt)", dim_opts,
                                 index=dim_opts.index(dg) if dg in dim_opts else 0, key="b_dim")
 
-    if not st.button("🎯 Run Budget Tracker", use_container_width=True, key="run_budget"):
+    run_clicked = st.button("🎯 Run Budget Tracker", use_container_width=True, key="run_budget")
+    if run_clicked:
+        st.session_state["budget_results"] = {
+            "df": df.copy(), "per_col": per_col, "act_col": act_col,
+            "bud_col": bud_col, "py_col": py_col, "dim_col": dim_col,
+        }
+        st.rerun()
+
+    if "budget_results" not in st.session_state:
+        st.markdown('<div class="box" style="opacity:0.5;font-size:0.74rem;">← Configure columns above and click Run Budget Tracker.</div>', unsafe_allow_html=True)
         return
+
+    # Restore from session state so results persist when sliders change
+    _r = st.session_state["budget_results"]
+    df = _r["df"].copy()
+    per_col = _r["per_col"]; act_col = _r["act_col"]
+    bud_col = _r["bud_col"]; py_col  = _r["py_col"]; dim_col = _r["dim_col"]
 
     df["_A"] = pd.to_numeric(df[act_col], errors="coerce").fillna(0)
     df["_B"] = pd.to_numeric(df[bud_col], errors="coerce").fillna(0)
@@ -1267,6 +1285,7 @@ def run_cost():
         st.markdown("---")
         if st.button("🏠 Module Home", use_container_width=True, key="cost_home"):
             st.session_state.cost_use_sample = False
+            st.session_state.cost_results    = None
             st.session_state.active_module   = None
             st.rerun()
         cogs_bench = st.slider("COGS Benchmark (% Rev)", 20, 80, 50, key="cb")
@@ -1323,8 +1342,23 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         dim_col  = st.selectbox("Segment/SKU (opt)", dim_opts,
                                 index=dim_opts.index(dg) if dg in dim_opts else 0, key="c_dim")
 
-    if not st.button("💡 Run Cost Intelligence", use_container_width=True, key="run_cost"):
+    run_clicked = st.button("💡 Run Cost Intelligence", use_container_width=True, key="run_cost")
+    if run_clicked:
+        st.session_state["cost_results"] = {
+            "df": df.copy(), "per_col": per_col, "dim_col": dim_col,
+            "rev_col": rev_col, "cogs_col": cogs_col, "opex_col": opex_col,
+        }
+        st.rerun()
+
+    if "cost_results" not in st.session_state:
+        st.markdown('<div class="box" style="opacity:0.5;font-size:0.74rem;">← Configure columns above and click Run Cost Intelligence.</div>', unsafe_allow_html=True)
         return
+
+    # Restore from session state so results persist when sliders change
+    _r = st.session_state["cost_results"]
+    df = _r["df"].copy()
+    per_col = _r["per_col"]; dim_col  = _r["dim_col"]
+    rev_col = _r["rev_col"]; cogs_col = _r["cogs_col"]; opex_col = _r["opex_col"]
 
     df["_R"]  = pd.to_numeric(df[rev_col],  errors="coerce").fillna(0)
     df["_C"]  = pd.to_numeric(df[cogs_col], errors="coerce").fillna(0)

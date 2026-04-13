@@ -366,7 +366,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
         <li>AI CFO powered by Llama 3.1 via Groq</li>
         <li>Board commentary &amp; PDF report export</li>
       </ul>
-      <a href="https://fincy-intelligence.streamlit.app" class="mod-cta" target="_blank" style="border-color:#c9a84c;color:#c9a84c;">Launch Module →</a>
+      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#c9a84c;color:#c9a84c;">Sign Up to Launch →</a>
     </div>
 
     <div class="mod-card" style="--mc:#4ade80">
@@ -379,7 +379,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
         <li>Match rate donut + difference waterfall chart</li>
         <li>Exceptions CSV download — board-ready</li>
       </ul>
-      <a href="https://fincy-intelligence.streamlit.app" class="mod-cta" target="_blank" style="border-color:#4ade80;color:#4ade80;">Launch Module →</a>
+      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#4ade80;color:#4ade80;">Sign Up to Launch →</a>
     </div>
 
     <div class="mod-card" style="--mc:#fbbf24">
@@ -392,7 +392,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
         <li>AI detects improving vs deteriorating trends</li>
         <li>AI deep insights + auto board commentary</li>
       </ul>
-      <a href="https://fincy-intelligence.streamlit.app" class="mod-cta" target="_blank" style="border-color:#fbbf24;color:#fbbf24;">Launch Module →</a>
+      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#fbbf24;color:#fbbf24;">Sign Up to Launch →</a>
     </div>
 
     <div class="mod-card" style="--mc:#f472b6">
@@ -405,7 +405,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
         <li>Flags above-benchmark lines in red</li>
         <li>AI cost reduction recommendations via Groq</li>
       </ul>
-      <a href="https://fincy-intelligence.streamlit.app" class="mod-cta" target="_blank" style="border-color:#f472b6;color:#f472b6;">Launch Module →</a>
+      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#f472b6;color:#f472b6;">Sign Up to Launch →</a>
     </div>
 
   </div>
@@ -523,7 +523,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
         <li>Priority AI (faster responses)</li>
         <li class="na">Custom branding</li>
       </ul>
-      <button class="p-btn p-btn-gold" onclick="openModal()">Get Pro Access →</button>
+      <button class="p-btn p-btn-gold" onclick="openModalPro()">Get Pro Access →</button>
     </div>
 
     <div class="p-card">
@@ -541,7 +541,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
         <li>SSO &amp; enterprise auth layer</li>
         <li>SLA &amp; data residency options</li>
       </ul>
-      <a href="/cdn-cgi/l/email-protection#044e6d70616a7465766d60653d31446369656d682a676b69" class="p-btn p-btn-border">Contact for Enterprise</a>
+      <a href="mailto:Jitenparida95@gmail.com" class="p-btn p-btn-border">Contact for Enterprise</a>
     </div>
 
   </div>
@@ -639,7 +639,7 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
     <a href="#features">Features</a>
     <a href="#modules">Modules</a>
     <a href="#pricing">Pricing</a>
-    <a href="/cdn-cgi/l/email-protection#763c1f0213180617041f12174f4336111b171f1a5815191b">Contact</a>
+    <a href="mailto:Jitenparida95@gmail.com">Contact</a>
   </div>
 </footer>
 
@@ -649,41 +649,77 @@ footer{border-top:1px solid var(--border);padding:32px 40px;display:flex;align-i
     <button class="m-close" onclick="closeModal()">✕</button>
     <div id="mForm">
       <div class="m-ey">Early Access</div>
-      <div class="m-title">Join Fincy Intelligence</div>
-      <div class="m-sub">Get early access and updates directly from the founder. Free forever. No spam.</div>
+      <div class="m-title" id="m-title-txt">Join Fincy Intelligence</div>
+      <div class="m-sub" id="m-sub-txt">Get early access and updates directly from the founder. Free forever. No spam.</div>
       <div class="m-form">
         <div class="f-field"><label class="f-lbl">Full Name *</label><input class="f-inp" type="text" id="f_name" placeholder="Your Name"/></div>
         <div class="f-field"><label class="f-lbl">Work Email *</label><input class="f-inp" type="email" id="f_email" placeholder="you@company.com"/></div>
         <div class="f-field"><label class="f-lbl">Company</label><input class="f-inp" type="text" id="f_company" placeholder="IBM, Reckitt, Unilever..."/></div>
-        <div class="f-field"><label class="f-lbl">Role</label><input class="f-inp" type="text" id="f_role" placeholder="FP&A Manager, CFO, Finance Analyst..."/></div>
+        <div class="f-field"><label class="f-lbl">Role</label><input class="f-inp" type="text" id="f_role" placeholder="FP&amp;A Manager, CFO, Finance Analyst..."/></div>
         <div class="f-field"><label class="f-lbl">LinkedIn URL</label><input class="f-inp" type="url" id="f_linkedin" placeholder="linkedin.com/in/yourprofile"/></div>
-        <button class="f-sub" onclick="submitSignup()">Get Early Access →</button>
+        <button class="f-sub" id="m-submit-btn" onclick="submitSignup()">Get Early Access →</button>
         <div class="f-note">🔒 Safe &amp; private. No spam. Unsubscribe anytime.</div>
       </div>
     </div>
     <div class="f-ok" id="fOk">
       <div class="f-ok-icon">✓</div>
-      <div class="f-ok-title">You're on the list.</div>
-      <div class="f-ok-sub">Welcome to Fincy Intelligence.<br>Jitendra will reach out to you shortly.<br><br><a href="https://fincy-intelligence.streamlit.app" style="color:var(--gold);">Launch the app now →</a></div>
+      <div class="f-ok-title" id="f-ok-title-txt">You're on the list.</div>
+      <div class="f-ok-sub" id="f-ok-sub-txt">Welcome to Fincy Intelligence.<br>Jitendra will reach out to you shortly.<br><br><a href="https://fincy-intelligence.streamlit.app" style="color:var(--gold);" target="_blank">Launch the app now →</a></div>
     </div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
+// Track whether signup came from Pro button (→ PayPal) or module button (→ Streamlit)
+var _signupIntent = 'app'; // 'app' | 'pro'
+
 function toggleMenu(){
   var h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
   h.classList.toggle('open');m.classList.toggle('open');
   document.body.style.overflow=m.classList.contains('open')?'hidden':'';
 }
+
+// Standard signup → goes to Streamlit app after
 function openModal(){
+  _signupIntent='app';
+  _resetModal();
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
+
+// Pro signup → goes to PayPal after
+function openModalPro(){
+  _signupIntent='pro';
+  _resetModal();
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('m-title-txt').textContent='Get Pro Access';
+  document.getElementById('m-sub-txt').textContent='Enter your details to proceed to secure PayPal checkout. $29/month — cancel anytime.';
+  document.getElementById('m-submit-btn').textContent='Continue to Payment →';
+  document.body.style.overflow='hidden';
+}
+
+function _resetModal(){
+  document.getElementById('mForm').style.display='';
+  document.getElementById('fOk').style.display='none';
+  document.getElementById('m-title-txt').textContent='Join Fincy Intelligence';
+  document.getElementById('m-sub-txt').textContent='Get early access and updates directly from the founder. Free forever. No spam.';
+  document.getElementById('m-submit-btn').textContent='Get Early Access →';
+  document.getElementById('f_name').value='';
+  document.getElementById('f_email').value='';
+  document.getElementById('f_company').value='';
+  document.getElementById('f_role').value='';
+  document.getElementById('f_linkedin').value='';
+}
+
 function closeModal(){
   document.getElementById('modal').classList.remove('open');
   document.body.style.overflow='';
 }
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+document.getElementById('modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal();
+});
+
 function submitSignup(){
   var n=document.getElementById('f_name').value.trim();
   var e=document.getElementById('f_email').value.trim();
@@ -692,14 +728,44 @@ function submitSignup(){
   var l=document.getElementById('f_linkedin').value.trim();
   if(!n){alert('Please enter your name.');return;}
   if(!e||!e.includes('@')){alert('Please enter a valid email.');return;}
+
+  // Send to Formspree → Jitenparida95@gmail.com
   fetch('https://formspree.io/f/mvzvybpr',{
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({_subject:'New Fincy Signup: '+n,name:n,email:e,company:c||'N/A',role:r||'N/A',linkedin:l||'N/A',_replyto:e})
+    body:JSON.stringify({
+      _subject:(_signupIntent==='pro'?'New Fincy PRO Signup: ':'New Fincy Signup: ')+n,
+      name:n,email:e,company:c||'N/A',role:r||'N/A',linkedin:l||'N/A',
+      plan:_signupIntent==='pro'?'Pro $29/mo':'Free Trial',
+      _replyto:e
+    })
   }).catch(function(){});
-  document.getElementById('mForm').style.display='none';
-  document.getElementById('fOk').style.display='block';
+
+  if(_signupIntent==='pro'){
+    // Show brief success then redirect to PayPal
+    document.getElementById('mForm').style.display='none';
+    document.getElementById('fOk').style.display='block';
+    document.getElementById('f-ok-title-txt').textContent='Redirecting to PayPal…';
+    document.getElementById('f-ok-sub-txt').innerHTML='Signup saved. Taking you to secure PayPal checkout.<br>If not redirected in 2 seconds, <a href="https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL" style="color:var(--gold);">click here →</a>';
+    setTimeout(function(){
+      window.open('https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL','_blank');
+    },1800);
+  } else {
+    // Standard signup → show success then launch app
+    document.getElementById('mForm').style.display='none';
+    document.getElementById('fOk').style.display='block';
+    document.getElementById('f-ok-title-txt').textContent="You're on the list.";
+    document.getElementById('f-ok-sub-txt').innerHTML='Welcome to Fincy Intelligence.<br>Jitendra will reach out to you shortly.<br><br><a href="https://fincy-intelligence.streamlit.app" style="color:var(--gold);" target="_blank">Launch the app now →</a>';
+  }
 }
+
 window.addEventListener('resize',function(){
   if(window.innerWidth>768){
-    d
+    document.getElementById('mobileNav').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  }
+});
+</script>
+</body>
+</html>
