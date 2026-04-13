@@ -6,7 +6,7 @@ from plotly.subplots import make_subplots
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
-# 🎯 MODULE ROUTING FROM URL (SAFE)
+# ✅ SAFE QUERY PARAM (NO ERROR)
 try:
     query_params = st.query_params
     if "module" in query_params:
@@ -1402,65 +1402,24 @@ Be concise and CFO-level sharp.
                            file_name="Fincy_Cost_Intelligence.csv", mime="text/csv")
 
 
-# =========================
+# ═══════════════════════════════════════
 # MAIN APP ROUTER
-# =========================
+# ═══════════════════════════════════════
 
-import streamlit as st
+module = st.session_state.active_module
 
-# Ensure session state exists
-if "active_module" not in st.session_state:
-    st.session_state.active_module = None
-
-# =========================
-# MODULE SELECTOR (HOME)
-# =========================
-
-def show_module_selector():
-    st.title("🚀 Fincy Intelligence")
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        if st.button("📊 FP&A Intelligence", use_container_width=True):
-            st.session_state.active_module = "fpa"
-
-    with col2:
-        if st.button("🔁 Reconciliation Engine", use_container_width=True):
-            st.session_state.active_module = "recon"
-
-    with col3:
-        if st.button("🎯 Budget vs Actuals", use_container_width=True):
-            st.session_state.active_module = "budget"
-
-    col4, col5 = st.columns(2)
-
-    with col4:
-        if st.button("💡 Cost Intelligence", use_container_width=True):
-            st.session_state.active_module = "cost"
-
-# =========================
-# ROUTING LOGIC
-# =========================
-
-if st.session_state.active_module is None:
+if module is None:
     show_module_selector()
 
-# =========================
-# 🔁 RECONCILIATION ENGINE
-# =========================
-
-elif st.session_state.active_module == "recon":
-
+elif module == "recon":
     st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
-
     st.title("🔁 Reconciliation Engine")
 
     tab1, tab2, tab3 = st.tabs(["Upload", "Results", "Download"])
 
     with tab1:
-        file1 = st.file_uploader("Upload Source A", key="file1")
-        file2 = st.file_uploader("Upload Source B", key="file2")
+        file1 = st.file_uploader("Upload Source A")
+        file2 = st.file_uploader("Upload Source B")
 
     with tab2:
         if file1 and file2:
@@ -1470,47 +1429,41 @@ elif st.session_state.active_module == "recon":
     with tab3:
         st.download_button("Download Exceptions", data="sample")
 
-# =========================
-# 🎯 BUDGET VS ACTUAL
-# =========================
 
-elif st.session_state.active_module == "budget":
-
+elif module == "budget":
     st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
-
     st.title("🎯 Budget vs Actuals")
 
     tab1, tab2, tab3 = st.tabs(["Upload", "Analysis", "Commentary"])
 
     with tab1:
-        budget_file = st.file_uploader("Upload Budget vs Actual CSV", key="budget_file")
+        file = st.file_uploader("Upload Budget vs Actual CSV")
 
     with tab2:
-        if budget_file:
-            st.write("📊 Variance + RAG + Trends")
+        if file:
+            df = pd.read_csv(file)
+            st.line_chart(df.select_dtypes(include="number"))
 
     with tab3:
-        if budget_file:
-            st.write("🧠 AI Commentary here")
+        st.write("AI Commentary here")
 
-# =========================
-# 💡 COST INTELLIGENCE
-# =========================
 
-elif st.session_state.active_module == "cost":
-
+elif module == "cost":
     st.button("⬅ Back to Modules", on_click=lambda: st.session_state.update({"active_module": None}))
-
     st.title("💡 Cost Intelligence")
 
     tab1, tab2 = st.tabs(["Upload", "Insights"])
 
     with tab1:
-        cost_file = st.file_uploader("Upload Cost Data", key="cost_file")
+        file = st.file_uploader("Upload Cost Data")
 
     with tab2:
-        if cost_file:
-            st.write("📉 COGS %, OPEX %, Benchmark flags")
+        if file:
+            df = pd.read_csv(file)
+            st.line_chart(df.select_dtypes(include="number"))
+
+
+# ✅ KEEP YOUR FP&A MODULE AS IS (DO NOT TOUCH)
 
 # =========================
 # 📊 FP&A MODULE (KEEP YOUR EXISTING)
