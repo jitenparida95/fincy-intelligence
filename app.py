@@ -23,195 +23,196 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
 
-/* ── Base & reset ── */
-html,body,[class*="css"]{font-family:'IBM Plex Sans',sans-serif;background:#0a0a08 !important;color:#e8e2d4 !important;-webkit-font-smoothing:antialiased;}
+/* ── Reset & base ── */
+html,body,[class*="css"]{
+  font-family:'IBM Plex Sans',sans-serif;
+  background:#0a0a08 !important;
+  color:#e8e2d4 !important;
+  -webkit-font-smoothing:antialiased;
+}
 .stApp{background:#0a0a08 !important;}
 .stApp>div{background:#0a0a08 !important;}
 
-/* ── Kill ALL Streamlit chrome ── */
-#MainMenu{visibility:hidden !important;}
-footer{visibility:hidden !important;}
-header[data-testid="stHeader"]{display:none !important;height:0 !important;}
+/* ── Hide ALL Streamlit chrome ── */
+#MainMenu{visibility:hidden;}
+footer{visibility:hidden;}
+header{visibility:hidden !important; height:0 !important; min-height:0 !important;}
+[data-testid="stHeader"]{display:none !important;}
 [data-testid="stToolbar"]{display:none !important;}
-[data-testid="stDecoration"]{display:none !important;}
 .stDeployButton{display:none !important;}
-[data-testid="stStatusWidget"]{display:none !important;}
-button[title="View fullscreen"]{display:none !important;}
+div[data-testid="stDecoration"]{display:none !important;}
 
-/* ── Main padding ── */
-.main .block-container{padding:2.5rem 2rem 2rem !important;max-width:100% !important;}
-
-/* ── NAV BAR (custom, built in HTML) ── */
-.fincy-nav{
-  background:#0f0f0c;
-  border-bottom:1px solid #1e1e18;
-  padding:0 32px;
-  height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin:-2.5rem -2rem 2rem -2rem;
-  position:sticky;
-  top:0;
-  z-index:100;
-}
-.fincy-nav-logo{
-  font-family:'Playfair Display',serif !important;
-  font-size:1.15rem !important;
-  font-weight:700 !important;
-  color:#c9a84c !important;
-  letter-spacing:0.02em;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.fincy-nav-right{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:0.56rem;
-  letter-spacing:0.16em;
-  text-transform:uppercase;
-  color:#3a3a34;
-}
-
-/* ── Page title — FORCED VISIBLE ── */
-.fincy-page-title{
-  font-family:'Playfair Display',serif !important;
-  font-size:2rem !important;
-  font-weight:900 !important;
-  color:#fafaf8 !important;
-  line-height:1.05 !important;
-  letter-spacing:-0.01em !important;
-  display:block !important;
-  opacity:1 !important;
-  visibility:visible !important;
-}
-.fincy-page-title em{color:#c9a84c !important;font-style:italic !important;}
-.fincy-eyebrow{
-  font-family:'IBM Plex Mono',monospace !important;
-  font-size:0.58rem !important;
-  letter-spacing:0.2em !important;
-  text-transform:uppercase !important;
-  color:#c9a84c !important;
-  margin-bottom:10px !important;
-  display:block !important;
-}
-.fincy-byline{
-  font-family:'IBM Plex Mono',monospace;
-  font-size:0.54rem;
-  color:#3a3a34;
-  margin-top:5px;
-  letter-spacing:0.1em;
-  display:block;
-}
-
-/* ── Section labels ── */
-.sec-label{
-  font-family:'IBM Plex Mono',monospace !important;
-  font-size:0.58rem !important;
-  letter-spacing:0.18em !important;
-  text-transform:uppercase !important;
-  color:#c9a84c !important;
-  margin:1.4rem 0 0.7rem !important;
-  border-left:2px solid #c9a84c !important;
-  padding-left:10px !important;
-  display:block !important;
-}
-
-/* ── Buttons ── */
-.stButton>button{
-  background:#c9a84c !important;color:#0a0a08 !important;border:none !important;
-  font-family:'IBM Plex Mono',monospace !important;font-size:0.72rem !important;
-  letter-spacing:0.08em !important;font-weight:600 !important;
-  padding:11px 24px !important;transition:background 0.2s !important;
-  border-radius:0 !important;box-shadow:none !important;
-}
-.stButton>button:hover{background:#e8c96a !important;color:#0a0a08 !important;}
-.stButton>button:focus{box-shadow:none !important;outline:none !important;}
-section[data-testid="stSidebar"] .stButton>button{
-  background:#161612 !important;color:#a09880 !important;
-  border:1px solid #2a2a24 !important;font-size:0.66rem !important;
-}
-section[data-testid="stSidebar"] .stButton>button:hover{
-  border-color:#c9a84c !important;color:#c9a84c !important;
+/* ── Main content — generous top padding so nothing clips ── */
+.main .block-container{
+  padding-top:2.5rem !important;
+  padding-bottom:2rem;
+  padding-left:2rem;
+  padding-right:2rem;
+  max-width:100%;
 }
 
 /* ── Sidebar ── */
-section[data-testid="stSidebar"]{background:#0f0f0c !important;border-right:1px solid #1e1e18 !important;}
+section[data-testid="stSidebar"]{background:#101010;border-right:1px solid #242420;}
 section[data-testid="stSidebar"] *{color:#a09880 !important;}
-section[data-testid="stSidebar"] h2,section[data-testid="stSidebar"] h3{color:#c9a84c !important;}
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3{color:#c9a84c !important;}
+section[data-testid="stSidebar"] .stMarkdown p{color:#a09880 !important;}
+section[data-testid="stSidebar"] caption{color:#5a5648 !important;}
 
-/* ── Inputs ── */
-.stTextInput input,.stTextInput textarea{
+/* ── Buttons ── */
+.stButton>button{
+  background:#c9a84c;color:#0a0a08;border:none;
+  font-family:'IBM Plex Mono',monospace;font-size:0.72rem;
+  letter-spacing:0.08em;font-weight:500;padding:10px 24px;
+  transition:background 0.2s;border-radius:0;
+}
+.stButton>button:hover{background:#e8c96a;color:#0a0a08;}
+.stButton>button:focus{box-shadow:none;outline:1px solid #c9a84c;}
+
+/* ── Sidebar buttons different style ── */
+section[data-testid="stSidebar"] .stButton>button{
+  background:#1a1a14 !important;color:#a09880 !important;
+  border:1px solid #2a2a24 !important;font-size:0.68rem !important;
+}
+section[data-testid="stSidebar"] .stButton>button:hover{
+  border-color:#c9a84c !important;color:#c9a84c !important;
+  background:#1a1a14 !important;
+}
+
+/* ── Form inputs ── */
+.stTextInput input, .stTextInput textarea{
   background:#101010 !important;border:1px solid #2a2a24 !important;
   color:#e8e2d4 !important;font-family:'IBM Plex Mono',monospace !important;
   border-radius:0 !important;padding:10px 12px !important;
 }
 .stTextInput input:focus{border-color:#c9a84c !important;box-shadow:none !important;}
-.stSelectbox>div>div{background:#101010 !important;border:1px solid #2a2a24 !important;color:#e8e2d4 !important;border-radius:0 !important;}
-.stFileUploader{background:#101010 !important;border:1px solid #2a2a24 !important;}
+.stSelectbox>div>div{
+  background:#101010 !important;border:1px solid #2a2a24 !important;
+  color:#e8e2d4 !important;border-radius:0 !important;
+}
+.stFileUploader{background:#101010;border:1px solid #2a2a24;}
+.stFileUploader label{color:#a09880 !important;}
+
+/* ── Alert / info ── */
+.stAlert{border-radius:0;border-left:2px solid #c9a84c;}
+
+/* ── Hide native metric ── */
+div[data-testid="metric-container"]{display:none;}
+
+/* ── Typography classes ── */
+.fin-title{
+  font-family:'Playfair Display',serif !important;
+  font-weight:900 !important;color:#fafaf8 !important;line-height:1.05 !important;
+  display:block !important;opacity:1 !important;visibility:visible !important;
+}
+.fin-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.62rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:#5a5648;
+}
+.sec-label{
+  font-family:'IBM Plex Mono',monospace;font-size:0.6rem;
+  letter-spacing:0.18em;text-transform:uppercase;color:#c9a84c;
+  margin:1.4rem 0 0.7rem;border-left:2px solid #c9a84c;padding-left:10px;
+}
 
 /* ── KPI cards ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.4rem;}
 .kpi-grid-2{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.6rem;}
-.kpi-card{background:#101010;border:1px solid #1e1e18;padding:16px;position:relative;overflow:hidden;transition:border-color 0.2s;}
-.kpi-card:hover{border-color:var(--ac,#c9a84c);}
-.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,#c9a84c);}
-.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-bottom:7px;}
-.kpi-value{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fafaf8 !important;}
-.kpi-delta{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;margin-top:5px;}
-.pos{color:#4ade80 !important;}.neg{color:#f87171 !important;}.neu{color:#5a5648 !important;}
+.kpi-card{
+  background:#101010;border:1px solid #242420;padding:16px;
+  position:relative;overflow:hidden;
+}
+.kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:var(--ac,#c9a84c);
+}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-bottom:6px;}
+.kpi-value{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:#fafaf8;}
+.kpi-delta{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;margin-top:4px;}
+.pos{color:#4ade80;}.neg{color:#f87171;}.neu{color:#5a5648;}
 
-/* ── Commentary ── */
-.box{background:#101010;border:1px solid #1e1e18;border-left:3px solid #c9a84c;padding:18px 20px;font-size:0.8rem;line-height:1.9;color:#a09880;}
-.box strong{color:#c9a84c !important;}
-.ai-box{background:#0c0c09;border:1px solid #2a2a20;border-left:3px solid #4ade80;padding:16px 20px;font-size:0.8rem;line-height:1.9;color:#b8e4b8;}
-.mapper-box{background:#101010;border:1px solid #1e1e18;border-left:3px solid #818cf8;padding:18px;margin-bottom:18px;}
+/* ── Commentary boxes ── */
+.box{
+  background:#101010;border:1px solid #242420;border-left:2px solid #c9a84c;
+  padding:16px 18px;font-size:0.8rem;line-height:1.85;color:#a09880;
+}
+.box strong{color:#c9a84c;}
+.ai-box{
+  background:#0d0d0a;border:1px solid #2a2a20;border-left:2px solid #4ade80;
+  padding:15px 18px;font-size:0.8rem;line-height:1.85;color:#c8e6c9;
+}
+.mapper-box{
+  background:#101010;border:1px solid #242420;border-left:2px solid #818cf8;
+  padding:18px;margin-bottom:18px;
+}
 
-/* ── RAG row ── */
+/* ── RAG summary row ── */
 .rag-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.4rem;}
-.rag-g{background:#041508;border:1px solid #4ade80;padding:16px;text-align:center;}
-.rag-a{background:#150f00;border:1px solid #fbbf24;padding:16px;text-align:center;}
-.rag-r{background:#150404;border:1px solid #f87171;padding:16px;text-align:center;}
-.rag-b{background:#040b15;border:1px solid #60a5fa;padding:16px;text-align:center;}
-.rag-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-bottom:6px;}
-.rag-val{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#fafaf8 !important;}
+.rag-g{background:#051a0a;border:1px solid #4ade80;padding:14px;text-align:center;}
+.rag-a{background:#1a1200;border:1px solid #fbbf24;padding:14px;text-align:center;}
+.rag-r{background:#1a0505;border:1px solid #f87171;padding:14px;text-align:center;}
+.rag-b{background:#060e1a;border:1px solid #60a5fa;padding:14px;text-align:center;}
+.rag-lbl{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-bottom:5px;}
+.rag-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;}
 
-/* ── Module cards ── */
-.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:#1e1e18;max-width:920px;margin:0 auto;}
-.mod-card{background:#101010;padding:32px 28px;position:relative;overflow:hidden;transition:background 0.2s,transform 0.2s;}
-.mod-card:hover{background:#141410;transform:translateY(-1px);}
-.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--mc,#c9a84c);}
-.mod-icon{font-size:2rem;margin-bottom:14px;display:block;}
-.mod-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fafaf8 !important;margin-bottom:8px;}
+/* ── Module home cards ── */
+.mod-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+  background:#242420;border:1px solid #242420;
+  max-width:900px;margin:0 auto;
+}
+.mod-card{
+  background:#101010;padding:32px 28px;
+  position:relative;overflow:hidden;transition:background 0.2s;
+}
+.mod-card:hover{background:#141410;}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,#c9a84c);}
+.mod-icon{font-size:1.8rem;margin-bottom:12px;display:block;}
+.mod-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fafaf8;margin-bottom:8px;}
 .mod-desc{font-size:0.76rem;color:#5a5648;line-height:1.75;margin-bottom:16px;}
-.mod-badge{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--mc,#c9a84c);border:1px solid var(--mc,#c9a84c);padding:3px 9px;display:inline-block;margin-bottom:16px;}
+.mod-badge{
+  font-family:'IBM Plex Mono',monospace;display:inline-block;
+  font-size:0.52rem;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--mc,#c9a84c);border:1px solid var(--mc,#c9a84c);padding:2px 8px;
+  margin-bottom:16px;
+}
+.mod-btn{
+  display:inline-block;
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;
+  text-transform:uppercase;background:var(--mc,#c9a84c);color:#0a0a08;
+  padding:8px 18px;text-decoration:none;font-weight:500;
+  border:none;cursor:pointer;transition:opacity 0.2s;
+}
+.mod-btn:hover{opacity:0.85;}
 
 /* ── Signup form ── */
-.signup-card{background:#101010;border:1px solid #1e1e18;padding:44px 40px;position:relative;max-width:480px;margin:0 auto;}
-.signup-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#c9a84c;}
+.signup-wrap{
+  max-width:480px;margin:0 auto;
+  background:#101010;border:1px solid #242420;padding:40px 36px;position:relative;
+}
+.signup-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#c9a84c;}
+.signup-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;margin-bottom:10px;}
+.signup-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#fafaf8;margin-bottom:6px;}
+.signup-sub{font-size:0.8rem;color:#a09880;margin-bottom:24px;line-height:1.65;font-weight:300;}
 
 /* ── Mobile ── */
 @media(max-width:768px){
-  .main .block-container{padding:1.5rem 1rem 1rem !important;}
-  .fincy-nav{padding:0 16px;margin:-1.5rem -1rem 1.5rem;}
+  .main .block-container{padding-top:2rem !important;padding-left:1rem;padding-right:1rem;}
   .kpi-grid,.kpi-grid-2{grid-template-columns:repeat(2,1fr);}
   .rag-row{grid-template-columns:repeat(2,1fr);}
   .mod-grid{grid-template-columns:1fr;}
-  .signup-card{padding:28px 20px;}
 }
 @media(max-width:480px){
   .kpi-grid,.kpi-grid-2{grid-template-columns:repeat(2,1fr);}
-  .main .block-container{padding:1.2rem 0.8rem 1rem !important;}
+  .main .block-container{padding-left:0.8rem;padding-right:0.8rem;}
 }
-div[data-testid="metric-container"]{display:none !important;}
-.stAlert{border-radius:0;border-left:2px solid #c9a84c;}
 </style>
 """, unsafe_allow_html=True)
 
 # ── SESSION STATE ─────────────────────────────────────────────────────────────
 _defaults = {
     "active_module": None,
-    "signed_up": False,
+    "signed_up": True,   # Signup handled on landing page only
     "pending_module": None,
     "chat_history": [],
     "col_map": {},
@@ -220,8 +221,6 @@ _defaults = {
     "recon_sample_b": False,
     "budget_use_sample": False,
     "cost_use_sample": False,
-    "budget_results": None,
-    "cost_results": None,
 }
 for k, v in _defaults.items():
     if k not in st.session_state:
@@ -425,24 +424,32 @@ Jun-2024,SKU-D,FR,1980,1188,396
 # ══════════════════════════════════════════════════════════════════════════════
 # SHARED: page header (shown on every page)
 # ══════════════════════════════════════════════════════════════════════════════
-def page_header(subtitle="AI-POWERED CFO DECISION PLATFORM", module_name=""):
-    """Renders the fixed nav bar + page title on every screen."""
-    mod_label = f"<span style='color:#5a5648;'>· {module_name}</span>" if module_name else ""
+def page_header(subtitle="AI-POWERED CFO DECISION PLATFORM", module=""):
+    """Renders sticky nav bar + forced-visible page title on every screen."""
+    mod_tag = f'<span style="color:#3a3a34;font-weight:400;"> · {module}</span>' if module else ""
     st.markdown(f"""
-<!-- NAV BAR -->
-<div class="fincy-nav">
-  <div class="fincy-nav-logo">
-    <span style="color:#c9a84c;">◆</span>
-    Fincy Intelligence
-    {mod_label}
+<div style="background:#0f0f0c;border-bottom:1px solid #1e1e18;padding:0 28px;
+height:52px;display:flex;align-items:center;justify-content:space-between;
+margin:-2.5rem -2rem 2rem -2rem;position:sticky;top:0;z-index:100;">
+  <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;
+  color:#c9a84c;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:0.8rem;opacity:0.6;">◆</span>
+    Fincy Intelligence{mod_tag}
   </div>
-  <div class="fincy-nav-right">AI CFO Platform · v2.0</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;
+  letter-spacing:0.14em;text-transform:uppercase;color:#3a3a34;">AI CFO Platform</div>
 </div>
-<!-- PAGE TITLE -->
-<div style="border-bottom:1px solid #1e1e18;padding-bottom:22px;margin-bottom:32px;">
-  <span class="fincy-eyebrow">{subtitle}</span>
-  <div class="fincy-page-title">Fincy <em>Intelligence</em></div>
-  <span class="fincy-byline">Built by Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt</span>
+<div style="border-bottom:1px solid #1e1e18;padding-bottom:20px;margin-bottom:28px;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:#c9a84c;margin-bottom:10px;">{subtitle}</div>
+  <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
+  color:#fafaf8 !important;line-height:1.05;letter-spacing:-0.01em;">
+    Fincy <em style="color:#c9a84c;font-style:italic;">Intelligence</em>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#3a3a34;
+  margin-top:6px;letter-spacing:0.1em;">
+    By Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt
+  </div>
 </div>""", unsafe_allow_html=True)
 
 
@@ -450,15 +457,15 @@ def page_header(subtitle="AI-POWERED CFO DECISION PLATFORM", module_name=""):
 # SIGNUP GATE  (shown on first module entry)
 # ══════════════════════════════════════════════════════════════════════════════
 def show_signup():
-    page_header("GET FREE ACCESS", "Sign Up")
+    page_header("GET FREE ACCESS — 7-DAY TRIAL · ALL 4 MODULES")
 
     _, col, _ = st.columns([1, 1.6, 1])
     with col:
         st.markdown("""
-<div class="signup-card">
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:#c9a84c;margin-bottom:10px;">Free Access · No Credit Card</div>
-  <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#fafaf8;margin-bottom:6px;">Get Instant Access</div>
-  <div style="font-size:0.8rem;color:#a09880;margin-bottom:24px;line-height:1.65;font-weight:300;">
+<div class="signup-wrap">
+  <div class="signup-eyebrow">Free Access · No Credit Card</div>
+  <div class="signup-title">Get Instant Access</div>
+  <div class="signup-sub">
     Enter your details to unlock all 4 modules free for 7 days.<br>
     No spam. Unsubscribe anytime. Your data never leaves your session.
   </div>
@@ -522,101 +529,145 @@ def show_home():
     # Value proposition strip
     st.markdown("""
 <div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #c9a84c;
-padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
   <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#c9a84c;">Free 7-Day Trial</div>
-  <div style="width:1px;height:16px;background:#1e1e18;"></div>
+  text-transform:uppercase;color:#c9a84c;flex-shrink:0;">Free 7-Day Trial</div>
+  <div style="width:1px;height:14px;background:#2a2a20;flex-shrink:0;"></div>
   <div style="font-size:0.8rem;color:#a09880;font-weight:300;">
-    Sign up free to access all 4 modules — P&amp;L Intelligence · Reconciliation · Budget Tracker · Cost Analysis
+    All 4 modules · P&amp;L Intelligence · Reconciliation · Budget Tracker · Cost Analysis
   </div>
-  <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.56rem;
-  color:#3a3a34;letter-spacing:0.1em;">No credit card · No code · Your data stays private</div>
+  <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.55rem;
+  color:#3a3a34;letter-spacing:0.1em;">No credit card · No code · Session isolated</div>
 </div>""", unsafe_allow_html=True)
 
-    # Module cards
-    st.markdown("""
-<div class="mod-grid">
+    # 2×2 module grid — button INSIDE the card via CSS trick
+    # Each card contains the launch button using Streamlit columns + CSS margin collapse
+    top_l, top_r = st.columns(2, gap="small")
+    bot_l, bot_r = st.columns(2, gap="small")
 
-  <div class="mod-card" style="--mc:#c9a84c">
-    <span class="mod-icon">📊</span>
-    <div class="mod-badge">Core Module</div>
-    <div class="mod-title">FP&amp;A Intelligence</div>
-    <div class="mod-desc">Instant P&amp;L dashboards, variance analysis, brand scorecards, and AI CFO chat from any CSV — in under 60 seconds.</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:#3a3a34;letter-spacing:0.1em;">10+ KPIs · 7 charts · AI CFO · PDF export</div>
-  </div>
+    _CARDS = [
+        (top_l, "fpa",    "#c9a84c", "📊", "Core Module", "FP&A Intelligence",
+         "Instant P&L dashboards, variance analysis, brand scorecards, and AI CFO chat from any CSV — in 60 seconds.",
+         "10+ KPIs · 7 Charts · AI CFO · PDF Export"),
+        (top_r, "recon",  "#4ade80", "🔁", "New", "Reconciliation Engine",
+         "Upload ERP vs Bank, GL vs Sub-ledger, or PO vs Invoice. Auto-match, flag breaks, download exceptions.",
+         "Auto-Match · Break Flags · Exceptions CSV"),
+        (bot_l, "budget", "#fbbf24", "🎯", "New", "Budget vs Actuals Tracker",
+         "RAG-status tracker with prior year overlays, trend detection, and AI-generated board commentary in minutes.",
+         "RAG Status · Prior Year · AI Trend Analysis"),
+        (bot_r, "cost",   "#f472b6", "💡", "New", "Cost Intelligence",
+         "COGS and OPEX benchmarking with segment efficiency scores and AI-driven cost reduction recommendations.",
+         "Benchmarks · Flagged Lines · AI Recommendations"),
+    ]
 
-  <div class="mod-card" style="--mc:#4ade80">
-    <span class="mod-icon">🔁</span>
-    <div class="mod-badge">New</div>
-    <div class="mod-title">Reconciliation Engine</div>
-    <div class="mod-desc">Upload ERP vs Bank, GL vs Sub-ledger, or PO vs Invoice. Auto-match, flag amount breaks, download exceptions instantly.</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:#3a3a34;letter-spacing:0.1em;">Auto-match · Break flags · Exceptions CSV</div>
-  </div>
-
-  <div class="mod-card" style="--mc:#fbbf24">
-    <span class="mod-icon">🎯</span>
-    <div class="mod-badge">New</div>
-    <div class="mod-title">Budget vs Actuals Tracker</div>
-    <div class="mod-desc">RAG-status tracker with prior year overlays, trend detection, and AI-generated board commentary in minutes.</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:#3a3a34;letter-spacing:0.1em;">RAG status · Prior year · AI trend analysis</div>
-  </div>
-
-  <div class="mod-card" style="--mc:#f472b6">
-    <span class="mod-icon">💡</span>
-    <div class="mod-badge">New</div>
-    <div class="mod-title">Cost Intelligence</div>
-    <div class="mod-desc">COGS and OPEX benchmarking with segment efficiency scores and AI-driven cost reduction recommendations.</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:#3a3a34;letter-spacing:0.1em;">Benchmarks · Flagged lines · AI recommendations</div>
-  </div>
-
+    for col, mod_key, color, icon, badge, title, desc, tags in _CARDS:
+        with col:
+            # Card top section (HTML)
+            st.markdown(f"""
+<div style="background:#101010;border:1px solid #1e1e18;border-top:3px solid {color};
+padding:26px 24px 16px;margin-bottom:-8px;">
+  <div style="font-size:1.8rem;margin-bottom:12px;">{icon}</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:{color};border:1px solid {color};padding:2px 8px;
+  display:inline-block;margin-bottom:14px;">{badge}</div>
+  <div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;
+  color:#fafaf8 !important;margin-bottom:9px;line-height:1.2;">{title}</div>
+  <div style="font-size:0.76rem;color:#5a5648;line-height:1.75;margin-bottom:14px;">{desc}</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#3a3a34;
+  letter-spacing:0.08em;margin-bottom:16px;">{tags}</div>
 </div>""", unsafe_allow_html=True)
+            # Button flush against card bottom (negative margin bridges the gap)
+            st.markdown(f"""<div style="background:#101010;border:1px solid #1e1e18;
+border-top:none;padding:0 24px 20px;">""", unsafe_allow_html=True)
+            if st.button(f"→  Launch {title}", use_container_width=True, key=f"h_{mod_key}",
+                         help=f"Open the {title} module"):
+                st.session_state.active_module = mod_key
+                st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
-    # Launch buttons
-    st.markdown("<div style='height:14px;'></div>", unsafe_allow_html=True)
-    r1c1, r1c2 = st.columns(2)
-    with r1c1:
-        if st.button("📊  Sign Up & Launch FP&A Intelligence →", use_container_width=True, key="h_fpa"):
-            goto_module("fpa")
-    with r1c2:
-        if st.button("🔁  Sign Up & Launch Reconciliation →", use_container_width=True, key="h_recon"):
-            goto_module("recon")
-
-    r2c1, r2c2 = st.columns(2)
-    with r2c1:
-        if st.button("🎯  Sign Up & Launch Budget Tracker →", use_container_width=True, key="h_budget"):
-            goto_module("budget")
-    with r2c2:
-        if st.button("💡  Sign Up & Launch Cost Intelligence →", use_container_width=True, key="h_cost"):
-            goto_module("cost")
-
-    # Stats strip
+    # Stats row
     st.markdown("""
-<div style="margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+<div style="margin-top:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
 background:#1e1e18;border:1px solid #1e1e18;">
-  <div style="background:#101010;padding:20px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#c9a84c;">4</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">AI Modules</div>
+  <div style="background:#101010;padding:18px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:#c9a84c;">4</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">AI Modules</div>
   </div>
-  <div style="background:#101010;padding:20px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#c9a84c;">10+</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">KPI Metrics</div>
+  <div style="background:#101010;padding:18px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:#c9a84c;">10+</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">KPI Metrics</div>
   </div>
-  <div style="background:#101010;padding:20px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#c9a84c;">60s</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">To Insights</div>
+  <div style="background:#101010;padding:18px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:#c9a84c;">60s</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">To Insights</div>
   </div>
-  <div style="background:#101010;padding:20px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#c9a84c;">0</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">Code Needed</div>
+  <div style="background:#101010;padding:18px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:#c9a84c;">0</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#5a5648;margin-top:4px;">Code Needed</div>
   </div>
 </div>
-
-<div style="margin-top:32px;border-top:1px solid #1a1a14;padding-top:18px;
-font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#2a2a24;
+<div style="margin-top:28px;border-top:1px solid #1a1a14;padding-top:16px;
+font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#2a2a24;
 letter-spacing:0.12em;text-align:center;">
 FINCY INTELLIGENCE · AI CFO PLATFORM · CONFIDENTIAL · FP&amp;A DECISION ENGINE
 </div>""", unsafe_allow_html=True)
 
+
+
+def ai_cfo_section(context_str: str, module_key: str, placeholder: str = "Ask about this data…"):
+    """Renders an inline AI CFO chat panel for any module."""
+    st.markdown('''<div class="sec-label">🧠 AI CFO — Ask About This Data</div>''', unsafe_allow_html=True)
+    hist_key = f"chat_{module_key}"
+    if hist_key not in st.session_state:
+        st.session_state[hist_key] = []
+
+    # Show history
+    if st.session_state[hist_key]:
+        for chat in reversed(st.session_state[hist_key][-3:]):  # last 3 only
+            st.markdown(f'''
+<div class="box" style="margin-bottom:8px;">
+<span style="color:#3a3a34;font-size:0.62rem;font-family:\'IBM Plex Mono\',monospace;">YOU:</span>
+{chat["q"]}<br><br>
+<span style="color:#3a3a34;font-size:0.62rem;font-family:\'IBM Plex Mono\',monospace;">AI CFO:</span><br>
+{chat["a"]}
+</div>''', unsafe_allow_html=True)
+
+    qa1, qa2, qa3 = st.columns([4, 1, 1])
+    with qa1:
+        question = st.text_input("", placeholder=placeholder, key=f"ai_q_{module_key}", label_visibility="collapsed")
+    with qa2:
+        ask = st.button("🚀 Ask CFO", use_container_width=True, key=f"ai_ask_{module_key}")
+    with qa3:
+        if st.button("🧹", use_container_width=True, key=f"ai_clear_{module_key}"):
+            st.session_state[hist_key] = []
+            st.rerun()
+
+    if ask and question.strip():
+        with st.spinner("AI CFO is thinking…"):
+            try:
+                from groq import Groq
+                api_key = os.getenv("GROQ_API_KEY")
+                if not api_key:
+                    ans = "⚠️ GROQ_API_KEY not set in Streamlit secrets."
+                else:
+                    client = Groq(api_key=api_key)
+                    prompt = f"""You are a world-class CFO analyst. Be concise and sharp — 2-3 insights max.
+Data context: {context_str}
+Question: {question.strip()}
+Answer with CFO-level insights and specific recommended actions."""
+                    resp = client.chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=0.3)
+                    ans = resp.choices[0].message.content
+            except Exception as e:
+                ans = f"Error: {e}"
+        st.markdown(f'''<div class="ai-box">{ans}</div>''', unsafe_allow_html=True)
+        st.session_state[hist_key].append({"q": question.strip(), "a": ans})
+    elif not ask:
+        st.markdown('''<div class="box" style="opacity:0.4;font-size:0.72rem;">
+Type a question above and click Ask CFO. Try: "What are the key risks?", "Where should we focus?", "What actions do you recommend?"
+</div>''', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODULE 1 — FP&A INTELLIGENCE
@@ -675,7 +726,7 @@ Your data stays in your session only · Nothing stored on our servers</div>""", 
 
     # ── Step 2: Column Mapper ─────────────────────────────────────────────────
     if not st.session_state.mapping_confirmed:
-        page_header(f"MAP COLUMNS · {len(df_raw):,} ROWS LOADED", "Column Mapper")
+        page_header(f"MAP COLUMNS · {len(df_raw):,} ROWS", "Column Mapper")
 
         st.markdown("""<div class="mapper-box">
 <div style="font-size:0.78rem;color:#a09880;line-height:1.75;">
@@ -737,13 +788,7 @@ Match your CSV columns to the metrics Fincy needs.<br>
         fch = filt("🛒 Channel",   "Channel")
         ft  = filt("📄 Type",      "Type")
         st.markdown("---")
-        st.markdown("### 💬 Ask the AI CFO")
-        st.caption("Powered by Groq · Llama 3.1")
-        question  = st.text_input("", placeholder="e.g. Why is margin declining?", key="fpa_q")
-        a1, a2    = st.columns([2, 1])
-        with a1: ask_btn   = st.button("🚀 Ask CFO",  use_container_width=True, key="ask_cfo")
-        with a2: clear_btn = st.button("🧹 Clear",    use_container_width=True, key="clear_cfo")
-        if clear_btn: st.session_state.chat_history = []
+        st.caption("💡 AI CFO available below the dashboard")
 
     # Apply filters
     df = df_mapped.copy()
@@ -889,50 +934,12 @@ EBITDA Margin <strong>{ebitdam:.1f}%</strong>. COGS {cogsp:.1f}% NR · OPEX {ope
 3. Tighten OPEX in markets below EBITDA threshold.
 </div>""", unsafe_allow_html=True)
 
-    # Chat history
-    if st.session_state.chat_history:
-        st.markdown('<div class="sec-label">CFO Chat History</div>', unsafe_allow_html=True)
-        for chat in reversed(st.session_state.chat_history):
-            st.markdown(f"""
-<div class="box" style="margin-bottom:10px;">
-<strong style="color:#5a5648;">You:</strong> {chat['question']}<br><br>
-<strong>AI CFO:</strong><br>{chat['answer']}
-</div>""", unsafe_allow_html=True)
-
-    # AI CFO
-    if ask_btn and question:
-        st.markdown('<div class="sec-label">AI CFO Response</div>', unsafe_allow_html=True)
-        with st.spinner("AI CFO is thinking…"):
-            try:
-                from groq import Groq
-                api_key = os.getenv("GROQ_API_KEY")
-                if not api_key:
-                    ai_ans = "⚠️ GROQ_API_KEY not set. Add it to Streamlit secrets."
-                else:
-                    client = Groq(api_key=api_key)
-                    prompt = f"""You are a world-class CFO. Concise and incisive.
-KPIs: NR={fmt_m(nr)} YoY={yoy:.1f}% | GP={fmt_m(gp)} GPM={gpm:.1f}% | EBITDA={fmt_m(ebitda)} Margin={ebitdam:.1f}%
-COGS={cogsp:.1f}%NR | OPEX={opexp:.1f}%NR | Budget Ach={bach:.1f}% | Variance={fmt_m(var)}
-Trade Promo={tradep:.1f}% | Top Market={top_mkt} | Risk Market={risk_mkt} | Top Brand={top_brand}
-Question: {question}
-Give 2-3 CFO-level insights with recommended actions. Use the numbers above."""
-                    resp = client.chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role":"user","content":prompt}],
-                        temperature=0.3)
-                    ai_ans = resp.choices[0].message.content
-            except Exception as e:
-                ai_ans = f"Error: {e}"
-        st.markdown(f'<div class="ai-box">{ai_ans}</div>', unsafe_allow_html=True)
-        st.session_state.chat_history.append({"question": question, "answer": ai_ans})
-        pdf = generate_pdf(ai_ans)
-        st.download_button("📄 Download CFO Report (PDF)", data=pdf,
-                           file_name="Fincy_CFO_Report.pdf", mime="application/pdf")
-    else:
-        st.markdown("""<div class="box" style="opacity:0.4;font-size:0.73rem;">
-← Type a question in the sidebar and click Ask CFO.<br>
-Try: revenue · margin · variance · budget · growth · top market · risk
-</div>""", unsafe_allow_html=True)
+    # Inline AI CFO
+    fpa_ctx = f"NR={fmt_m(nr)} YoY={yoy:.1f}% | GP={fmt_m(gp)} GPM={gpm:.1f}% | EBITDA={fmt_m(ebitda)} {ebitdam:.1f}% | COGS {cogsp:.1f}%NR | OPEX {opexp:.1f}%NR | Budget Ach {bach:.1f}% | Var {fmt_m(var)} | Top Market={top_mkt} | Risk={risk_mkt} | Top Brand={top_brand}"
+    ai_cfo_section(fpa_ctx, "fpa", "e.g. Why is margin declining? Which market needs attention?")
+    if st.button("📄 Download Board Commentary (PDF)", key="fpa_pdf"):
+        pdf = generate_pdf(f"Fincy Intelligence — FP&A Board Report\n\nNet Revenue: {fmt_m(nr)} | YoY: {yoy:+.1f}%\nGP Margin: {gpm:.1f}% | EBITDA: {ebitdam:.1f}%\nTop Market: {top_mkt} | Risk Market: {risk_mkt}")
+        st.download_button("📄 Download PDF", data=pdf, file_name="Fincy_FPA_Report.pdf", mime="application/pdf", key="fpa_pdf_dl")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1080,6 +1087,13 @@ def run_recon():
                            out.to_csv(index=False).encode(),
                            "Fincy_Recon_Full.csv", "text/csv")
 
+    # AI CFO — always shown after run
+    if df1 is not None and df2 is not None:
+        recon_ctx = f"Reconciliation: {total} records total | Matched={matched} ({mrate:.1f}%) | Amount Breaks={breaks} (diff={t_break:,.2f}) | Missing in B={miss_b} | Missing in A={miss_a}" if "total" in dir() else "Reconciliation data loaded"
+        ai_cfo_section(
+            f"Two-source reconciliation complete. Match rate context depends on data loaded.",
+            "recon", "e.g. What caused the amount breaks? Where are the biggest discrepancies?")
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # MODULE 3 — BUDGET vs ACTUALS TRACKER
@@ -1150,20 +1164,8 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         dim_col  = st.selectbox("Dimension (opt)", dim_opts,
                                 index=dim_opts.index(dg) if dg in dim_opts else 0, key="b_dim")
 
-    if st.button("🎯 Run Budget Tracker", use_container_width=True, key="run_budget"):
-        st.session_state["budget_results"] = {
-            "df": df.copy(), "per_col": per_col, "act_col": act_col,
-            "bud_col": bud_col, "py_col": py_col, "dim_col": dim_col,
-        }
-        st.rerun()
-
-    if not st.session_state.get("budget_results"):
-        st.markdown('<div class="box" style="opacity:0.5;font-size:0.74rem;">← Configure columns above and click Run Budget Tracker.</div>', unsafe_allow_html=True)
+    if not st.button("🎯 Run Budget Tracker", use_container_width=True, key="run_budget"):
         return
-
-    _r = st.session_state["budget_results"]
-    df = _r["df"].copy(); per_col = _r["per_col"]; act_col = _r["act_col"]
-    bud_col = _r["bud_col"]; py_col = _r["py_col"]; dim_col = _r["dim_col"]
 
     df["_A"] = pd.to_numeric(df[act_col], errors="coerce").fillna(0)
     df["_B"] = pd.to_numeric(df[bud_col], errors="coerce").fillna(0)
@@ -1267,57 +1269,17 @@ Total actuals <strong>{fmt_m(ta)}</strong> vs budget <strong>{fmt_m(tb)}</strong
 3. Escalate all 🔴 Red lines to business owners for corrective action plans.
 </div>""", unsafe_allow_html=True)
 
-    # AI Insights
-    st.markdown('<div class="sec-label">🧠 AI CFO — Historical Trend Analysis</div>', unsafe_allow_html=True)
-    if st.button("🧠 Get AI Budget Insights", use_container_width=True, key="bai"):
-        try:
-            from groq import Groq
-            api_key = os.getenv("GROQ_API_KEY")
-            if not api_key:
-                st.warning("⚠️ No GROQ_API_KEY. Set it in Streamlit secrets.")
-            else:
-                lines = []
-                for _, row in pg_df.iterrows():
-                    ach = row["_A"]/row["_B"]*100 if row["_B"] else 0
-                    line = f"  {row[per_col]}: A={row['_A']:,.0f} B={row['_B']:,.0f} V={row['_V']:+,.0f} ({ach:.1f}%)"
-                    if has_py and "_PY" in row:
-                        yoy_ = (row["_A"]-row["_PY"])/row["_PY"]*100 if row["_PY"] else 0
-                        line += f" PY={row['_PY']:,.0f} (YoY {yoy_:+.1f}%)"
-                    lines.append(line)
-                last = pg_df.iloc[-1]; prev = pg_df.iloc[-2] if len(pg_df) > 1 else None
-                mom  = f"MoM: {last[per_col]} vs {prev[per_col]}: {last['_A']-prev['_A']:+,.0f}" \
-                       if prev is not None else ""
-                prompt = f"""You are a CFO. Analyse this Budget vs Actuals data.
-SUMMARY: Actual={fmt_m(ta)} Budget={fmt_m(tb)} Var={tv:+,.0f} Ach={tach:.1f}% Trend={trend_dir}
-{f"YoY={tyoy:+.1f}% vs PY={fmt_m(tpy)}" if has_py else ""}
-{mom}  Best={top_over}  Worst={top_under}
-
-PERIOD DATA:
-{chr(10).join(lines)}
-
-1. Key trends — accelerating or decelerating?
-2. Current vs prior year — growing or contracting?
-3. Top 2-3 periods needing urgent CFO attention.
-4. 3 specific actions to close the gap or sustain over-performance.
-5. If deteriorating, early warning and corrective timeline.
-Be concise, data-driven, CFO-level sharp. Use numbers."""
-                with st.spinner("AI CFO analysing historical trends…"):
-                    client = Groq(api_key=api_key)
-                    resp   = client.chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role":"user","content":prompt}],
-                        temperature=0.25)
-                st.markdown(f'<div class="ai-box">{resp.choices[0].message.content}</div>',
-                            unsafe_allow_html=True)
-        except Exception as e:
-            st.error(f"Groq error: {e}")
-    else:
-        st.markdown("""<div class="box" style="opacity:0.4;font-size:0.73rem;">
-← Click to get AI analysis using your period data, prior year comparisons and trend detection.
-</div>""", unsafe_allow_html=True)
-
+    # AI CFO inline — replaces old button-only pattern
+    budget_ctx = (f"Budget vs Actuals: Actual={fmt_m(ta)} Budget={fmt_m(tb)} "
+                  f"Variance={tv:+,.0f} Achievement={tach:.1f}% "
+                  f"RAG=Green:{gc} Amber:{ac} Red:{rc} Trend={trend_dir} "
+                  f"Best period={top_over} Worst={top_under}"
+                  + (f" YoY={tyoy:+.1f}% vs PY={fmt_m(tpy)}" if has_py else ""))
+    ai_cfo_section(budget_ctx, "budget",
+        "e.g. Which periods need attention? What caused the variance? What actions do you recommend?")
     st.download_button("📥 Download RAG Report (CSV)", disp.to_csv(index=False).encode(),
                        "Fincy_Budget_RAG.csv", "text/csv")
+
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1385,20 +1347,8 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         dim_col  = st.selectbox("Segment/SKU (opt)", dim_opts,
                                 index=dim_opts.index(dg) if dg in dim_opts else 0, key="c_dim")
 
-    if st.button("💡 Run Cost Intelligence", use_container_width=True, key="run_cost"):
-        st.session_state["cost_results"] = {
-            "df": df.copy(), "per_col": per_col, "dim_col": dim_col,
-            "rev_col": rev_col, "cogs_col": cogs_col, "opex_col": opex_col,
-        }
-        st.rerun()
-
-    if not st.session_state.get("cost_results"):
-        st.markdown('<div class="box" style="opacity:0.5;font-size:0.74rem;">← Configure columns above and click Run Cost Intelligence.</div>', unsafe_allow_html=True)
+    if not st.button("💡 Run Cost Intelligence", use_container_width=True, key="run_cost"):
         return
-
-    _r = st.session_state["cost_results"]
-    df = _r["df"].copy(); per_col = _r["per_col"]; dim_col = _r["dim_col"]
-    rev_col = _r["rev_col"]; cogs_col = _r["cogs_col"]; opex_col = _r["opex_col"]
 
     df["_R"]  = pd.to_numeric(df[rev_col],  errors="coerce").fillna(0)
     df["_C"]  = pd.to_numeric(df[cogs_col], errors="coerce").fillna(0)
@@ -1485,35 +1435,13 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         st.dataframe(flagged[[c for c in show if c in flagged.columns]],
                      use_container_width=True, hide_index=True)
 
-    st.markdown('<div class="sec-label">🧠 AI Cost Reduction Recommendations</div>',
-                unsafe_allow_html=True)
+    # AI CFO inline
     worst_seg = str(sg.loc[sg["_CP"].idxmax(), dim_col]) if sg is not None and len(sg) > 0 else "N/A"
-    if st.button("🧠 Get AI Cost Insights", use_container_width=True, key="cai"):
-        try:
-            from groq import Groq
-            api_key = os.getenv("GROQ_API_KEY")
-            if not api_key:
-                st.warning("⚠️ No GROQ_API_KEY. Set it in Streamlit secrets.")
-            else:
-                client = Groq(api_key=api_key)
-                prompt = f"""You are a CFO and cost management expert.
-Revenue={fmt_m(tr)} | COGS={fmt_m(tc)} ({acp:.1f}%, bench {cogs_bench}%) | OPEX={fmt_m(to)} ({aop:.1f}%, bench {opex_bench}%)
-GP Margin={agpm:.1f}% | Lines above benchmark={above} | Highest cost segment={worst_seg}
-Give 3 specific, actionable cost reduction recommendations with expected impact.
-Supply chain · procurement · operational efficiency. Concise, CFO-level sharp."""
-                with st.spinner("Analysing cost structure…"):
-                    resp = client.chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role":"user","content":prompt}],
-                        temperature=0.3)
-                st.markdown(f'<div class="ai-box">{resp.choices[0].message.content}</div>',
-                            unsafe_allow_html=True)
-        except Exception as e:
-            st.error(f"Groq error: {e}")
-    else:
-        st.markdown("""<div class="box" style="opacity:0.4;font-size:0.73rem;">
-← Click to get AI-powered cost reduction recommendations based on your data.
-</div>""", unsafe_allow_html=True)
+    cost_ctx = (f"Cost Intelligence: Revenue={fmt_m(tr)} COGS={fmt_m(tc)} ({acp:.1f}% vs bench {cogs_bench}%) "
+                f"OPEX={fmt_m(to)} ({aop:.1f}% vs bench {opex_bench}%) GP Margin={agpm:.1f}% "
+                f"Lines above benchmark={above} Highest cost segment={worst_seg}")
+    ai_cfo_section(cost_ctx, "cost",
+        "e.g. Where can we cut costs? Which SKU is least efficient? What's the priority action?")
 
     dl_cols = [c for c in [per_col, dim_col if dim_col != "— none —" else None,
                rev_col, cogs_col, opex_col, "_CP", "_OP", "_GPM", "_Flag"] if c]
@@ -1527,12 +1455,11 @@ Supply chain · procurement · operational efficiency. Concise, CFO-level sharp.
 # ══════════════════════════════════════════════════════════════════════════════
 _mod = st.session_state.active_module
 
-if   _mod is None:          show_home()
-elif _mod == "__signup__":  show_signup()
-elif _mod == "fpa":         run_fpa()
-elif _mod == "recon":       run_recon()
-elif _mod == "budget":      run_budget()
-elif _mod == "cost":        run_cost()
+if   _mod is None:      show_home()
+elif _mod == "fpa":     run_fpa()
+elif _mod == "recon":   run_recon()
+elif _mod == "budget":  run_budget()
+elif _mod == "cost":    run_cost()
 
 st.markdown("""
 <div style="margin-top:40px;border-top:1px solid #1a1a14;padding-top:16px;
