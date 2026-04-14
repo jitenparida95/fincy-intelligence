@@ -536,7 +536,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">Session Isolation</strong><br>
       Each user session is completely isolated. No data uploaded by one user is accessible by any other user. All session data is discarded when you close your browser tab.</p>
       <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">Contact</strong><br>
-      For any data privacy questions: <a href="mailto:Jitenparida95@gmail.com" style="color:var(--gold);">Jitenparida95@gmail.com</a></p>
+      For any data privacy questions: <a href="mailto:Jitenparida95@gmail.com" style="color:var(--gold);"><span class="__cf_email__" data-cfemail="0842617c6d6678697a616c69313d486f65696164266b6765">[email&#160;protected]</span></a></p>
       <p style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#3a3a34;margin-top:18px;letter-spacing:0.08em;">Last updated: April 2026 · Fincy Intelligence by Jitendra Parida</p>
     </div>
   </div>
@@ -569,12 +569,145 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 </div>
 <script>
 var _intent='app';
-function toggleMenu(){var h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');h.classList.toggle('open');m.classList.toggle('open');document.body.style.overflow=m.classList.contains('open')?'hidden':'';}
-function _reset(){document.getElementById('mForm').style.display='';document.getElementById('fOk').style.display='none';document.getElementById('m-ey-txt').textContent='Early Access';document.getElementById('m-title-txt').textContent='Join Fincy Intelligence';document.getElementById('m-sub-txt').textContent='Get early access to all 4 modules free for 7 days. No spam. No credit card.';document.getElementById('m-submit-btn').textContent='Get Free Access →';['f_name','f_email','f_company','f_role','f_linkedin'].forEach(function(id){document.getElementById(id).value='';});}
-function openModal(){_intent='app';_reset();document.getElementById('modal').classList.add('open');document.body.style.overflow='hidden';}
-function openModalPro(){_intent='pro';_reset();document.getElementById('m-ey-txt').textContent='Pro Plan';document.getElementById('m-title-txt').textContent='Get Pro Access';document.getElementById('m-sub-txt').textContent='Enter your details to proceed to secure PayPal checkout. $29/month — cancel anytime.';document.getElementById('m-submit-btn').textContent='Continue to Payment →';document.getElementById('modal').classList.add('open');document.body.style.overflow='hidden';}
-function closeModal(){document.getElementById('modal').classList.remove('open');document.body.style.overflow='';}
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+var STORAGE_KEY='fincy_user_v1';
+var APP_URL='https://fincy-intelligence.streamlit.app';
+
+// ── Persistence helpers ────────────────────────────────────────────────────
+function saveUser(name,email){
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({name:name,email:email,ts:Date.now()}));}catch(e){}
+}
+function getUser(){
+  try{var d=localStorage.getItem(STORAGE_KEY);return d?JSON.parse(d):null;}catch(e){return null;}
+}
+function clearUser(){
+  try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
+}
+
+// ── On page load: check if user already signed up ─────────────────────────
+window.addEventListener('DOMContentLoaded',function(){
+  var u=getUser();
+  if(!u) return;  // first-time visitor — show normal page
+
+  // Returning user — update all primary CTAs to skip modal
+  var first = u.name.split(' ')[0];
+
+  // Nav "Sign Up Free" → "Welcome, {first}"
+  var navGhost = document.querySelector('nav .btn-ghost');
+  if(navGhost){
+    navGhost.textContent='✓ Welcome, '+first;
+    navGhost.style.borderColor='var(--green)';
+    navGhost.style.color='var(--green)';
+    navGhost.onclick=null;
+    navGhost.href=APP_URL;
+    navGhost.setAttribute('target','_blank');
+    navGhost.setAttribute('href',APP_URL);
+  }
+
+  // Nav "Launch App →" → direct to app
+  var navGold = document.querySelector('nav .btn-gold');
+  if(navGold){
+    navGold.textContent='Launch App →';
+    navGold.removeAttribute('onclick');
+    navGold.setAttribute('href',APP_URL);
+    navGold.setAttribute('target','_blank');
+    navGold.tagName==='BUTTON'&&navGold.parentNode.replaceChild(
+      Object.assign(document.createElement('a'),
+        {href:APP_URL,target:'_blank',className:navGold.className,textContent:'Launch App →'}),
+      navGold);
+  }
+
+  // Hero "Start Free Trial" → direct to app
+  var heroBtn = document.querySelector('.hero .btn-gold');
+  if(heroBtn){
+    heroBtn.textContent='Launch App →';
+    heroBtn.removeAttribute('onclick');
+    heroBtn.setAttribute('href',APP_URL);
+    heroBtn.setAttribute('target','_blank');
+  }
+
+  // Module "Sign Up & Launch" buttons → direct to app
+  document.querySelectorAll('.mod-cta').forEach(function(b){
+    b.removeAttribute('onclick');
+    b.setAttribute('href',APP_URL);
+    b.setAttribute('target','_blank');
+    b.textContent='Launch Module →';
+  });
+
+  // Pricing "Start Free Trial" → direct to app
+  document.querySelectorAll('.p-btn-gold').forEach(function(b){
+    if(b.tagName==='BUTTON'){
+      // keep pro button as-is (still needs payment)
+      if(b.textContent.includes('Pro')) return;
+    }
+    b.removeAttribute('onclick');
+    b.setAttribute('href',APP_URL);
+    b.setAttribute('target','_blank');
+    b.textContent='Launch App →';
+  });
+
+  // Show a small "not you?" link near the nav
+  var nav = document.querySelector('nav');
+  if(nav){
+    var tag = document.createElement('span');
+    tag.style.cssText='font-family:IBM Plex Mono,monospace;font-size:0.52rem;color:var(--text3);letter-spacing:0.08em;cursor:pointer;';
+    tag.innerHTML='Not '+first+'? <u onclick="signOut()" style="color:var(--text3);cursor:pointer;">Sign out</u>';
+    nav.appendChild(tag);
+  }
+});
+
+// ── Sign out ───────────────────────────────────────────────────────────────
+function signOut(){
+  clearUser();
+  location.reload();
+}
+
+// ── Modal helpers ──────────────────────────────────────────────────────────
+function toggleMenu(){
+  var h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
+  h.classList.toggle('open');m.classList.toggle('open');
+  document.body.style.overflow=m.classList.contains('open')?'hidden':'';
+}
+
+function _reset(){
+  document.getElementById('mForm').style.display='';
+  document.getElementById('fOk').style.display='none';
+  document.getElementById('m-ey-txt').textContent='Early Access';
+  document.getElementById('m-title-txt').textContent='Join Fincy Intelligence';
+  document.getElementById('m-sub-txt').textContent='Get early access to all 4 modules free for 7 days. No spam. No credit card.';
+  document.getElementById('m-submit-btn').textContent='Get Free Access →';
+  ['f_name','f_email','f_company','f_role','f_linkedin'].forEach(function(id){
+    document.getElementById(id).value='';
+  });
+}
+
+// If already signed up and clicks "Sign Up Free" — go direct to app instead
+function openModal(){
+  var u=getUser();
+  if(u){window.open(APP_URL,'_blank');return;}
+  _intent='app';_reset();
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function openModalPro(){
+  _intent='pro';_reset();
+  document.getElementById('m-ey-txt').textContent='Pro Plan';
+  document.getElementById('m-title-txt').textContent='Get Pro Access';
+  document.getElementById('m-sub-txt').textContent='Enter your details to proceed to secure PayPal checkout. $29/month — cancel anytime.';
+  document.getElementById('m-submit-btn').textContent='Continue to Payment →';
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+document.getElementById('modal').addEventListener('click',function(e){
+  if(e.target===this)closeModal();
+});
+
 function submitSignup(){
   var n=document.getElementById('f_name').value.trim();
   var e=document.getElementById('f_email').value.trim();
@@ -583,20 +716,45 @@ function submitSignup(){
   var l=document.getElementById('f_linkedin').value.trim();
   if(!n){alert('Please enter your name.');return;}
   if(!e||!e.includes('@')){alert('Please enter a valid email.');return;}
-  fetch('https://formspree.io/f/mvzvybpr',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({_subject:(_intent==='pro'?'New Fincy PRO: ':'New Fincy Signup: ')+n,name:n,email:e,company:c||'N/A',role:r||'N/A',linkedin:l||'N/A',plan:_intent==='pro'?'Pro $29/mo':'Free Trial',_replyto:e})}).catch(function(){});
+
+  // ── Save to localStorage so they're recognised on return visits ──────────
+  saveUser(n, e);
+
+  fetch('https://formspree.io/f/mvzvybpr',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify({
+      _subject:(_intent==='pro'?'New Fincy PRO: ':'New Fincy Signup: ')+n,
+      name:n,email:e,company:c||'N/A',role:r||'N/A',linkedin:l||'N/A',
+      plan:_intent==='pro'?'Pro $29/mo':'Free Trial',_replyto:e
+    })
+  }).catch(function(){});
+
   document.getElementById('mForm').style.display='none';
   document.getElementById('fOk').style.display='block';
+
   if(_intent==='pro'){
     document.getElementById('f-ok-title-txt').textContent='Redirecting to PayPal…';
     document.getElementById('f-ok-sub-txt').innerHTML='Signup saved. Taking you to secure PayPal checkout.<br>If not redirected, <a href="https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL" style="color:var(--gold);">click here →</a>';
     setTimeout(function(){window.open('https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL','_blank');},1800);
   } else {
-    document.getElementById('f-ok-title-txt').textContent="You're on the list.";
-    document.getElementById('f-ok-sub-txt').innerHTML='Welcome to Fincy Intelligence.<br>Jitendra will reach out to you shortly.<br><br><a href="https://fincy-intelligence.streamlit.app" style="color:var(--gold);" target="_blank">Launch the app now →</a>';
+    document.getElementById('f-ok-title-txt').textContent='You're in. Welcome, '+n.split(' ')[0]+'!';
+    document.getElementById('f-ok-sub-txt').innerHTML=(
+      'Your access is saved. You won't need to sign up again on this device.<br><br>'
+      +'<a href="'+APP_URL+'" style="color:var(--gold);" target="_blank">Launch the app now →</a>'
+    );
   }
 }
+
 function showPrivacy(){document.getElementById('privacy-modal').classList.add('open');document.body.style.overflow='hidden';}
-window.addEventListener('resize',function(){if(window.innerWidth>768){document.getElementById('mobileNav').classList.remove('open');document.getElementById('hamburger').classList.remove('open');document.body.style.overflow='';}});
+
+window.addEventListener('resize',function(){
+  if(window.innerWidth>768){
+    document.getElementById('mobileNav').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow='';
+  }
+});
 </script>
 </body>
 </html>
