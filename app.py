@@ -272,6 +272,16 @@ def generate_pdf(text):
     buf.seek(0)
     return buf
 
+def _get_groq_key() -> str:
+    """Get Groq API key — tries Streamlit secrets first, then env var."""
+    try:
+        k = st.secrets.get("GROQ_API_KEY", "")
+        if k: return k
+    except Exception:
+        pass
+    return os.getenv("GROQ_API_KEY", "")
+
+
 def send_to_formspree(name, email, company, role, linkedin):
     """Post signup data to Formspree → Jitenparida95@gmail.com"""
     try:
@@ -652,6 +662,26 @@ padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:20px;fl
 
 </div>""", unsafe_allow_html=True)
 
+    # AI CFO status check — show warning if key not set
+    _k = _get_groq_key()
+    if not _k:
+        st.markdown("""
+<div style="background:#150404;border:1px solid #f87171;border-left:3px solid #f87171;
+padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+  <div style="font-size:1.2rem;flex-shrink:0;">⚠️</div>
+  <div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
+    text-transform:uppercase;color:#f87171;margin-bottom:4px;">AI CFO Not Configured</div>
+    <div style="font-size:0.76rem;color:#a09880;font-weight:300;">
+      GROQ_API_KEY is missing. The AI CFO button will not work in any module.<br>
+      <strong style="color:#fafaf8;">Fix:</strong> Streamlit Dashboard → Your app →
+      ⋮ Settings → Secrets → add <code style="color:#c9a84c;">GROQ_API_KEY = "gsk_..."</code>
+      · Get a free key at <a href="https://console.groq.com" target="_blank"
+      style="color:#c9a84c;">console.groq.com ↗</a>
+    </div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
     # Founder + privacy trust strip
     st.markdown("""
 <div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:1px;
@@ -717,15 +747,29 @@ FINCY INTELLIGENCE · AI CFO PLATFORM · CONFIDENTIAL · FP&amp;A DECISION ENGIN
 
 
 def ai_cfo_section(context_str: str, module_key: str, placeholder: str = "Ask about this data…"):
-    """Renders an inline AI CFO chat panel for any module."""
+    """Renders an inline AI CFO chat panel for any module. Works on Streamlit Cloud + local."""
     st.markdown('''<div class="sec-label">🧠 AI CFO — Ask About This Data</div>''', unsafe_allow_html=True)
+
+    # ── Key check ─────────────────────────────────────────────────────────────
+    api_key = _get_groq_key()
+    if not api_key:
+        st.markdown("""
+<div style="background:#150404;border:1px solid #f87171;border-left:3px solid #f87171;
+padding:12px 16px;font-size:0.76rem;color:#a09880;font-weight:300;">
+<strong style="color:#f87171;">AI CFO not available</strong> — GROQ_API_KEY is missing.<br>
+Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
+<code style="color:#c9a84c;">GROQ_API_KEY = "gsk_..."</code>
+· Free key at <a href="https://console.groq.com" target="_blank" style="color:#c9a84c;">console.groq.com ↗</a>
+</div>""", unsafe_allow_html=True)
+        return
+
     hist_key = f"chat_{module_key}"
     if hist_key not in st.session_state:
         st.session_state[hist_key] = []
 
-    # Show history
+    # ── Chat history ──────────────────────────────────────────────────────────
     if st.session_state[hist_key]:
-        for chat in reversed(st.session_state[hist_key][-3:]):  # last 3 only
+        for chat in reversed(st.session_state[hist_key][-3:]):
             st.markdown(f'''
 <div class="box" style="margin-bottom:8px;">
 <span style="color:#3a3a34;font-size:0.62rem;font-family:\'IBM Plex Mono\',monospace;">YOU:</span>
@@ -734,9 +778,11 @@ def ai_cfo_section(context_str: str, module_key: str, placeholder: str = "Ask ab
 {chat["a"]}
 </div>''', unsafe_allow_html=True)
 
+    # ── Input row ─────────────────────────────────────────────────────────────
     qa1, qa2, qa3 = st.columns([4, 1, 1])
     with qa1:
-        question = st.text_input("", placeholder=placeholder, key=f"ai_q_{module_key}", label_visibility="collapsed")
+        question = st.text_input("", placeholder=placeholder,
+                                 key=f"ai_q_{module_key}", label_visibility="collapsed")
     with qa2:
         ask = st.button("🚀 Ask CFO", use_container_width=True, key=f"ai_ask_{module_key}")
     with qa3:
@@ -744,31 +790,33 @@ def ai_cfo_section(context_str: str, module_key: str, placeholder: str = "Ask ab
             st.session_state[hist_key] = []
             st.rerun()
 
+    # ── Response ──────────────────────────────────────────────────────────────
     if ask and question.strip():
-        with st.spinner("AI CFO is thinking…"):
+        with st.spinner("AI CFO analysing…"):
             try:
                 from groq import Groq
-                api_key = os.getenv("GROQ_API_KEY")
-                if not api_key:
-                    ans = "⚠️ GROQ_API_KEY not set in Streamlit secrets."
-                else:
-                    client = Groq(api_key=api_key)
-                    prompt = f"""You are a world-class CFO analyst. Be concise and sharp — 2-3 insights max.
-Data context: {context_str}
-Question: {question.strip()}
-Answer with CFO-level insights and specific recommended actions."""
-                    resp = client.chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role": "user", "content": prompt}],
-                        temperature=0.3)
-                    ans = resp.choices[0].message.content
+                client = Groq(api_key=api_key)
+                prompt = (
+                    "You are a world-class CFO analyst. Be concise and sharp — 2-3 insights max.\n\n"
+                    f"Data context: {context_str}\n\n"
+                    f"Question: {question.strip()}\n\n"
+                    "Answer with CFO-level insights and specific recommended actions. "
+                    "Use bullet points. Reference specific numbers from the context."
+                )
+                resp = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[{"role": "user", "content": prompt}],
+                    max_tokens=600,
+                    temperature=0.3)
+                ans = resp.choices[0].message.content
             except Exception as e:
-                ans = f"Error: {e}"
+                ans = f"⚠️ Error calling Groq API: {e}"
         st.markdown(f'''<div class="ai-box">{ans}</div>''', unsafe_allow_html=True)
         st.session_state[hist_key].append({"q": question.strip(), "a": ans})
     elif not ask:
         st.markdown('''<div class="box" style="opacity:0.4;font-size:0.72rem;">
-Type a question above and click Ask CFO. Try: "What are the key risks?", "Where should we focus?", "What actions do you recommend?"
+Ask the AI CFO anything about this data — "What are the key risks?",
+"Where should we focus?", "What actions do you recommend?"
 </div>''', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
