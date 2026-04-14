@@ -1134,6 +1134,7 @@ flags amount breaks and missing records, and downloads a clean exceptions report
     cols2   = list(df2.columns)
     common  = [c for c in cols1 if c in cols2]
 
+    # ── Key column config ────────────────────────────────────────────────────
     st.markdown('<div class="sec-label">Configure Match</div>', unsafe_allow_html=True)
     mc1, mc2, mc3 = st.columns(3)
     with mc1:
@@ -1154,11 +1155,75 @@ flags amount breaks and missing records, and downloads a clean exceptions report
         a2_col = st.selectbox("Amount (Source B)", n2 if n2 else cols2,
                               index=n2.index(ag2) if ag2 in n2 else 0, key="recon_a2")
 
+    # ── Duplicate key detection & composite key builder ──────────────────────
+    dup_a = df1[mkey].duplicated().sum()
+    dup_b = df2[mkey].duplicated().sum()
+
+    secondary_key = None
+    tertiary_key  = None
+    if dup_a > 0 or dup_b > 0:
+        st.markdown(f"""
+<div style="background:#150f00;border:1px solid #fbbf24;border-left:3px solid #fbbf24;
+padding:12px 18px;margin-bottom:12px;">
+<div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#fbbf24;margin-bottom:6px;">⚠️ Match Key Has Duplicates</div>
+<div style="font-size:0.76rem;color:#a09880;font-weight:300;">
+<strong style="color:#fafaf8;">{mkey}</strong> is not a unique transaction ID —
+Source A has <strong style="color:#fbbf24;">{dup_a} duplicate</strong> values,
+Source B has <strong style="color:#fbbf24;">{dup_b} duplicate</strong> values.<br>
+Matching on a non-unique column alone causes a cartesian product, producing thousands of
+false Amount Breaks. Add one or two more columns to build a composite key.
+<br><br>
+<strong style="color:#fafaf8;">💡 Tip for bank/ERP reconciliation:</strong>
+Use <em>Category + Date + Amount</em> as a 3-part key for the most accurate match.
+</div>
+</div>""", unsafe_allow_html=True)
+
+        sk_opts = ["— none —"] + [c for c in common if c != mkey]
+        # Auto-suggest date as second key
+        date_guess = next((c for c in sk_opts if any(k in c.lower()
+                      for k in ["date","period","month","year","trans"])), sk_opts[0])
+        secondary_key_raw = st.selectbox(
+            "2nd Key Column (e.g. transaction date)",
+            sk_opts, index=sk_opts.index(date_guess) if date_guess in sk_opts else 0,
+            key="recon_mkey2")
+        secondary_key = secondary_key_raw if secondary_key_raw != "— none —" else None
+
+        tk_opts = ["— none —"] + [c for c in common if c not in [mkey, secondary_key_raw]]
+        tertiary_key_raw = st.selectbox(
+            "3rd Key Column (e.g. amount — for highest accuracy)",
+            tk_opts, index=0, key="recon_mkey3",
+            help="Adding amount as a 3rd key achieves zero amount-breaks when amounts uniquely identify transactions")
+        tertiary_key = tertiary_key_raw if tertiary_key_raw != "— none —" else None
+
     if st.button("🔁 Run Reconciliation", use_container_width=True, key="run_recon"):
-        merged = pd.merge(
-            df1[[mkey, a1_col]].rename(columns={a1_col:"Amt_A"}),
-            df2[[mkey, a2_col]].rename(columns={a2_col:"Amt_B"}),
-            on=mkey, how="outer", indicator=True)
+
+        # ── Build match key (up to 3 columns) ───────────────────────────────
+        def make_key(df, primary, secondary=None, tertiary=None):
+            k = df[primary].astype(str)
+            if secondary: k = k + "||" + df[secondary].astype(str)
+            if tertiary:  k = k + "||" + df[tertiary].astype(str)
+            return k
+
+        df1["_match_key"] = make_key(df1, mkey, secondary_key, tertiary_key)
+        df2["_match_key"] = make_key(df2, mkey, secondary_key, tertiary_key)
+
+        # ── Add within-group sequence to handle legitimate duplicate rows ────
+        # e.g. same vendor paid same amount twice on same date → both are valid
+        df1["_seq"] = df1.groupby("_match_key").cumcount()
+        df2["_seq"] = df2.groupby("_match_key").cumcount()
+        df1["_full_key"] = df1["_match_key"] + "||" + df1["_seq"].astype(str)
+        df2["_full_key"] = df2["_match_key"] + "||" + df2["_seq"].astype(str)
+
+        # ── Carry original columns into merged output ────────────────────────
+        a_cols = [c for c in df1.columns if c not in ["_match_key","_seq","_full_key",a1_col]]
+        b_cols = [c for c in df2.columns if c not in ["_match_key","_seq","_full_key",a2_col]]
+
+        left  = df1[a_cols + [a1_col, "_full_key"]].rename(columns={a1_col: "Amt_A"})
+        right = df2[b_cols + [a2_col, "_full_key"]].rename(
+            columns={a2_col: "Amt_B", **{c: c+"_B" for c in b_cols if c in a_cols}})
+
+        merged = pd.merge(left, right, on="_full_key", how="outer", indicator=True)
 
         def classify(r):
             if r["_merge"] == "left_only":  return "Missing in B"
@@ -1168,13 +1233,38 @@ flags amount breaks and missing records, and downloads a clean exceptions report
         merged["Status"]     = merged.apply(classify, axis=1)
         merged["Difference"] = merged["Amt_A"].fillna(0) - merged["Amt_B"].fillna(0)
 
-        total   = len(merged)
-        matched = (merged["Status"]=="Matched").sum()
-        breaks  = (merged["Status"]=="Amount Break").sum()
-        miss_b  = (merged["Status"]=="Missing in B").sum()
-        miss_a  = (merged["Status"]=="Missing in A").sum()
+        # ── Drop internal columns from display ───────────────────────────────
+        display_cols = [c for c in merged.columns
+                        if c not in ["_full_key","_merge"] and not c.endswith("_B")
+                        or c in [mkey, a1_col, "Amt_A", "Amt_B", "Status", "Difference"]]
+        # Clean final output: key + amounts + status + diff
+        out_cols = [mkey]
+        if secondary_key and secondary_key in merged.columns:
+            out_cols.append(secondary_key)
+        if tertiary_key and tertiary_key in merged.columns:
+            out_cols.append(tertiary_key)
+        out_cols += ["Amt_A", "Amt_B", "Status", "Difference"]
+        out_cols = [c for c in out_cols if c in merged.columns]
+
+        merged_out = merged[out_cols].copy()
+
+        total   = len(merged_out)
+        matched = (merged_out["Status"]=="Matched").sum()
+        breaks  = (merged_out["Status"]=="Amount Break").sum()
+        miss_b  = (merged_out["Status"]=="Missing in B").sum()
+        miss_a  = (merged_out["Status"]=="Missing in A").sum()
         mrate   = matched/total*100 if total else 0
-        t_break = merged.loc[merged["Status"]=="Amount Break","Difference"].abs().sum()
+        t_break = merged_out.loc[merged_out["Status"]=="Amount Break","Difference"].abs().sum()
+
+        # Show composite key info
+        key_parts = [k for k in [mkey, secondary_key, tertiary_key] if k]
+        if len(key_parts) > 1:
+            key_display = " + ".join(key_parts)
+            st.markdown(f"""<div style="background:#041508;border:1px solid #4ade80;
+padding:9px 16px;margin-bottom:12px;font-family:'IBM Plex Mono',monospace;
+font-size:0.6rem;letter-spacing:0.1em;color:#4ade80;">
+✓ {len(key_parts)}-part composite key: <strong>{key_display}</strong>
+</div>""", unsafe_allow_html=True)
 
         st.markdown('<div class="sec-label">Reconciliation Summary</div>', unsafe_allow_html=True)
         st.markdown(f"""
@@ -1200,7 +1290,7 @@ flags amount breaks and missing records, and downloads a clean exceptions report
                               height=270, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
         with ch2:
-            dbs = merged.groupby("Status")["Difference"].sum().reset_index()
+            dbs = merged_out.groupby("Status")["Difference"].sum().reset_index()
             fig = go.Figure(go.Bar(x=dbs["Status"], y=dbs["Difference"],
                 marker_color=["#4ade80" if v >= 0 else "#f87171" for v in dbs["Difference"]],
                 text=dbs["Difference"].apply(lambda x: f"{x:+,.2f}"), textposition="auto"))
@@ -1208,7 +1298,7 @@ flags amount breaks and missing records, and downloads a clean exceptions report
                               height=270, xaxis=AXIS, yaxis=AXIS)
             st.plotly_chart(fig, use_container_width=True)
 
-        exc = merged[merged["Status"] != "Matched"].copy()
+        exc = merged_out[merged_out["Status"] != "Matched"].copy()
         if not exc.empty:
             st.markdown('<div class="sec-label">Exceptions Detail</div>', unsafe_allow_html=True)
             sf = st.multiselect("Filter Status",
@@ -1216,18 +1306,17 @@ flags amount breaks and missing records, and downloads a clean exceptions report
                                 default=["Amount Break","Missing in B","Missing in A"],
                                 key="recon_sf")
             fe = exc[exc["Status"].isin(sf)]
-            st.dataframe(fe.drop(columns=["_merge"]), use_container_width=True, hide_index=True)
+            st.dataframe(fe, use_container_width=True, hide_index=True)
             st.download_button("📥 Download Exceptions (CSV)",
-                               fe.drop(columns=["_merge"]).to_csv(index=False).encode(),
+                               fe.to_csv(index=False).encode(),
                                "Fincy_Recon_Exceptions.csv", "text/csv")
         else:
             st.success("🎉 Perfect reconciliation — no exceptions found!")
 
         st.markdown('<div class="sec-label">Full Reconciliation Output</div>', unsafe_allow_html=True)
-        out = merged.drop(columns=["_merge"])
-        st.dataframe(out, use_container_width=True, hide_index=True)
+        st.dataframe(merged_out, use_container_width=True, hide_index=True)
         st.download_button("📥 Download Full Recon Output (CSV)",
-                           out.to_csv(index=False).encode(),
+                           merged_out.to_csv(index=False).encode(),
                            "Fincy_Recon_Full.csv", "text/csv")
 
     # AI CFO — always shown after run
