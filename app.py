@@ -272,16 +272,6 @@ def generate_pdf(text):
     buf.seek(0)
     return buf
 
-def _get_groq_key() -> str:
-    """Get Groq API key — tries Streamlit secrets first, then env var."""
-    try:
-        k = st.secrets.get("GROQ_API_KEY", "")
-        if k: return k
-    except Exception:
-        pass
-    return os.getenv("GROQ_API_KEY", "")
-
-
 def send_to_formspree(name, email, company, role, linkedin):
     """Post signup data to Formspree → Jitenparida95@gmail.com"""
     try:
@@ -662,26 +652,6 @@ padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:20px;fl
 
 </div>""", unsafe_allow_html=True)
 
-    # AI CFO status check — show warning if key not set
-    _k = _get_groq_key()
-    if not _k:
-        st.markdown("""
-<div style="background:#150404;border:1px solid #f87171;border-left:3px solid #f87171;
-padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
-  <div style="font-size:1.2rem;flex-shrink:0;">⚠️</div>
-  <div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
-    text-transform:uppercase;color:#f87171;margin-bottom:4px;">AI CFO Not Configured</div>
-    <div style="font-size:0.76rem;color:#a09880;font-weight:300;">
-      GROQ_API_KEY is missing. The AI CFO button will not work in any module.<br>
-      <strong style="color:#fafaf8;">Fix:</strong> Streamlit Dashboard → Your app →
-      ⋮ Settings → Secrets → add <code style="color:#c9a84c;">GROQ_API_KEY = "gsk_..."</code>
-      · Get a free key at <a href="https://console.groq.com" target="_blank"
-      style="color:#c9a84c;">console.groq.com ↗</a>
-    </div>
-  </div>
-</div>""", unsafe_allow_html=True)
-
     # Founder + privacy trust strip
     st.markdown("""
 <div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:1px;
@@ -750,16 +720,23 @@ def ai_cfo_section(context_str: str, module_key: str, placeholder: str = "Ask ab
     """Renders an inline AI CFO chat panel for any module. Works on Streamlit Cloud + local."""
     st.markdown('''<div class="sec-label">🧠 AI CFO — Ask About This Data</div>''', unsafe_allow_html=True)
 
-    # ── Key check ─────────────────────────────────────────────────────────────
-    api_key = _get_groq_key()
+    # ── Get API key: st.secrets (Streamlit Cloud) → os.getenv (local) ────────
+    api_key = ""
+    try:
+        api_key = st.secrets.get("GROQ_API_KEY", "") or ""
+    except Exception:
+        pass
+    if not api_key:
+        api_key = os.getenv("GROQ_API_KEY", "") or ""
+
     if not api_key:
         st.markdown("""
 <div style="background:#150404;border:1px solid #f87171;border-left:3px solid #f87171;
 padding:12px 16px;font-size:0.76rem;color:#a09880;font-weight:300;">
-<strong style="color:#f87171;">AI CFO not available</strong> — GROQ_API_KEY is missing.<br>
-Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
-<code style="color:#c9a84c;">GROQ_API_KEY = "gsk_..."</code>
-· Free key at <a href="https://console.groq.com" target="_blank" style="color:#c9a84c;">console.groq.com ↗</a>
+<strong style="color:#f87171;">AI CFO not available</strong> — GROQ_API_KEY not found in Streamlit Secrets.<br>
+Fix: Streamlit Dashboard → Your app → ⋮ Settings → Secrets → add:
+<code style="color:#c9a84c;display:block;margin-top:6px;">GROQ_API_KEY = "gsk_your_key_here"</code>
+Get a free key at <a href="https://console.groq.com" target="_blank" style="color:#c9a84c;">console.groq.com ↗</a>
 </div>""", unsafe_allow_html=True)
         return
 
@@ -767,7 +744,7 @@ Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
     if hist_key not in st.session_state:
         st.session_state[hist_key] = []
 
-    # ── Chat history ──────────────────────────────────────────────────────────
+    # Show chat history
     if st.session_state[hist_key]:
         for chat in reversed(st.session_state[hist_key][-3:]):
             st.markdown(f'''
@@ -778,7 +755,6 @@ Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
 {chat["a"]}
 </div>''', unsafe_allow_html=True)
 
-    # ── Input row ─────────────────────────────────────────────────────────────
     qa1, qa2, qa3 = st.columns([4, 1, 1])
     with qa1:
         question = st.text_input("", placeholder=placeholder,
@@ -790,7 +766,6 @@ Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
             st.session_state[hist_key] = []
             st.rerun()
 
-    # ── Response ──────────────────────────────────────────────────────────────
     if ask and question.strip():
         with st.spinner("AI CFO analysing…"):
             try:
@@ -800,8 +775,8 @@ Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
                     "You are a world-class CFO analyst. Be concise and sharp — 2-3 insights max.\n\n"
                     f"Data context: {context_str}\n\n"
                     f"Question: {question.strip()}\n\n"
-                    "Answer with CFO-level insights and specific recommended actions. "
-                    "Use bullet points. Reference specific numbers from the context."
+                    "Give CFO-level insights with specific recommended actions. "
+                    "Use bullet points. Reference specific numbers from the data context."
                 )
                 resp = client.chat.completions.create(
                     model="llama-3.1-8b-instant",
@@ -810,13 +785,12 @@ Add it in Streamlit Dashboard → Your app → ⋮ Settings → Secrets:
                     temperature=0.3)
                 ans = resp.choices[0].message.content
             except Exception as e:
-                ans = f"⚠️ Error calling Groq API: {e}"
+                ans = f"⚠️ Groq API error: {e}"
         st.markdown(f'''<div class="ai-box">{ans}</div>''', unsafe_allow_html=True)
         st.session_state[hist_key].append({"q": question.strip(), "a": ans})
     elif not ask:
         st.markdown('''<div class="box" style="opacity:0.4;font-size:0.72rem;">
-Ask the AI CFO anything about this data — "What are the key risks?",
-"Where should we focus?", "What actions do you recommend?"
+Ask the AI CFO anything — "What are the key risks?", "Where should we focus?", "What actions do you recommend?"
 </div>''', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1116,7 +1090,6 @@ EBITDA Margin <strong>{ebitdam:.1f}%</strong>. COGS {cogsp:.1f}% NR · OPEX {ope
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# ══════════════════════════════════════════════════════════════════════════════
 # MODULE 2 — RECONCILIATION ENGINE
 # ══════════════════════════════════════════════════════════════════════════════
 def run_recon():
@@ -1139,10 +1112,9 @@ def run_recon():
 padding:11px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
 <span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
 text-transform:uppercase;color:#4ade80;">How it works: </span>
-Upload two CSVs (ERP vs Bank, GL vs Sub-ledger, PO vs Invoice). Select match key columns.
-If your key is not unique, add more columns to build a composite key.
-For bank/ERP: use <strong style="color:#fafaf8;">Category + Date + Amount</strong> as a
-3-part key for the most accurate result — zero false breaks.
+Upload two CSVs — e.g. ERP export and Bank statement. Both need a common ID column
+(Invoice ID, Transaction ID etc.) and an amount column. Fincy auto-matches rows,
+flags amount breaks and missing records, and downloads a clean exceptions report.
 </div>""", unsafe_allow_html=True)
 
     c1, c2 = st.columns(2)
@@ -1161,7 +1133,6 @@ For bank/ERP: use <strong style="color:#fafaf8;">Category + Date + Amount</stron
 
     use_a = st.session_state.recon_sample_a
     use_b = st.session_state.recon_sample_b
-
     def _safe_csv(fileobj, fallback_str):
         if fileobj is None: return pd.read_csv(io.StringIO(fallback_str))
         try:
@@ -1170,244 +1141,212 @@ For bank/ERP: use <strong style="color:#fafaf8;">Category + Date + Amount</stron
             return result
         except Exception as e:
             st.error(f"⚠️ Could not read CSV: {e}"); return None
-
     df1 = _safe_csv(f1 if f1 else None, SAMPLE_RECON_A) if (use_a or f1) else None
     df2 = _safe_csv(f2 if f2 else None, SAMPLE_RECON_B) if (use_b or f2) else None
 
     if df1 is None or df2 is None:
         st.markdown("""<div class="box" style="opacity:0.6;font-size:0.74rem;">
-\u2191 Upload both files above or click the sample buttons.<br><br>
-<strong>Use cases:</strong> ERP vs Bank \u00b7 GL vs Sub-ledger \u00b7 PO vs Invoice \u00b7 Intercompany<br>
-<strong>Output:</strong> Match rate \u00b7 Amount breaks \u00b7 Missing records \u00b7 Exceptions CSV
+↑ Upload both files above or click the sample buttons.<br><br>
+<strong>Use cases:</strong> ERP vs Bank · GL vs Sub-ledger · PO vs Invoice · Intercompany<br>
+<strong>Output:</strong> Match rate · Amount breaks · Missing records · Exceptions CSV
 </div>""", unsafe_allow_html=True)
         return
 
-    cols1  = list(df1.columns)
-    cols2  = list(df2.columns)
-    common = [c for c in cols1 if c in cols2]
+    cols1   = list(df1.columns)
+    cols2   = list(df2.columns)
+    common  = [c for c in cols1 if c in cols2]
 
-    # ── Column selectors ──────────────────────────────────────────────────────
+    # ── Key column config ────────────────────────────────────────────────────
     st.markdown('<div class="sec-label">Configure Match</div>', unsafe_allow_html=True)
     mc1, mc2, mc3 = st.columns(3)
     with mc1:
         kg   = next((c for c in common if any(k in c.lower()
-               for k in ["id","no","number","ref","invoice","trans","prefix","type","cat"])),
-               common[0] if common else cols1[0])
-        mkey = st.selectbox("Match Key Column (1st)", common if common else cols1,
+               for k in ["id","no","number","ref","invoice","trans"])), common[0] if common else cols1[0])
+        mkey = st.selectbox("Match Key Column", common if common else cols1,
                             index=common.index(kg) if kg in common else 0, key="recon_mkey")
     with mc2:
-        n1   = [c for c in cols1 if pd.api.types.is_numeric_dtype(df1[c])]
-        ag1  = next((c for c in n1 if any(k in c.lower()
-               for k in ["amount","amt","erp","value","total","n_amount"])), n1[0] if n1 else cols1[0])
+        n1  = [c for c in cols1 if pd.api.types.is_numeric_dtype(df1[c])]
+        ag1 = next((c for c in n1 if any(k in c.lower()
+              for k in ["amount","amt","erp","value","total"])), n1[0] if n1 else cols1[0])
         a1_col = st.selectbox("Amount (Source A)", n1 if n1 else cols1,
                               index=n1.index(ag1) if ag1 in n1 else 0, key="recon_a1")
     with mc3:
-        n2   = [c for c in cols2 if pd.api.types.is_numeric_dtype(df2[c])]
-        ag2  = next((c for c in n2 if any(k in c.lower()
-               for k in ["amount","amt","bank","value","total","n_amount"])), n2[0] if n2 else cols2[0])
+        n2  = [c for c in cols2 if pd.api.types.is_numeric_dtype(df2[c])]
+        ag2 = next((c for c in n2 if any(k in c.lower()
+              for k in ["amount","amt","bank","value","total"])), n2[0] if n2 else cols2[0])
         a2_col = st.selectbox("Amount (Source B)", n2 if n2 else cols2,
                               index=n2.index(ag2) if ag2 in n2 else 0, key="recon_a2")
 
-    # ── Duplicate-key detection ───────────────────────────────────────────────
-    dup_a = int(df1[mkey].duplicated().sum())
-    dup_b = int(df2[mkey].duplicated().sum())
+    # ── Duplicate key detection & composite key builder ──────────────────────
+    dup_a = df1[mkey].duplicated().sum()
+    dup_b = df2[mkey].duplicated().sum()
+
     secondary_key = None
     tertiary_key  = None
-
     if dup_a > 0 or dup_b > 0:
         st.markdown(f"""
 <div style="background:#150f00;border:1px solid #fbbf24;border-left:3px solid #fbbf24;
 padding:12px 18px;margin-bottom:12px;">
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#fbbf24;margin-bottom:6px;">\u26a0\ufe0f Match Key Has Duplicates</div>
-  <div style="font-size:0.76rem;color:#a09880;font-weight:300;">
-    <strong style="color:#fafaf8;">{mkey}</strong> is not a unique transaction ID \u2014
-    Source A has <strong style="color:#fbbf24;">{dup_a} duplicate</strong> values,
-    Source B has <strong style="color:#fbbf24;">{dup_b} duplicate</strong> values.<br>
-    Matching on a non-unique column causes a cartesian product producing thousands of
-    false Amount Breaks. Add 1\u20132 more columns to build a composite key.<br><br>
-    <strong style="color:#4ade80;">\U0001f4a1 Best practice:</strong>
-    Use <em>Category + Date + Amount</em> as a 3-part key for zero false breaks.
-  </div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#fbbf24;margin-bottom:6px;">⚠️ Match Key Has Duplicates</div>
+<div style="font-size:0.76rem;color:#a09880;font-weight:300;">
+<strong style="color:#fafaf8;">{mkey}</strong> is not a unique transaction ID —
+Source A has <strong style="color:#fbbf24;">{dup_a} duplicate</strong> values,
+Source B has <strong style="color:#fbbf24;">{dup_b} duplicate</strong> values.<br>
+Matching on a non-unique column alone causes a cartesian product, producing thousands of
+false Amount Breaks. Add one or two more columns to build a composite key.
+<br><br>
+<strong style="color:#fafaf8;">💡 Tip for bank/ERP reconciliation:</strong>
+Use <em>Category + Date + Amount</em> as a 3-part key for the most accurate match.
+</div>
 </div>""", unsafe_allow_html=True)
 
-        sk_opts = ["\u2014 none \u2014"] + [c for c in common if c != mkey]
-        # Auto-suggest: exact date column first, then partial match, avoid pure "year"
-        date_guess = next(
-            (c for c in sk_opts if c.lower() in ["transactiondate","date","trans_date","tran_date"]),
-            next((c for c in sk_opts if any(k in c.lower()
-                  for k in ["transact","date","period","month"]) and "year" not in c.lower()),
-            next((c for c in sk_opts if any(k in c.lower() for k in ["date","period","month","year"])),
-            sk_opts[0])))
+        sk_opts = ["— none —"] + [c for c in common if c != mkey]
+        # Auto-suggest date as second key
+        date_guess = next((c for c in sk_opts if any(k in c.lower()
+                      for k in ["date","period","month","year","trans"])), sk_opts[0])
         secondary_key_raw = st.selectbox(
             "2nd Key Column (e.g. transaction date)",
-            sk_opts,
-            index=sk_opts.index(date_guess) if date_guess in sk_opts else 0,
+            sk_opts, index=sk_opts.index(date_guess) if date_guess in sk_opts else 0,
             key="recon_mkey2")
-        secondary_key = secondary_key_raw if secondary_key_raw != "\u2014 none \u2014" else None
+        secondary_key = secondary_key_raw if secondary_key_raw != "— none —" else None
 
-        # 3rd key — auto-suggest the amount column for highest accuracy
-        amtcol_guess = next(
-            (c for c in common if c == a1_col or any(k in c.lower()
-             for k in ["amount","amt","n_amount"])), None)
-        tk_opts = ["\u2014 none \u2014"] + [c for c in common
-                  if c not in [mkey, secondary_key_raw or ""]]
-        tk_default = amtcol_guess if amtcol_guess in tk_opts else tk_opts[0]
+        tk_opts = ["— none —"] + [c for c in common if c not in [mkey, secondary_key_raw]]
         tertiary_key_raw = st.selectbox(
-            "3rd Key Column (e.g. amount \u2014 highest accuracy)",
-            tk_opts,
-            index=tk_opts.index(tk_default) if tk_default in tk_opts else 0,
-            key="recon_mkey3",
-            help="Using amount as 3rd key matches by value not row position, eliminating false breaks")
-        tertiary_key = tertiary_key_raw if tertiary_key_raw != "\u2014 none \u2014" else None
+            "3rd Key Column (e.g. amount — for highest accuracy)",
+            tk_opts, index=0, key="recon_mkey3",
+            help="Adding amount as a 3rd key achieves zero amount-breaks when amounts uniquely identify transactions")
+        tertiary_key = tertiary_key_raw if tertiary_key_raw != "— none —" else None
 
-    if st.button("\U0001f501 Run Reconciliation", use_container_width=True, key="run_recon"):
+    if st.button("🔁 Run Reconciliation", use_container_width=True, key="run_recon"):
 
-        # 1. Build composite match key
-        def _mk(df, p, s=None, t=None):
-            k = df[p].astype(str).str.strip()
-            if s: k = k + "\xa7" + df[s].astype(str).str.strip()
-            if t: k = k + "\xa7" + df[t].astype(str).str.strip()
+        # ── Build match key (up to 3 columns) ───────────────────────────────
+        def make_key(df, primary, secondary=None, tertiary=None):
+            k = df[primary].astype(str)
+            if secondary: k = k + "||" + df[secondary].astype(str)
+            if tertiary:  k = k + "||" + df[tertiary].astype(str)
             return k
 
-        _df1 = df1.copy(); _df2 = df2.copy()
-        _df1["_mk"] = _mk(_df1, mkey, secondary_key, tertiary_key)
-        _df2["_mk"] = _mk(_df2, mkey, secondary_key, tertiary_key)
+        df1["_match_key"] = make_key(df1, mkey, secondary_key, tertiary_key)
+        df2["_match_key"] = make_key(df2, mkey, secondary_key, tertiary_key)
 
-        # 2. Within-group sequence (handles legitimate duplicate rows positionally)
-        _df1["_sq"] = _df1.groupby("_mk").cumcount()
-        _df2["_sq"] = _df2.groupby("_mk").cumcount()
-        _df1["_fk"] = _df1["_mk"] + "\xa7" + _df1["_sq"].astype(str)
-        _df2["_fk"] = _df2["_mk"] + "\xa7" + _df2["_sq"].astype(str)
+        # ── Add within-group sequence to handle legitimate duplicate rows ────
+        # e.g. same vendor paid same amount twice on same date → both are valid
+        df1["_seq"] = df1.groupby("_match_key").cumcount()
+        df2["_seq"] = df2.groupby("_match_key").cumcount()
+        df1["_full_key"] = df1["_match_key"] + "||" + df1["_seq"].astype(str)
+        df2["_full_key"] = df2["_match_key"] + "||" + df2["_seq"].astype(str)
 
-        # 3. Merge keeping all original columns from both sides
-        b_rename = {c: c+"_B" for c in _df2.columns
-                    if c in _df1.columns and c not in ["_mk","_sq","_fk",a2_col]}
-        left  = _df1.drop(columns=["_mk","_sq"]).rename(columns={a1_col:"Amt_A"})
-        right = _df2.drop(columns=["_mk","_sq"]).rename(
-                    columns={**{a2_col:"Amt_B"}, **b_rename})
-        merged = pd.merge(left, right, on="_fk", how="outer", indicator=True)
+        # ── Carry original columns into merged output ────────────────────────
+        a_cols = [c for c in df1.columns if c not in ["_match_key","_seq","_full_key",a1_col]]
+        b_cols = [c for c in df2.columns if c not in ["_match_key","_seq","_full_key",a2_col]]
 
-        # 4. Classify
+        left  = df1[a_cols + [a1_col, "_full_key"]].rename(columns={a1_col: "Amt_A"})
+        right = df2[b_cols + [a2_col, "_full_key"]].rename(
+            columns={a2_col: "Amt_B", **{c: c+"_B" for c in b_cols if c in a_cols}})
+
+        merged = pd.merge(left, right, on="_full_key", how="outer", indicator=True)
+
         def classify(r):
             if r["_merge"] == "left_only":  return "Missing in B"
             if r["_merge"] == "right_only": return "Missing in A"
-            a = r["Amt_A"]; b = r["Amt_B"]
-            if pd.isna(a) or pd.isna(b): return "Amount Break"
-            return "Matched" if abs(float(a)-float(b)) <= tolerance else "Amount Break"
+            return "Matched" if abs(r["Amt_A"] - r["Amt_B"]) <= tolerance else "Amount Break"
 
         merged["Status"]     = merged.apply(classify, axis=1)
         merged["Difference"] = merged["Amt_A"].fillna(0) - merged["Amt_B"].fillna(0)
 
-        # 5. Fill NaN columns from the B side for "Missing in A" / "Missing in B" rows
-        #    For Missing in A: A-side columns are NaN — fill from B-side equivalents
-        #    For Missing in B: B-side columns are NaN — already have A-side values
-        for orig_col in list(df1.columns):
-            b_col = orig_col + "_B"
-            if b_col in merged.columns and orig_col in merged.columns:
-                merged[orig_col] = merged[orig_col].fillna(merged[b_col])
+        # ── Drop internal columns from display ───────────────────────────────
+        display_cols = [c for c in merged.columns
+                        if c not in ["_full_key","_merge"] and not c.endswith("_B")
+                        or c in [mkey, a1_col, "Amt_A", "Amt_B", "Status", "Difference"]]
+        # Clean final output: key + amounts + status + diff
+        out_cols = [mkey]
+        if secondary_key and secondary_key in merged.columns:
+            out_cols.append(secondary_key)
+        if tertiary_key and tertiary_key in merged.columns:
+            out_cols.append(tertiary_key)
+        out_cols += ["Amt_A", "Amt_B", "Status", "Difference"]
+        out_cols = [c for c in out_cols if c in merged.columns]
 
-        # 6. Build clean output columns (all original cols + amounts + status + diff)
-        drop_internal = {"_fk","_merge"} | {c for c in merged.columns if c.endswith("_B")}
-        meta_cols = [c for c in merged.columns if c not in drop_internal
-                     and c not in ["Amt_A","Amt_B","Status","Difference"]]
-        merged_out = merged[[c for c in meta_cols + ["Amt_A","Amt_B","Status","Difference"]
-                              if c in merged.columns]].copy()
+        merged_out = merged[out_cols].copy()
 
-        # 7. Summary stats
         total   = len(merged_out)
-        matched = int((merged_out["Status"]=="Matched").sum())
-        breaks  = int((merged_out["Status"]=="Amount Break").sum())
-        miss_b  = int((merged_out["Status"]=="Missing in B").sum())
-        miss_a  = int((merged_out["Status"]=="Missing in A").sum())
+        matched = (merged_out["Status"]=="Matched").sum()
+        breaks  = (merged_out["Status"]=="Amount Break").sum()
+        miss_b  = (merged_out["Status"]=="Missing in B").sum()
+        miss_a  = (merged_out["Status"]=="Missing in A").sum()
         mrate   = matched/total*100 if total else 0
-        t_break = float(merged_out.loc[merged_out["Status"]=="Amount Break","Difference"].abs().sum())
+        t_break = merged_out.loc[merged_out["Status"]=="Amount Break","Difference"].abs().sum()
 
-        # 8. Key banner
+        # Show composite key info
         key_parts = [k for k in [mkey, secondary_key, tertiary_key] if k]
         if len(key_parts) > 1:
+            key_display = " + ".join(key_parts)
             st.markdown(f"""<div style="background:#041508;border:1px solid #4ade80;
 padding:9px 16px;margin-bottom:12px;font-family:'IBM Plex Mono',monospace;
 font-size:0.6rem;letter-spacing:0.1em;color:#4ade80;">
-\u2713 {len(key_parts)}-part composite key: <strong>{" + ".join(key_parts)}</strong>
+✓ {len(key_parts)}-part composite key: <strong>{key_display}</strong>
 </div>""", unsafe_allow_html=True)
 
-        # 9. KPI cards
         st.markdown('<div class="sec-label">Reconciliation Summary</div>', unsafe_allow_html=True)
         st.markdown(f"""
 <div class="rag-row">
-<div class="rag-g"><div class="rag-lbl">Matched</div>
-  <div class="rag-val" style="color:#4ade80;">{matched:,}</div>
-  <div style="font-size:0.6rem;color:#4ade80;">{mrate:.1f}% match rate</div></div>
-<div class="{"rag-r" if breaks>0 else "rag-g"}"><div class="rag-lbl">Amount Breaks</div>
-  <div class="rag-val" style="color:{"#f87171" if breaks>0 else "#4ade80"};">{breaks:,}</div>
-  <div style="font-size:0.6rem;color:#5a5648;">Diff: {t_break:,.2f}</div></div>
-<div class="{"rag-a" if miss_b>0 else "rag-g"}"><div class="rag-lbl">Missing in B</div>
-  <div class="rag-val" style="color:{"#fbbf24" if miss_b>0 else "#4ade80"};">{miss_b:,}</div>
-  <div style="font-size:0.6rem;color:#5a5648;">In A only</div></div>
-<div class="{"rag-b" if miss_a>0 else "rag-g"}"><div class="rag-lbl">Missing in A</div>
-  <div class="rag-val" style="color:{"#60a5fa" if miss_a>0 else "#4ade80"};">{miss_a:,}</div>
-  <div style="font-size:0.6rem;color:#5a5648;">In B only</div></div>
+<div class="rag-g"><div class="rag-lbl">Matched</div><div class="rag-val" style="color:#4ade80;">{matched:,}</div><div style="font-size:0.6rem;color:#4ade80;">{mrate:.1f}% match rate</div></div>
+<div class="rag-r"><div class="rag-lbl">Amount Breaks</div><div class="rag-val" style="color:#f87171;">{breaks:,}</div><div style="font-size:0.6rem;color:#f87171;">Diff: {t_break:,.2f}</div></div>
+<div class="rag-a"><div class="rag-lbl">Missing in B</div><div class="rag-val" style="color:#fbbf24;">{miss_b:,}</div><div style="font-size:0.6rem;color:#fbbf24;">In A only</div></div>
+<div class="rag-b"><div class="rag-lbl">Missing in A</div><div class="rag-val" style="color:#60a5fa;">{miss_a:,}</div><div style="font-size:0.6rem;color:#60a5fa;">In B only</div></div>
 </div>""", unsafe_allow_html=True)
 
-        # 10. Charts
         ch1, ch2 = st.columns([1, 2])
         with ch1:
-            nz_labs = [l for l,v in zip(["Matched","Amount Break","Missing in B","Missing in A"],
-                                        [matched,breaks,miss_b,miss_a]) if v>0]
-            nz_vals = [v for v in [matched,breaks,miss_b,miss_a] if v>0]
-            nz_clrs = [c for c,v in zip(["#4ade80","#f87171","#fbbf24","#60a5fa"],
-                                        [matched,breaks,miss_b,miss_a]) if v>0]
-            fig = go.Figure(go.Pie(labels=nz_labs, values=nz_vals, hole=0.62,
-                marker=dict(colors=nz_clrs, line=dict(color="#0a0a08",width=2)),
+            fig = go.Figure(go.Pie(
+                labels=["Matched","Amount Break","Missing in B","Missing in A"],
+                values=[matched, breaks, miss_b, miss_a], hole=0.62,
+                marker=dict(colors=["#4ade80","#f87171","#fbbf24","#60a5fa"],
+                            line=dict(color="#0a0a08", width=2)),
                 textinfo="label+percent", textfont=dict(size=9)))
             fig.add_annotation(text=f"{mrate:.0f}%<br>Matched", x=0.5, y=0.5,
                                showarrow=False,
-                               font=dict(size=13,color="#fafaf8",family="Playfair Display"))
+                               font=dict(size=13, color="#fafaf8", family="Playfair Display"))
             fig.update_layout(**PLOTLY_BASE, title="Reconciliation Status",
                               height=270, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
         with ch2:
             dbs = merged_out.groupby("Status")["Difference"].sum().reset_index()
-            clrs = {"Matched":"#4ade80","Amount Break":"#f87171",
-                    "Missing in B":"#fbbf24","Missing in A":"#60a5fa"}
             fig = go.Figure(go.Bar(x=dbs["Status"], y=dbs["Difference"],
-                marker_color=[clrs.get(s,"#5a5648") for s in dbs["Status"]],
-                text=dbs["Difference"].apply(lambda x: f"{x:+,.2f}"),textposition="auto"))
+                marker_color=["#4ade80" if v >= 0 else "#f87171" for v in dbs["Difference"]],
+                text=dbs["Difference"].apply(lambda x: f"{x:+,.2f}"), textposition="auto"))
             fig.update_layout(**PLOTLY_BASE, title="Net Difference by Status",
                               height=270, xaxis=AXIS, yaxis=AXIS)
             st.plotly_chart(fig, use_container_width=True)
 
-        # 11. Exceptions
         exc = merged_out[merged_out["Status"] != "Matched"].copy()
         if not exc.empty:
             st.markdown('<div class="sec-label">Exceptions Detail</div>', unsafe_allow_html=True)
-            exc_types = [t for t in ["Amount Break","Missing in B","Missing in A"]
-                         if t in exc["Status"].values]
-            sf = st.multiselect("Filter Status", exc_types, default=exc_types, key="recon_sf")
+            sf = st.multiselect("Filter Status",
+                                ["Amount Break","Missing in B","Missing in A"],
+                                default=["Amount Break","Missing in B","Missing in A"],
+                                key="recon_sf")
             fe = exc[exc["Status"].isin(sf)]
             st.dataframe(fe, use_container_width=True, hide_index=True)
-            st.download_button("\U0001f4e5 Download Exceptions (CSV)",
+            st.download_button("📥 Download Exceptions (CSV)",
                                fe.to_csv(index=False).encode(),
-                               "Fincy_Recon_Exceptions.csv","text/csv",key="dl_exc")
+                               "Fincy_Recon_Exceptions.csv", "text/csv")
         else:
-            st.success("\U0001f389 Perfect reconciliation \u2014 no exceptions found!")
+            st.success("🎉 Perfect reconciliation — no exceptions found!")
 
-        # 12. Full output
         st.markdown('<div class="sec-label">Full Reconciliation Output</div>', unsafe_allow_html=True)
         st.dataframe(merged_out, use_container_width=True, hide_index=True)
-        st.download_button("\U0001f4e5 Download Full Recon Output (CSV)",
+        st.download_button("📥 Download Full Recon Output (CSV)",
                            merged_out.to_csv(index=False).encode(),
-                           "Fincy_Recon_Full.csv","text/csv",key="dl_full")
+                           "Fincy_Recon_Full.csv", "text/csv")
 
-        # 13. AI CFO
-        recon_ctx = (f"Reconciliation: {total} records | "
-                     f"Matched={matched} ({mrate:.1f}%) | "
-                     f"Amount Breaks={breaks} (total diff={t_break:,.0f}) | "
-                     f"Missing in B={miss_b} | Missing in A={miss_a} | "
-                     f"Key: {' + '.join(key_parts)}")
-        ai_cfo_section(recon_ctx, "recon",
-            "e.g. What caused the missing records? Which breaks need urgent attention?")
+    # AI CFO — always shown after run
+    if df1 is not None and df2 is not None:
+        recon_ctx = f"Reconciliation: {total} records total | Matched={matched} ({mrate:.1f}%) | Amount Breaks={breaks} (diff={t_break:,.2f}) | Missing in B={miss_b} | Missing in A={miss_a}" if "total" in dir() else "Reconciliation data loaded"
+        ai_cfo_section(
+            f"Two-source reconciliation complete. Match rate context depends on data loaded.",
+            "recon", "e.g. What caused the amount breaks? Where are the biggest discrepancies?")
 
 
 # ══════════════════════════════════════════════════════════════════════════════

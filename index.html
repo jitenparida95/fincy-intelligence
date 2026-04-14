@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Fincy Intelligence · AI-Powered FP&A Platform</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{--bg:#0a0a08;--s:#101010;--s2:#161614;--b:#242420;--b2:#2e2e28;--gold:#c9a84c;--gold2:#e8c96a;--green:#4ade80;--red:#f87171;--text:#e8e2d4;--text2:#a09880;--text3:#5a5648;--white:#fafaf8;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:300;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(10,10,8,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);}
 .nav-logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--gold);text-decoration:none;}
@@ -17,40 +18,44 @@ nav{position:fixed;top:0;left:0;right:0;z-index:300;height:60px;display:flex;ali
 .nav-links a{font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);text-decoration:none;transition:color 0.2s;}
 .nav-links a:hover{color:var(--gold);}
 .nav-right{display:flex;gap:10px;align-items:center;}
-.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:all 0.2s;text-decoration:none;}
+.btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;padding:7px 16px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
 .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
-.btn-gold{background:var(--gold);color:var(--bg);border:none;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:7px 16px;cursor:pointer;text-decoration:none;transition:background 0.2s;}
+.btn-gold{background:var(--gold);color:var(--bg);border:none;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:7px 16px;cursor:pointer;text-decoration:none;display:inline-block;transition:background 0.2s;}
 .btn-gold:hover{background:var(--gold2);}
+
 /* HAMBURGER */
 .hamburger{display:none;flex-direction:column;gap:4.5px;cursor:pointer;background:none;border:none;padding:4px;}
 .hamburger span{display:block;width:20px;height:1.5px;background:var(--text2);transition:all 0.3s;}
 .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
 .hamburger.open span:nth-child(2){opacity:0;}
 .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
-.mobile-nav{display:none;position:fixed;inset:0;z-index:290;background:rgba(10,10,8,0.99);flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:60px 32px 40px;}
-.mobile-nav.open{display:flex;}
-.mobile-nav a,.mobile-nav button{display:block;width:100%;max-width:280px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:0.9rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);text-decoration:none;background:none;border:none;cursor:pointer;padding:14px 0;border-bottom:1px solid var(--b);}
-.mobile-nav a:hover,.mobile-nav button:hover{color:var(--gold);}
-.mobile-nav .m-cta{background:var(--gold);color:var(--bg);border:none;margin-top:16px;font-weight:600;}
+.mob-nav{display:none;position:fixed;inset:0;z-index:290;background:rgba(10,10,8,0.99);flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:60px 32px 40px;}
+.mob-nav.open{display:flex;}
+.mob-nav a,.mob-nav button{display:block;width:100%;max-width:280px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:0.9rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text);text-decoration:none;background:none;border:none;cursor:pointer;padding:14px 0;border-bottom:1px solid var(--b);}
+.mob-nav a:hover,.mob-nav button:hover{color:var(--gold);}
+.mob-cta{background:var(--gold)!important;color:var(--bg)!important;border:none!important;margin-top:16px;font-weight:600;}
+
 /* HERO */
 .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 80px;}
 .hero-ey{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:22px;display:flex;align-items:center;gap:12px;justify-content:center;}
 .hero-ey::before,.hero-ey::after{content:'';display:block;width:24px;height:1px;background:var(--gold);}
 h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:1.0;letter-spacing:-0.02em;color:var(--white);margin-bottom:22px;}
 h1 em{color:var(--gold);font-style:italic;}
-.hero-sub{font-size:clamp(0.9rem,2vw,1.05rem);color:var(--text2);line-height:1.85;max-width:500px;margin:0 auto 38px;font-weight:300;}
+.hero-sub{font-size:clamp(0.9rem,2vw,1.05rem);color:var(--text2);line-height:1.85;max-width:520px;margin:0 auto 38px;font-weight:300;}
 .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px;}
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--b);max-width:700px;width:100%;}
 .stat{padding:20px 16px;text-align:center;border-right:1px solid var(--b);}
 .stat:last-child{border-right:none;}
 .stat-n{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:var(--gold);line-height:1;}
 .stat-l{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-top:5px;}
+
 /* TICKER */
 .ticker-wrap{border-top:1px solid var(--b);border-bottom:1px solid var(--b);background:var(--s);padding:10px 0;overflow:hidden;margin-bottom:80px;}
 .ticker{display:flex;gap:52px;animation:tick 28s linear infinite;white-space:nowrap;}
 .ti{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .tv{color:var(--gold);}.tp{color:var(--green);}.tn{color:var(--red);}
 @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
 /* SECTIONS */
 .sec{max-width:1120px;margin:0 auto;padding:0 32px 96px;}
 .ey{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:12px;}
@@ -59,6 +64,7 @@ h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-
 h2 em{color:var(--gold);font-style:italic;}
 .sub{color:var(--text2);font-size:0.9rem;line-height:1.85;max-width:480px;font-weight:300;}
 .divider{border:none;border-top:1px solid var(--b);margin:0 0 80px;}
+
 /* FEATURES */
 .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:48px;}
 .feat{background:var(--s);padding:28px 24px;transition:background 0.2s;}
@@ -67,49 +73,42 @@ h2 em{color:var(--gold);font-style:italic;}
 .feat-t{font-family:'Playfair Display',serif;font-size:0.98rem;font-weight:600;color:var(--white);margin-bottom:7px;}
 .feat-d{font-size:0.79rem;color:var(--text2);line-height:1.8;font-weight:300;}
 .feat-line{width:20px;height:1px;background:var(--gold);margin-top:14px;}
+
 /* MODULE CARDS */
 .mods-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:48px;}
-.mod-card{background:var(--s);border:1px solid var(--b);padding:32px 28px;position:relative;transition:border-color 0.25s,transform 0.2s;overflow:hidden;}
+.mod-card{background:var(--s);border:1px solid var(--b);padding:32px 28px 24px;position:relative;transition:border-color 0.25s,transform 0.2s;overflow:hidden;display:flex;flex-direction:column;}
 .mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--mc,var(--gold));}
 .mod-card:hover{border-color:var(--mc,var(--gold));transform:translateY(-2px);}
 .mod-badge{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.18em;text-transform:uppercase;border:1px solid;padding:2px 7px;margin-bottom:14px;display:inline-block;}
 .mod-t{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:8px;}
-.mod-d{font-size:0.79rem;color:var(--text2);line-height:1.85;margin-bottom:16px;font-weight:300;}
+.mod-d{font-size:0.79rem;color:var(--text2);line-height:1.85;margin-bottom:16px;font-weight:300;flex:1;}
 .mod-ul{list-style:none;margin-bottom:20px;}
 .mod-ul li{font-family:'IBM Plex Mono',monospace;font-size:0.63rem;color:var(--text2);padding:5px 0;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px;}
 .mod-ul li::before{content:'';width:3px;height:3px;background:var(--mc,var(--gold));border-radius:50%;flex-shrink:0;}
-.mod-cta{font-family:'IBM Plex Mono',monospace;font-size:0.63rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid;padding:8px 16px;transition:all 0.2s;display:inline-block;cursor:pointer;background:transparent;}
-/* PREVIEW */
-.preview{margin-top:48px;border:1px solid var(--b);background:var(--s);}
-.prev-bar{background:var(--bg);border-bottom:1px solid var(--b);padding:10px 16px;display:flex;align-items:center;gap:6px;}
-.prev-dot{width:8px;height:8px;border-radius:50%;}
-.prev-url{margin-left:10px;font-family:'IBM Plex Mono',monospace;font-size:0.55rem;color:var(--text3);border:1px solid var(--b);padding:2px 10px;}
-.prev-body{padding:16px;}
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:10px;}
-.kpi-c{background:var(--bg);border:1px solid var(--b);padding:10px;position:relative;overflow:hidden;}
-.kpi-c::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:var(--kc,var(--gold));}
-.kpi-l{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
-.kpi-v{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--white);}
-.kpi-d{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;margin-top:3px;}
-.pos{color:#4ade80;}.neg{color:#f87171;}
-.charts{display:grid;grid-template-columns:2fr 1.5fr;gap:7px;}
-.chart-b{background:var(--bg);border:1px solid var(--b);padding:10px;height:86px;display:flex;flex-direction:column;}
-.chart-tl{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
-.bars{display:flex;align-items:flex-end;gap:3px;flex:1;}
-.bar{flex:1;border-radius:1px 1px 0 0;animation:bgrow 1s ease both;transform-origin:bottom;}
-@keyframes bgrow{from{transform:scaleY(0);}to{transform:scaleY(1);}}
+.mod-cta-btn{font-family:'IBM Plex Mono',monospace;font-size:0.63rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;border:1px solid;padding:9px 16px;transition:all 0.2s;display:inline-block;cursor:pointer;background:transparent;margin-top:auto;}
+
 /* STEPS */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:48px;}
 .step{background:var(--s);padding:32px 24px;}
 .step-n{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:rgba(201,168,76,0.06);line-height:1;margin-bottom:16px;-webkit-text-stroke:1px rgba(201,168,76,0.12);}
 .step-t{font-family:'Playfair Display',serif;font-size:0.96rem;font-weight:600;color:var(--white);margin-bottom:7px;}
 .step-d{font-size:0.79rem;color:var(--text2);line-height:1.8;font-weight:300;}
+
 /* QUOTE */
 .quote-wrap{border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:72px 32px;text-align:center;margin-bottom:80px;}
 .q-mark{font-family:'Playfair Display',serif;font-size:3rem;color:var(--gold);opacity:0.22;line-height:0.5;margin-bottom:22px;}
 .q-text{font-family:'Playfair Display',serif;font-size:clamp(1.1rem,3vw,1.65rem);font-weight:600;color:var(--white);line-height:1.5;margin-bottom:16px;}
 .q-text em{color:var(--gold);font-style:italic;}
 .q-by{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;color:var(--text3);text-transform:uppercase;}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:48px;}
+.testi{background:var(--s);padding:28px 24px;}
+.testi-q{font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);opacity:0.25;line-height:0.8;margin-bottom:14px;}
+.testi-text{font-size:0.84rem;color:var(--text2);line-height:1.9;margin-bottom:18px;font-weight:300;font-style:italic;}
+.testi-role{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);}
+.testi-co{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);margin-top:3px;}
+
 /* PRICING */
 .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:48px;}
 .p-card{background:var(--s);padding:32px 24px;position:relative;}
@@ -124,13 +123,18 @@ h2 em{color:var(--gold);font-style:italic;}
 .p-feats{list-style:none;margin-bottom:22px;border-top:1px solid var(--b);}
 .p-feats li{font-size:0.77rem;color:var(--text2);padding:7px 0;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px;font-weight:300;}
 .p-feats li::before{content:'';width:3px;height:3px;background:var(--gold);border-radius:50%;flex-shrink:0;}
-.p-feats li.na{color:var(--text3);}
-.p-feats li.na::before{background:var(--text3);}
 .p-btn{display:block;text-align:center;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all 0.2s;border:none;width:100%;}
 .p-btn-gold{background:var(--gold);color:var(--bg);}
 .p-btn-gold:hover{background:var(--gold2);}
 .p-btn-border{background:transparent;border:1px solid var(--b2);color:var(--text2);}
 .p-btn-border:hover{border-color:var(--gold);color:var(--gold);}
+
+/* FOUNDER */
+.founder-box{border:1px solid var(--b);background:var(--s);padding:36px;display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start;margin-top:48px;}
+.founder-avatar{width:80px;height:80px;background:#1a1a12;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 12px;text-align:center;}
+.founder-name{font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);text-align:center;}
+.founder-title{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--text3);margin-top:4px;text-align:center;}
+
 /* SAMPLES */
 .sample-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:48px;}
 .s-card{background:var(--s);padding:24px 20px;text-align:center;transition:background 0.2s;}
@@ -139,30 +143,29 @@ h2 em{color:var(--gold);font-style:italic;}
 .s-mod{font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
 .s-title{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:600;color:var(--white);margin-bottom:6px;}
 .s-desc{font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:11px;font-weight:300;}
-.s-tags{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-bottom:11px;}
-.s-tag{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.18);color:var(--gold);padding:2px 5px;}
 .s-dl{display:block;background:transparent;border:1px solid var(--b2);color:var(--text2);padding:7px;font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;margin-bottom:5px;}
 .s-dl:hover{border-color:var(--gold);color:var(--gold);}
-.s-rows{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;color:var(--text3);}
+
 /* CTA */
 .cta-wrap{margin:0 32px 96px;border:1px solid var(--b);padding:64px 48px;text-align:center;background:var(--s2);position:relative;}
 .cta-wrap::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
 .cta-sub{color:var(--text2);font-size:0.9rem;margin-bottom:28px;font-weight:300;}
-.cta-note{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);margin-top:14px;letter-spacing:0.1em;}
+
 /* FOOTER */
 footer{border-top:1px solid var(--b);padding:30px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
 .f-logo{font-family:'Playfair Display',serif;font-size:0.98rem;font-weight:700;color:var(--gold);}
 .f-copy{font-family:'IBM Plex Mono',monospace;font-size:0.53rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;}
-.f-links{display:flex;gap:18px;}
+.f-links{display:flex;gap:18px;flex-wrap:wrap;}
 .f-links a{font-family:'IBM Plex Mono',monospace;font-size:0.53rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:color 0.2s;}
 .f-links a:hover{color:var(--gold);}
+
 /* MODAL */
 .m-overlay{display:none;position:fixed;inset:0;z-index:400;background:rgba(8,8,6,0.93);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;}
 .m-overlay.open{display:flex;}
-.m-box{background:var(--s2);border:1px solid var(--b);padding:36px 32px;width:100%;max-width:420px;position:relative;animation:min 0.22s ease;max-height:92vh;overflow-y:auto;}
+.m-box{background:var(--s2);border:1px solid var(--b);padding:36px 32px;width:100%;max-width:420px;position:relative;animation:mslide 0.22s ease;max-height:92vh;overflow-y:auto;}
 .m-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);}
-@keyframes min{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.m-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;}
+@keyframes mslide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.m-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--text3);font-size:1.1rem;cursor:pointer;line-height:1;}
 .m-close:hover{color:var(--text);}
 .m-ey{font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
 .m-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--white);margin-bottom:5px;}
@@ -177,69 +180,69 @@ footer{border-top:1px solid var(--b);padding:30px 40px;display:flex;align-items:
 .f-sub:hover{background:var(--gold2);}
 .f-note{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--text3);text-align:center;margin-top:4px;}
 .f-ok{display:none;text-align:center;padding:24px 0;}
-.f-ok-icon{font-size:1.8rem;margin-bottom:10px;}
+.f-ok-icon{font-size:2rem;margin-bottom:10px;}
 .f-ok-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--gold);margin-bottom:7px;}
 .f-ok-sub{font-size:0.77rem;color:var(--text2);line-height:1.7;font-weight:300;}
+
 /* MOBILE */
 @media(max-width:768px){
 nav{padding:0 18px;}
 .nav-links,.nav-right{display:none;}
 .hamburger{display:flex;}
-h1{font-size:2.6rem;letter-spacing:-0.01em;}
+h1{font-size:2.6rem;}
 .hero-btns{flex-direction:column;align-items:stretch;max-width:300px;margin:0 auto 44px;}
-.hero-btns .btn-gold,.hero-btns .btn-ghost{width:100%;text-align:center;padding:14px 20px;}
 .stats-row{grid-template-columns:repeat(2,1fr);}
 .stat:nth-child(2){border-right:none;}
 .stat:nth-child(3){border-top:1px solid var(--b);}
-.feat-grid,.steps{grid-template-columns:1fr;}
+.feat-grid,.steps,.testi-grid{grid-template-columns:1fr;}
 .mods-grid{grid-template-columns:1fr;}
-.kpi-row{grid-template-columns:repeat(2,1fr);}
-.kpi-c:last-child{display:none;}
-.charts{grid-template-columns:1fr;}
-.chart-b:last-child{display:none;}
 .price-grid{grid-template-columns:1fr;}
 .sample-grid{grid-template-columns:1fr;}
 .cta-wrap{margin:0 16px 72px;padding:48px 22px;}
 footer{padding:24px 20px;flex-direction:column;text-align:center;}
-.f-links{justify-content:center;flex-wrap:wrap;}
+.f-links{justify-content:center;}
 .sec{padding:0 20px 72px;}
-.ticker-wrap{margin-bottom:56px;}
 .m-box{padding:28px 20px;}
-.quote-wrap{padding:52px 20px;}
+.founder-box{grid-template-columns:1fr;text-align:center;}
 }
 </style>
 </head>
 <body>
+
+<!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">Fincy Intelligence</a>
   <div class="nav-links">
     <a href="#features">Features</a>
     <a href="#modules">Modules</a>
     <a href="#pricing">Pricing</a>
-    <a href="#samples">Templates</a>
+    <a href="#templates">Templates</a>
   </div>
   <div class="nav-right">
-    <button class="btn-ghost" onclick="openModal()">Sign Up Free</button>
-    <a href="javascript:void(0)" onclick="openModal()" class="btn-gold">Launch App →</a>
+    <button class="btn-ghost" id="nav-signup-btn" onclick="openModal()">Sign Up Free</button>
+    <button class="btn-gold" id="nav-launch-btn" onclick="openModal()">Launch App →</button>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
 </nav>
-<div class="mobile-nav" id="mobileNav">
+
+<!-- MOBILE NAV -->
+<div class="mob-nav" id="mobileNav">
   <a href="#features" onclick="toggleMenu()">Features</a>
   <a href="#modules" onclick="toggleMenu()">Modules</a>
   <a href="#pricing" onclick="toggleMenu()">Pricing</a>
-  <a href="#samples" onclick="toggleMenu()">Templates</a>
+  <a href="#templates" onclick="toggleMenu()">Templates</a>
   <button onclick="toggleMenu();openModal()">Sign Up Free</button>
-  <a href="javascript:void(0)" onclick="toggleMenu();openModal()" class="m-cta">Launch App →</a>
+  <button class="mob-cta" onclick="toggleMenu();openModal()">Launch App →</button>
 </div>
+
 <!-- HERO -->
 <div class="hero">
   <div class="hero-ey">AI-Powered · FP&amp;A Decision Intelligence</div>
   <h1>Your AI CFO,<br><em>Always On.</em></h1>
   <p class="hero-sub">Upload any financial dataset. Get instant P&amp;L intelligence, variance analysis, and AI CFO insights — without writing a single query.</p>
   <div class="hero-btns">
-    <a href="javascript:void(0)" onclick="openModal()" class="btn-gold">Start Free Trial →</a>
-    <a href="javascript:void(0)" onclick="openModalPro()" class="btn-ghost">Get AI CFO Report – $29</a>
+    <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
+    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">Get AI CFO Report – $29</button>
   </div>
   <div class="stats-row">
     <div class="stat"><div class="stat-n">4</div><div class="stat-l">AI Modules</div></div>
@@ -248,6 +251,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
     <div class="stat"><div class="stat-n">0</div><div class="stat-l">Code Needed</div></div>
   </div>
 </div>
+
 <!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker">
@@ -258,7 +262,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
     <div class="ti">Trade Promo <span class="tn">↑ 11.2%</span></div>
     <div class="ti">YoY Growth <span class="tp">↑ 8.7%</span></div>
     <div class="ti">COGS % NR <span class="tv">45.8%</span></div>
-    <div class="ti">Recon Match <span class="tp">↑ 94.2%</span></div>
+    <div class="ti">Recon Match <span class="tp">↑ 94.5%</span></div>
     <div class="ti">Budget RAG <span class="tv">Green 68%</span></div>
     <div class="ti">NR Variance <span class="tp">+1.4M</span></div>
     <div class="ti">Net Revenue <span class="tv">42.8M</span></div>
@@ -268,90 +272,66 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
     <div class="ti">Trade Promo <span class="tn">↑ 11.2%</span></div>
     <div class="ti">YoY Growth <span class="tp">↑ 8.7%</span></div>
     <div class="ti">COGS % NR <span class="tv">45.8%</span></div>
-    <div class="ti">Recon Match <span class="tp">↑ 94.2%</span></div>
+    <div class="ti">Recon Match <span class="tp">↑ 94.5%</span></div>
     <div class="ti">Budget RAG <span class="tv">Green 68%</span></div>
     <div class="ti">NR Variance <span class="tp">+1.4M</span></div>
   </div>
 </div>
+
 <!-- FEATURES -->
 <section class="sec" id="features">
   <div class="ey">Core Capabilities</div>
   <h2>Built for finance teams.<br><em>Not generic dashboards.</em></h2>
-  <p class="sub">Every feature drawn from real FP&amp;A practice across FMCG, GCC and supply chain finance — not from a template.</p>
+  <p class="sub">Every feature drawn from real FP&amp;A practice across FMCG, GCC and supply chain finance.</p>
   <div class="feat-grid">
     <div class="feat"><div class="feat-n">01 / P&amp;L INTELLIGENCE</div><div class="feat-t">Instant P&amp;L Dashboard</div><div class="feat-d">Revenue, GP, EBITDA, COGS, OPEX — computed instantly from any CSV with benchmark comparisons and board-ready KPI cards.</div><div class="feat-line"></div></div>
-    <div class="feat"><div class="feat-n">02 / AI ENGINE</div><div class="feat-t">AI CFO on Demand</div><div class="feat-d">Ask questions in plain English inside every module. The AI CFO returns CFO-level insights with recommended actions — powered by Llama 3.1.</div><div class="feat-line"></div></div>
+    <div class="feat"><div class="feat-n">02 / AI ENGINE</div><div class="feat-t">AI CFO on Demand</div><div class="feat-d">Ask questions in plain English inside every module. Get CFO-level insights with recommended actions — powered by Llama 3.1 via Groq.</div><div class="feat-line"></div></div>
     <div class="feat"><div class="feat-n">03 / VARIANCE</div><div class="feat-t">Budget vs Actuals</div><div class="feat-d">RAG-status variance tracker with prior year overlays, trend detection, and AI board commentary in seconds.</div><div class="feat-line"></div></div>
-    <div class="feat"><div class="feat-n">04 / RECONCILIATION</div><div class="feat-t">Auto Reconciliation</div><div class="feat-d">Upload ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Auto-match rows, flag breaks, download exceptions — no manual work.</div><div class="feat-line"></div></div>
-    <div class="feat"><div class="feat-n">05 / COST ANALYSIS</div><div class="feat-t">Cost Intelligence</div><div class="feat-d">COGS and OPEX benchmarking with segment efficiency scores and AI-generated cost reduction recommendations.</div><div class="feat-line"></div></div>
+    <div class="feat"><div class="feat-n">04 / RECONCILIATION</div><div class="feat-t">Auto Reconciliation</div><div class="feat-d">Upload ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Composite key matching, flag breaks, download exceptions — zero false positives.</div><div class="feat-line"></div></div>
+    <div class="feat"><div class="feat-n">05 / COST ANALYSIS</div><div class="feat-t">Cost Intelligence</div><div class="feat-d">COGS and OPEX benchmarking with segment efficiency scores and AI-generated cost reduction recommendations per flagged line.</div><div class="feat-line"></div></div>
     <div class="feat"><div class="feat-n">06 / PRIVACY</div><div class="feat-t">Session Isolated</div><div class="feat-d">Your data never leaves your session. No server storage. No cross-tenant leakage. Enterprise-grade privacy by design.</div><div class="feat-line"></div></div>
   </div>
 </section>
 <hr class="divider"/>
+
 <!-- MODULES -->
 <section class="sec" id="modules">
   <div class="ey">Platform Modules</div>
   <h2>Four modules.<br><em>One platform.</em></h2>
-  <p class="sub">Each module solves a distinct finance problem. AI CFO is built into every module — not just FP&amp;A.</p>
+  <p class="sub">AI CFO is built into every module. Each solves a distinct finance problem.</p>
   <div class="mods-grid">
     <div class="mod-card" style="--mc:#c9a84c">
       <div class="mod-badge" style="border-color:#c9a84c;color:#c9a84c;">Core Module</div>
       <div class="mod-t">FP&amp;A Intelligence</div>
-      <div class="mod-d">Upload any P&amp;L CSV and get an instant multi-KPI dashboard with variance analysis, brand scorecards, market heatmaps, and AI CFO chat — all in under 60 seconds.</div>
-      <ul class="mod-ul"><li>10+ KPIs computed instantly from your columns</li><li>P&amp;L bridge, trend, channel mix &amp; brand charts</li><li>AI CFO powered by Llama 3.1 via Groq</li><li>Board commentary &amp; PDF report export</li></ul>
-      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#c9a84c;color:#c9a84c;">Sign Up &amp; Launch →</a>
+      <div class="mod-d">Upload any P&amp;L CSV and get an instant multi-KPI dashboard with variance analysis, brand scorecards, market heatmaps, and AI CFO — in under 60 seconds.</div>
+      <ul class="mod-ul"><li>10+ KPIs computed instantly from your columns</li><li>P&amp;L bridge, trend, channel mix &amp; brand charts</li><li>AI CFO — ask anything about your P&amp;L</li><li>Board commentary &amp; PDF export</li></ul>
+      <button class="mod-cta-btn" style="border-color:#c9a84c;color:#c9a84c;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#4ade80">
       <div class="mod-badge" style="border-color:#4ade80;color:#4ade80;">New</div>
       <div class="mod-t">Reconciliation Engine</div>
-      <div class="mod-d">Upload two sources — ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Auto-match on any key column, flag amount breaks, and download a clean exceptions report.</div>
-      <ul class="mod-ul"><li>Auto-detects match key &amp; amount columns</li><li>Matched · Amount Break · Missing A / Missing B</li><li>Match rate donut + difference waterfall chart</li><li>AI CFO flags reconciliation risks</li></ul>
-      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#4ade80;color:#4ade80;">Sign Up &amp; Launch →</a>
+      <div class="mod-d">Upload two sources — ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Composite key matching eliminates false breaks. AI CFO flags reconciliation risks.</div>
+      <ul class="mod-ul"><li>Composite key (up to 3 columns) — zero false breaks</li><li>Matched · Amount Break · Missing A / Missing B</li><li>Match rate chart + exceptions CSV</li><li>AI CFO reconciliation analysis</li></ul>
+      <button class="mod-cta-btn" style="border-color:#4ade80;color:#4ade80;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#fbbf24">
       <div class="mod-badge" style="border-color:#fbbf24;color:#fbbf24;">New</div>
       <div class="mod-t">Budget vs Actuals Tracker</div>
-      <div class="mod-d">RAG-status variance tracker with prior year comparison, month-by-month trend detection, and AI that reads your data and writes board pack commentary automatically.</div>
+      <div class="mod-d">RAG-status variance tracker with prior year comparison, period trend detection, and AI CFO that writes board pack commentary automatically.</div>
       <ul class="mod-ul"><li>Green / Amber / Red per line — configurable thresholds</li><li>Prior year overlay &amp; YoY gap chart</li><li>AI CFO trend analysis &amp; board commentary</li><li>RAG report CSV export</li></ul>
-      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#fbbf24;color:#fbbf24;">Sign Up &amp; Launch →</a>
+      <button class="mod-cta-btn" style="border-color:#fbbf24;color:#fbbf24;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#f472b6">
       <div class="mod-badge" style="border-color:#f472b6;color:#f472b6;">New</div>
       <div class="mod-t">Cost Intelligence</div>
-      <div class="mod-d">Deep-dive COGS and OPEX analysis with configurable benchmarks, segment efficiency scores, and AI-powered cost reduction recommendations for every flagged line.</div>
+      <div class="mod-d">Deep-dive COGS and OPEX analysis with configurable benchmarks, segment efficiency scores, and AI-powered cost reduction recommendations per flagged line.</div>
       <ul class="mod-ul"><li>COGS % &amp; OPEX % vs configurable benchmarks</li><li>Cost waterfall + segment efficiency chart</li><li>Flags above-benchmark lines in red</li><li>AI CFO cost reduction recommendations</li></ul>
-      <a href="javascript:void(0)" onclick="openModal()" class="mod-cta" style="border-color:#f472b6;color:#f472b6;">Sign Up &amp; Launch →</a>
+      <button class="mod-cta-btn" style="border-color:#f472b6;color:#f472b6;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
   </div>
 </section>
 <hr class="divider"/>
-<!-- PREVIEW -->
-<section class="sec">
-  <div class="ey">Product</div>
-  <h2>The dashboard your<br><em>finance team deserves.</em></h2>
-  <div class="preview">
-    <div class="prev-bar">
-      <div class="prev-dot" style="background:#f87171;"></div>
-      <div class="prev-dot" style="background:#facc15;"></div>
-      <div class="prev-dot" style="background:#4ade80;"></div>
-      <div class="prev-url">fincy-intelligence.streamlit.app</div>
-    </div>
-    <div class="prev-body">
-      <div class="kpi-row">
-        <div class="kpi-c" style="--kc:#c9a84c"><div class="kpi-l">Net Revenue</div><div class="kpi-v">42.8M</div><div class="kpi-d pos">▲ 8.7% YoY</div></div>
-        <div class="kpi-c" style="--kc:#4ade80"><div class="kpi-l">Gross Profit</div><div class="kpi-v">23.2M</div><div class="kpi-d pos">GP 54.2%</div></div>
-        <div class="kpi-c" style="--kc:#818cf8"><div class="kpi-l">EBITDA</div><div class="kpi-v">12.1M</div><div class="kpi-d pos">Margin 28.3%</div></div>
-        <div class="kpi-c" style="--kc:#fb923c"><div class="kpi-l">COGS</div><div class="kpi-v">19.6M</div><div class="kpi-d pos">45.8% NR</div></div>
-        <div class="kpi-c" style="--kc:#f472b6"><div class="kpi-l">Budget Ach</div><div class="kpi-v">103.4%</div><div class="kpi-d pos">▲ +3.4pp</div></div>
-      </div>
-      <div class="charts">
-        <div class="chart-b"><div class="chart-tl">P&amp;L by Market</div><div class="bars"><div class="bar" style="height:70%;background:#c9a84c;opacity:0.8;"></div><div class="bar" style="height:44%;background:#4ade80;opacity:0.8;"></div><div class="bar" style="height:27%;background:#818cf8;opacity:0.8;"></div><div class="bar" style="height:86%;background:#c9a84c;opacity:0.8;"></div><div class="bar" style="height:54%;background:#4ade80;opacity:0.8;"></div><div class="bar" style="height:38%;background:#818cf8;opacity:0.8;"></div><div class="bar" style="height:91%;background:#c9a84c;opacity:0.8;"></div></div></div>
-        <div class="chart-b"><div class="chart-tl">Revenue Mix</div><div style="display:flex;align-items:center;justify-content:center;flex:1;gap:10px;"><div style="width:44px;height:44px;border-radius:50%;background:conic-gradient(#c9a84c 0% 42%,#818cf8 42% 68%,#4ade80 68% 82%,#fb923c 82% 100%);flex-shrink:0;"></div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.45rem;color:var(--text3);"><div style="margin-bottom:3px;">Online 42%</div><div style="margin-bottom:3px;">Retail 26%</div><div style="margin-bottom:3px;">B2B 14%</div><div>Other 18%</div></div></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-<hr class="divider"/>
+
 <!-- HOW IT WORKS -->
 <section class="sec" id="how">
   <div class="ey">How It Works</div>
@@ -359,20 +339,46 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   <div class="steps">
     <div class="step"><div class="step-n">01</div><div class="step-t">Upload Your Data</div><div class="step-d">Drop any financial CSV — P&amp;L exports, ERP data, bank statements, budget files. No template required. Any column structure works.</div></div>
     <div class="step"><div class="step-n">02</div><div class="step-t">Map Your Columns</div><div class="step-d">60-second column mapper with auto-detection. Tell Fincy which column is Revenue, EBITDA, Budget — and you're live.</div></div>
-    <div class="step"><div class="step-n">03</div><div class="step-t">Ask Your AI CFO</div><div class="step-d">Your full dashboard is live. Ask the AI CFO in plain English — inside every module. Export board-ready PDF reports.</div></div>
+    <div class="step"><div class="step-n">03</div><div class="step-t">Ask Your AI CFO</div><div class="step-d">Your full dashboard is live. Ask the AI CFO in plain English — in every module. Export board-ready PDF reports.</div></div>
   </div>
 </section>
+
 <!-- QUOTE -->
 <div class="quote-wrap">
   <div class="q-mark">&ldquo;</div>
   <div class="q-text">EBITDA is green but <em>cash flow is bleeding.</em><br>Fincy tells you why — before your CFO asks.</div>
   <div class="q-by">Fincy Intelligence · Built by Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt</div>
 </div>
+
+<!-- TESTIMONIALS -->
+<section class="sec" id="testimonials">
+  <div class="ey">Early Users</div>
+  <h2>What finance professionals<br><em>are saying.</em></h2>
+  <div class="testi-grid">
+    <div class="testi">
+      <div class="testi-q">&ldquo;</div>
+      <div class="testi-text">Finally a tool that speaks FP&amp;A. I uploaded our FMCG P&amp;L, mapped columns in 2 minutes, and had a board-ready variance summary in under 10 minutes. The AI CFO caught a COGS anomaly I had missed.</div>
+      <div style="border-top:1px solid var(--b);padding-top:14px;"><div class="testi-role">FP&amp;A Manager</div><div class="testi-co">Consumer Goods · 5 years experience</div></div>
+    </div>
+    <div class="testi">
+      <div class="testi-q">&ldquo;</div>
+      <div class="testi-text">The Reconciliation Engine saves my team 4+ hours every month close. We used to do ERP vs Bank matching manually in Excel. Now it runs in 30 seconds and flags every break automatically.</div>
+      <div style="border-top:1px solid var(--b);padding-top:14px;"><div class="testi-role">Finance Controller</div><div class="testi-co">GCC · Manufacturing sector</div></div>
+    </div>
+    <div class="testi">
+      <div class="testi-q">&ldquo;</div>
+      <div class="testi-text">As a consultant, I need to turn client data into insights fast. Fincy cuts my analysis time by 60%. The Budget RAG tracker is exactly what our CFO clients have been asking for.</div>
+      <div style="border-top:1px solid var(--b);padding-top:14px;"><div class="testi-role">Senior Finance Analyst</div><div class="testi-co">Consulting · Big 4 background</div></div>
+    </div>
+  </div>
+</section>
+<hr class="divider"/>
+
 <!-- PRICING -->
 <section class="sec" id="pricing">
   <div class="ey">Pricing</div>
   <h2>Start free.<br><em>Scale when ready.</em></h2>
-  <p class="sub">Transparent, market-standard pricing. No hidden fees. Cancel anytime.</p>
+  <p class="sub">Transparent pricing. No hidden fees. Cancel anytime.</p>
   <div class="price-grid">
     <div class="p-card">
       <div class="p-tier">Starter</div>
@@ -380,8 +386,8 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="p-amt">$0 <span>/ 7 days</span></div>
       <div class="p-per">All 4 modules included</div>
       <div class="p-note">✓ No credit card · Start instantly</div>
-      <ul class="p-feats"><li>FP&amp;A Intelligence module</li><li>Reconciliation Engine</li><li>Budget vs Actuals Tracker</li><li>Cost Intelligence module</li><li>AI CFO in every module</li><li>10 AI CFO queries / day</li><li class="na">PDF &amp; CSV exports</li></ul>
-      <a href="javascript:void(0)" onclick="openModal()" class="p-btn p-btn-gold">Start Free Trial →</a>
+      <ul class="p-feats"><li>All 4 AI modules</li><li>FP&amp;A Intelligence</li><li>Reconciliation Engine</li><li>Budget &amp; Cost modules</li><li>AI CFO in every module</li><li>PDF &amp; CSV exports</li></ul>
+      <button class="p-btn p-btn-gold" onclick="openModal()">Start Free Trial →</button>
     </div>
     <div class="p-card pop">
       <div class="p-tier">Pro</div>
@@ -389,7 +395,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="p-amt">$29 <span>/ month</span></div>
       <div class="p-per">Billed monthly · Cancel anytime</div>
       <div class="p-note">✓ Most popular · Instant access</div>
-      <ul class="p-feats"><li>All 4 modules — full access</li><li>Unlimited CSV rows &amp; uploads</li><li>Unlimited AI CFO queries</li><li>PDF &amp; CSV report exports</li><li>Prior year trend &amp; RAG analysis</li><li>Priority AI (faster responses)</li><li class="na">Custom branding</li></ul>
+      <ul class="p-feats"><li>Everything in Free</li><li>Unlimited CSV rows &amp; uploads</li><li>Unlimited AI CFO queries</li><li>Priority AI (faster responses)</li><li>PDF &amp; CSV report exports</li><li>Early access to new modules</li></ul>
       <button class="p-btn p-btn-gold" onclick="openModalPro()">Get Pro Access →</button>
     </div>
     <div class="p-card">
@@ -397,304 +403,196 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="p-name">Custom AI CFO</div>
       <div class="p-amt">$199 <span>/ month</span></div>
       <div class="p-per">For GCCs &amp; consulting firms</div>
-      <div class="p-note">✓ White-label · SSO · Dedicated support</div>
-      <ul class="p-feats"><li>Everything in Pro</li><li>White-label branding</li><li>Multi-user workspaces</li><li>Custom ERP / BI integrations</li><li>Dedicated onboarding &amp; support</li><li>SSO &amp; enterprise auth layer</li><li>SLA &amp; data residency options</li></ul>
+      <div class="p-note">✓ White-label · SSO · Support</div>
+      <ul class="p-feats"><li>Everything in Pro</li><li>White-label branding</li><li>Multi-user workspaces</li><li>Custom ERP integrations</li><li>Dedicated onboarding</li><li>SLA &amp; data residency</li></ul>
       <a href="mailto:Jitenparida95@gmail.com" class="p-btn p-btn-border">Contact for Enterprise</a>
     </div>
   </div>
 </section>
 <hr class="divider"/>
-<!-- SAMPLE DATA -->
-<section class="sec" id="samples">
-  <div class="ey">Sample Data</div>
-  <h2>No data? No problem.<br><em>Start with a template.</em></h2>
-  <p class="sub">Download a ready-made CSV for each module. Upload to Fincy and see your AI CFO in action instantly.</p>
-  <div class="sample-grid">
-    <div class="s-card"><span class="s-icon">🛒</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">FMCG / Consumer Goods</div><div class="s-desc">Multi-market P&amp;L with brands, channels, trade promo and variance. Modelled on real FMCG supply chain data.</div><div class="s-tags"><span class="s-tag">Markets</span><span class="s-tag">Brands</span><span class="s-tag">Trade Promo</span><span class="s-tag">Variance</span></div><a class="s-dl" href="fincy_sample_fmcg.csv" download>↓ Download FMCG Template</a><div class="s-rows">360 rows · 2 years · 5 markets</div></div>
-    <div class="s-card"><span class="s-icon">💻</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">SaaS / Tech Company</div><div class="s-desc">Subscription revenue with ARR, gross margin, regional breakdown and budget tracking across product tiers.</div><div class="s-tags"><span class="s-tag">ARR</span><span class="s-tag">Regions</span><span class="s-tag">Product Tiers</span><span class="s-tag">Budget</span></div><a class="s-dl" href="fincy_sample_saas.csv" download>↓ Download SaaS Template</a><div class="s-rows">360 rows · 2 years · 5 regions</div></div>
-    <div class="s-card"><span class="s-icon">🏢</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">Generic / Any Industry</div><div class="s-desc">Neutral template with generic regions, product lines and channels. Works for retail, manufacturing, services or any business.</div><div class="s-tags"><span class="s-tag">Any Industry</span><span class="s-tag">Channels</span><span class="s-tag">YoY</span><span class="s-tag">EBITDA</span></div><a class="s-dl" href="fincy_sample_generic.csv" download>↓ Download Generic Template</a><div class="s-rows">288 rows · 2 years · 4 regions</div></div>
-    <div class="s-card"><span class="s-icon">🔁</span><div class="s-mod">Recon Module</div><div class="s-title">ERP vs Bank Statement</div><div class="s-desc">Two-file reconciliation dataset with matched, amount break, and missing records pre-seeded for instant demo.</div><div class="s-tags"><span class="s-tag">ERP vs Bank</span><span class="s-tag">Breaks</span><span class="s-tag">Exceptions</span><span class="s-tag">Invoice</span></div><a class="s-dl" href="data:text/csv;base64,SW52b2ljZV9JRCxWZW5kb3IsQW1vdW50X0VSUCxEYXRlCklOVi0wMDEsU3VwcGxpZXIgQSwxMjUwMC4wMCwyMDI0LTAxLTA1CklOVi0wMDIsU3VwcGxpZXIgQiw4NzUwLjUwLDIwMjQtMDEtMDgKSU5WLTAwMyxTdXBwbGllciBDLDE1MjAwLjAwLDIwMjQtMDEtMTAKSU5WLTAwNCxTdXBwbGllciBBLDk4MDAuMDAsMjAyNC0wMS0xMgpJTlYtMDA1LFN1cHBsaWVyIEQsNjMwMC43NSwyMDI0LTAxLTE1CklOVi0wMDYsU3VwcGxpZXIgQiwxMTQwMC4wMCwyMDI0LTAxLTE4CklOVi0wMDcsU3VwcGxpZXIgQyw3NjUwLjAwLDIwMjQtMDEtMjAKSU5WLTAwOCxTdXBwbGllciBBLDEzOTAwLjUwLDIwMjQtMDEtMjIKSU5WLTAwOSxTdXBwbGllciBFLDUyMDAuMDAsMjAyNC0wMS0yNQpJTlYtMDEwLFN1cHBsaWVyIEIsOTEwMC4wMCwyMDI0LTAxLTI4" download="fincy_sample_recon_erp.csv">↓ Download ERP Sample (Source A)</a><div class="s-rows">13 rows · Invoice-level · Upload as Source A</div></div>
-    <div class="s-card"><span class="s-icon">🎯</span><div class="s-mod">Budget Module</div><div class="s-title">Budget vs Actuals</div><div class="s-desc">Monthly budget vs actuals with prior year column, category dimension, and mixed RAG status pre-seeded.</div><div class="s-tags"><span class="s-tag">Prior Year</span><span class="s-tag">RAG</span><span class="s-tag">Monthly</span><span class="s-tag">YoY</span></div><a class="s-dl" href="data:text/csv;base64,UGVyaW9kLENhdGVnb3J5LEFjdHVhbCxCdWRnZXQsUHJpb3JfWWVhcgpKYW4tMjAyNCxSZXZlbnVlLDQyNTAsNDEwMCwzOTgwCkZlYi0yMDI0LFJldmVudWUsNDM4MCw0MjAwLDQwNTAKTWFyLTIwMjQsUmV2ZW51ZSw0NTIwLDQ1MDAsNDIwMApBcHItMjAyNCxSZXZlbnVlLDQ2MDAsNDYwMCw0MzAwCk1heS0yMDI0LFJldmVudWUsNDQ4MCw0NzAwLDQzNTAKSnVuLTIwMjQsUmV2ZW51ZSw0MzUwLDQ4MDAsNDQwMApKdWwtMjAyNCxSZXZlbnVlLDQyMDAsNDYwMCw0MjUwCkF1Zy0yMDI0LFJldmVudWUsNDM4MCw0NTAwLDQzMDAKU2VwLTIwMjQsUmV2ZW51ZSw0NjUwLDQ3MDAsNDQyMApPY3QtMjAyNCxSZXZlbnVlLDQ4MDAsNDgwMCw0NTAwCk5vdi0yMDI0LFJldmVudWUsNDk1MCw0OTAwLDQ2MDAKRGVjLTIwMjQsUmV2ZW51ZSw1MTAwLDUwMDAsNDc1MApKYW4tMjAyNCxDT0dTLDE5MDAsMTg1MCwxNzkwCkZlYi0yMDI0LENPR1MsMTk2MCwxODkwLDE4MjAKTWFyLTIwMjQsQ09HUywyMDMwLDIwMjUsMTg5MApBcHItMjAyNCxDT0dTLDIwNzAsMjA3MCwxOTQwCk1heS0yMDI0LENPR1MsMjAxNiwyMTE1LDE5NjAKSnVuLTIwMjQsQ09HUywxOTU4LDIxNjAsMTk4MApKYW4tMjAyNCxPUEVYLDg1MCw4MjAsODAwCkZlYi0yMDI0LE9QRVgsODc2LDg0MCw4MTAKTWFyLTIwMjQsT1BFWCw5MDQsOTAwLDg0MA==" download="fincy_sample_budget.csv">↓ Download Budget Template</a><div class="s-rows">21 periods · 3 categories</div></div>
-    <div class="s-card"><span class="s-icon">💡</span><div class="s-mod">Cost Module</div><div class="s-title">Cost Intelligence</div><div class="s-desc">Supply chain cost data with COGS, OPEX, revenue by SKU and market. Pre-seeded with above-benchmark lines.</div><div class="s-tags"><span class="s-tag">COGS</span><span class="s-tag">OPEX</span><span class="s-tag">SKU</span><span class="s-tag">Benchmarks</span></div><a class="s-dl" href="data:text/csv;base64,UGVyaW9kLFNLVSxNYXJrZXQsUmV2ZW51ZSxDT0dTLE9QRVgKSmFuLTIwMjQsU0tVLUEsVUssNDIwMCwxODkwLDg0MApKYW4tMjAyNCxTS1UtQixVSywzMTAwLDE1NTAsNjIwCkphbi0yMDI0LFNLVS1DLERFLDI4MDAsMTU0MCw1NjAKRmViLTIwMjQsU0tVLUEsVUssNDM1MCwxOTU4LDg3MApGZWItMjAyNCxTS1UtQixVSywzMjAwLDE3NjAsNjQwCkZlYi0yMDI0LFNLVS1DLERFLDI5MDAsMTU5NSw1ODAKTWFyLTIwMjQsU0tVLUEsVUssNDUwMCwyMDI1LDkwMApNYXItMjAyNCxTS1UtQixVSywzMzAwLDE4MTUsNjYwCk1hci0yMDI0LFNLVS1DLERFLDMwMDAsMTY1MCw2MDAKQXByLTIwMjQsU0tVLUEsVUssNDYwMCwyMDcwLDkyMApBcHItMjAyNCxTS1UtQixVSywzMzUwLDE4NDMsNjcwCkFwci0yMDI0LFNLVS1DLERFLDMwNTAsMTY3OCw2MTA=" download="fincy_sample_cost.csv">↓ Download Cost Template</a><div class="s-rows">12 rows · 4 SKUs · 3 markets</div></div>
-  </div>
-</section>
-<!-- TESTIMONIALS -->
-<section class="sec" id="testimonials">
-  <div class="ey">Early Users</div>
-  <h2>What finance professionals<br><em>are saying.</em></h2>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:48px;">
-    <div style="background:var(--s);padding:28px 24px;">
-      <div style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);opacity:0.25;line-height:0.8;margin-bottom:14px;">&ldquo;</div>
-      <div style="font-size:0.84rem;color:var(--text2);line-height:1.9;margin-bottom:18px;font-weight:300;font-style:italic;">Finally a tool that actually speaks FP&amp;A. I uploaded our FMCG P&amp;L, mapped columns in 2 minutes, and had a board-ready variance summary in under 10 minutes. The AI CFO caught a COGS anomaly I had missed.</div>
-      <div style="border-top:1px solid var(--b);padding-top:14px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);">FP&amp;A Manager</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);margin-top:3px;">Consumer Goods · 5 years experience</div>
-      </div>
-    </div>
-    <div style="background:var(--s);padding:28px 24px;">
-      <div style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);opacity:0.25;line-height:0.8;margin-bottom:14px;">&ldquo;</div>
-      <div style="font-size:0.84rem;color:var(--text2);line-height:1.9;margin-bottom:18px;font-weight:300;font-style:italic;">The Reconciliation Engine alone saves my team 4+ hours every month close. We used to do ERP vs Bank matching manually in Excel. Now it runs in 30 seconds and flags every break automatically.</div>
-      <div style="border-top:1px solid var(--b);padding-top:14px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);">Finance Controller</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);margin-top:3px;">GCC · Manufacturing sector</div>
-      </div>
-    </div>
-    <div style="background:var(--s);padding:28px 24px;">
-      <div style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--gold);opacity:0.25;line-height:0.8;margin-bottom:14px;">&ldquo;</div>
-      <div style="font-size:0.84rem;color:var(--text2);line-height:1.9;margin-bottom:18px;font-weight:300;font-style:italic;">As a senior analyst at a consulting firm, I need to turn client data into insights fast. Fincy cuts my analysis time by 60%. The Budget RAG tracker is exactly what our CFO clients have been asking for.</div>
-      <div style="border-top:1px solid var(--b);padding-top:14px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--white);">Senior Finance Analyst</div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);margin-top:3px;">Consulting · Big 4 background</div>
-      </div>
-    </div>
-  </div>
-</section>
-<hr class="divider"/>
+
 <!-- FOUNDER -->
-<section class="sec" id="founder">
+<section class="sec" id="about">
   <div class="ey">Built by a Practitioner</div>
   <h2>Not a generic tool.<br><em>Built from the inside.</em></h2>
-  <div style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start;margin-top:48px;border:1px solid var(--b);background:var(--s);padding:36px;">
+  <div class="founder-box">
     <div style="text-align:center;min-width:120px;">
-      <div style="width:80px;height:80px;background:#1a1a12;border:1px solid var(--gold);
-      border-radius:50%;display:flex;align-items:center;justify-content:center;
-      font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold);margin:0 auto 12px;">JP</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;
-      text-transform:uppercase;color:var(--white);">Jitendra Parida</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--text3);margin-top:4px;">Senior FP&amp;A Analyst</div>
-      <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank"
-      style="display:inline-block;margin-top:10px;font-family:'IBM Plex Mono',monospace;
-      font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);
-      text-decoration:none;border:1px solid var(--gold);padding:4px 10px;">LinkedIn ↗</a>
+      <div class="founder-avatar">JP</div>
+      <div class="founder-name">Jitendra Parida</div>
+      <div class="founder-title">Senior FP&amp;A Analyst</div>
+      <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank" style="display:inline-block;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid var(--gold);padding:4px 10px;">LinkedIn ↗</a>
     </div>
     <div>
-      <p style="font-size:0.88rem;color:var(--text2);line-height:1.9;margin-bottom:14px;font-weight:300;">
-        Fincy Intelligence was built by someone who has lived the FP&amp;A problem — not a developer who guessed at it.
-        With 6+ years in FMCG finance at <strong style="color:var(--white);">IBM supporting Reckitt</strong> across
-        MENARP and Africa markets, and prior experience at <strong style="color:var(--white);">Capgemini supporting Unilever</strong>
-        across ANZ and APAC, I've spent thousands of hours in Excel doing exactly what Fincy now does in seconds.
-      </p>
-      <p style="font-size:0.88rem;color:var(--text2);line-height:1.9;margin-bottom:18px;font-weight:300;">
-        Every module — FP&amp;A Intelligence, Reconciliation Engine, Budget Tracker, Cost Intelligence —
-        was designed around real workflows I've run in real finance teams. The AI CFO was trained on
-        the kinds of questions a board actually asks. This isn't a generic BI tool. It's an FP&amp;A tool
-        built by an FP&amp;A analyst.
-      </p>
+      <p style="font-size:0.88rem;color:var(--text2);line-height:1.9;margin-bottom:14px;font-weight:300;">Fincy Intelligence was built by someone who has lived the FP&amp;A problem. With 6+ years in FMCG finance at <strong style="color:var(--white);">IBM supporting Reckitt</strong> across MENARP and Africa markets, and prior experience at <strong style="color:var(--white);">Capgemini supporting Unilever</strong> across ANZ and APAC, I've spent thousands of hours doing exactly what Fincy now does in seconds.</p>
+      <p style="font-size:0.88rem;color:var(--text2);line-height:1.9;margin-bottom:18px;font-weight:300;">Every module was designed around real finance workflows. The AI CFO answers the questions a board actually asks. This isn't a generic BI tool — it's an FP&amp;A platform built by an FP&amp;A analyst.</p>
       <div style="display:flex;gap:24px;flex-wrap:wrap;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--text3);">
-          <span style="color:var(--gold);">IBM / Reckitt</span> · MENARP &amp; Africa
-        </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--text3);">
-          <span style="color:var(--gold);">Capgemini / Unilever</span> · ANZ &amp; APAC
-        </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--text3);">
-          <span style="color:var(--gold);">6+ years</span> · Supply Chain FP&amp;A
-        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--text3);"><span style="color:var(--gold);">IBM / Reckitt</span> · MENARP &amp; Africa</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--text3);"><span style="color:var(--gold);">Capgemini / Unilever</span> · ANZ &amp; APAC</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--text3);"><span style="color:var(--gold);">6+ years</span> · Supply Chain FP&amp;A</div>
       </div>
     </div>
   </div>
 </section>
 <hr class="divider"/>
+
+<!-- TEMPLATES -->
+<section class="sec" id="templates">
+  <div class="ey">Sample Data</div>
+  <h2>No data? No problem.<br><em>Start with a template.</em></h2>
+  <p class="sub">Download a ready-made CSV for each module and see your AI CFO in action instantly.</p>
+  <div class="sample-grid">
+    <div class="s-card"><span class="s-icon">🛒</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">FMCG / Consumer Goods</div><div class="s-desc">Multi-market P&amp;L with brands, channels, trade promo and variance. Modelled on real FMCG supply chain data.</div><a class="s-dl" href="fincy_sample_fmcg.csv" download>↓ Download FMCG Template</a></div>
+    <div class="s-card"><span class="s-icon">💻</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">SaaS / Tech Company</div><div class="s-desc">Subscription revenue with ARR, gross margin, regional breakdown and budget tracking across product tiers.</div><a class="s-dl" href="fincy_sample_saas.csv" download>↓ Download SaaS Template</a></div>
+    <div class="s-card"><span class="s-icon">🏢</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">Generic / Any Industry</div><div class="s-desc">Neutral template with generic regions, product lines and channels. Works for retail, manufacturing, services.</div><a class="s-dl" href="fincy_sample_generic.csv" download>↓ Download Generic Template</a></div>
+  </div>
+</section>
+
 <!-- CTA -->
 <div class="cta-wrap">
   <h2>Ready to meet<br><em>your AI CFO?</em></h2>
   <p class="cta-sub">Upload your CSV. Get P&amp;L intelligence in under 60 seconds. No code. No setup.</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-    <a href="javascript:void(0)" onclick="openModal()" class="btn-gold">Start Free Trial →</a>
-    <a href="javascript:void(0)" onclick="openModalPro()" class="btn-ghost">Get Pro Access – $29/mo</a>
+    <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
+    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">Get Pro Access – $29/mo</button>
   </div>
-  <div class="cta-note">Free 7-day trial · No credit card · Your data stays yours</div>
+  <div style="margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);">Free 7-day trial · No credit card · Your data stays yours</div>
 </div>
+
 <!-- FOOTER -->
 <footer>
   <div class="f-logo">Fincy Intelligence</div>
-  <div class="f-copy">© 2025 Fincy AI · Built by Jitendra Parida</div>
+  <div class="f-copy">© 2026 Fincy AI · Built by Jitendra Parida</div>
   <div class="f-links">
     <a href="https://fincy-intelligence.streamlit.app" target="_blank">App</a>
     <a href="#features">Features</a>
     <a href="#modules">Modules</a>
     <a href="#pricing">Pricing</a>
-    <a href="#founder">About</a>
+    <a href="#about">About</a>
     <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank">LinkedIn ↗</a>
     <a href="javascript:void(0)" onclick="showPrivacy()">Privacy</a>
     <a href="mailto:Jitenparida95@gmail.com">Contact</a>
   </div>
 </footer>
-<!-- PRIVACY MODAL -->
-<div class="m-overlay" id="privacy-modal">
-  <div class="m-box" style="max-width:520px;">
-    <button class="m-close" onclick="document.getElementById('privacy-modal').classList.remove('open')">✕</button>
-    <div class="m-ey">Legal</div>
-    <div class="m-title" style="margin-bottom:16px;">Privacy Policy</div>
-    <div style="font-size:0.78rem;color:#a09880;line-height:1.85;font-weight:300;">
-      <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">Data Processing</strong><br>
-      Fincy Intelligence processes your uploaded CSV files entirely within your browser session using Streamlit's in-memory runtime. Your data is never transmitted to, stored on, or logged by any Fincy server.</p>
-      <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">AI Queries</strong><br>
-      When you use the AI CFO feature, anonymised financial summary statistics (totals, ratios, KPIs) are sent to the Groq API (groq.com) for inference. Raw row-level data from your CSV is never included in AI queries.</p>
-      <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">Sign-up Data</strong><br>
-      Name, email, company and role submitted via the sign-up form are stored securely via Formspree and used only to contact you about Fincy Intelligence. We do not sell or share this data with third parties.</p>
-      <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">Session Isolation</strong><br>
-      Each user session is completely isolated. No data uploaded by one user is accessible by any other user. All session data is discarded when you close your browser tab.</p>
-      <p style="margin-bottom:12px;"><strong style="color:#e8e2d4;">Contact</strong><br>
-      For any data privacy questions: <a href="mailto:Jitenparida95@gmail.com" style="color:var(--gold);"><span class="__cf_email__" data-cfemail="0842617c6d6678697a616c69313d486f65696164266b6765">[email&#160;protected]</span></a></p>
-      <p style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#3a3a34;margin-top:18px;letter-spacing:0.08em;">Last updated: April 2026 · Fincy Intelligence by Jitendra Parida</p>
-    </div>
-  </div>
-</div>
 
-<!-- MODAL -->
+<!-- SIGNUP MODAL -->
 <div class="m-overlay" id="modal">
   <div class="m-box">
     <button class="m-close" onclick="closeModal()">✕</button>
     <div id="mForm">
-      <div class="m-ey" id="m-ey-txt">Early Access</div>
-      <div class="m-title" id="m-title-txt">Join Fincy Intelligence</div>
-      <div class="m-sub" id="m-sub-txt">Get early access to all 4 modules free for 7 days. No spam. No credit card.</div>
+      <div class="m-ey" id="mEy">Early Access</div>
+      <div class="m-title" id="mTitle">Join Fincy Intelligence</div>
+      <div class="m-sub" id="mSub">Get early access to all 4 modules free for 7 days. No spam. No credit card.</div>
       <div class="m-form">
-        <div class="f-field"><label class="f-lbl">Full Name *</label><input class="f-inp" type="text" id="f_name" placeholder="Your Name"/></div>
-        <div class="f-field"><label class="f-lbl">Work Email *</label><input class="f-inp" type="email" id="f_email" placeholder="you@company.com"/></div>
-        <div class="f-field"><label class="f-lbl">Company</label><input class="f-inp" type="text" id="f_company" placeholder="IBM, Reckitt, Unilever…"/></div>
-        <div class="f-field"><label class="f-lbl">Role</label><input class="f-inp" type="text" id="f_role" placeholder="FP&amp;A Manager, CFO, Finance Analyst…"/></div>
-        <div class="f-field"><label class="f-lbl">LinkedIn URL</label><input class="f-inp" type="url" id="f_linkedin" placeholder="linkedin.com/in/yourprofile"/></div>
-        <button class="f-sub" id="m-submit-btn" onclick="submitSignup()">Get Free Access →</button>
+        <div class="f-field"><label class="f-lbl">Full Name *</label><input class="f-inp" type="text" id="fName" placeholder="Your Name"/></div>
+        <div class="f-field"><label class="f-lbl">Work Email *</label><input class="f-inp" type="email" id="fEmail" placeholder="you@company.com"/></div>
+        <div class="f-field"><label class="f-lbl">Company</label><input class="f-inp" type="text" id="fCompany" placeholder="IBM, Reckitt, Unilever…"/></div>
+        <div class="f-field"><label class="f-lbl">Role</label><input class="f-inp" type="text" id="fRole" placeholder="FP&amp;A Manager, CFO, Finance Analyst…"/></div>
+        <div class="f-field"><label class="f-lbl">LinkedIn URL</label><input class="f-inp" type="url" id="fLinkedin" placeholder="linkedin.com/in/yourprofile"/></div>
+        <button class="f-sub" id="mSubmit" onclick="submitSignup()">Get Free Access →</button>
         <div class="f-note">🔒 Safe &amp; private. No spam. Unsubscribe anytime.</div>
       </div>
     </div>
     <div class="f-ok" id="fOk">
       <div class="f-ok-icon">✓</div>
-      <div class="f-ok-title" id="f-ok-title-txt">You're on the list.</div>
-      <div class="f-ok-sub" id="f-ok-sub-txt">Welcome to Fincy Intelligence.<br>Jitendra will reach out to you shortly.<br><br><a href="https://fincy-intelligence.streamlit.app" style="color:var(--gold);" target="_blank">Launch the app now →</a></div>
+      <div class="f-ok-title" id="fOkTitle">You're in!</div>
+      <div class="f-ok-sub" id="fOkSub">Welcome to Fincy Intelligence.<br><br><a href="https://fincy-intelligence.streamlit.app" style="color:var(--gold);" target="_blank">Launch the app now →</a></div>
     </div>
   </div>
 </div>
+
+<!-- PRIVACY MODAL -->
+<div class="m-overlay" id="privacyModal">
+  <div class="m-box" style="max-width:520px;">
+    <button class="m-close" onclick="document.getElementById('privacyModal').classList.remove('open');document.body.style.overflow='';">✕</button>
+    <div class="m-ey">Legal</div>
+    <div class="m-title" style="margin-bottom:16px;">Privacy Policy</div>
+    <div style="font-size:0.78rem;color:var(--text2);line-height:1.85;font-weight:300;">
+      <p style="margin-bottom:12px;"><strong style="color:var(--white);">Data Processing</strong><br>Your uploaded CSV files are processed entirely within your browser session. Your data is never stored on any Fincy server.</p>
+      <p style="margin-bottom:12px;"><strong style="color:var(--white);">AI Queries</strong><br>When you use the AI CFO, anonymised financial summary statistics are sent to the Groq API for inference. Raw row-level data is never included in AI queries.</p>
+      <p style="margin-bottom:12px;"><strong style="color:var(--white);">Sign-up Data</strong><br>Name and email submitted via the sign-up form are stored via Formspree and used only to contact you about Fincy Intelligence.</p>
+      <p style="margin-bottom:12px;"><strong style="color:var(--white);">Session Isolation</strong><br>Each user session is completely isolated. All session data is discarded when you close your browser tab.</p>
+      <p><strong style="color:var(--white);">Contact</strong><br><a href="mailto:Jitenparida95@gmail.com" style="color:var(--gold);">Jitenparida95@gmail.com</a></p>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--text3);margin-top:18px;">Last updated: April 2026 · Fincy Intelligence</p>
+    </div>
+  </div>
+</div>
+
 <script>
-var _intent='app';
-var STORAGE_KEY='fincy_user_v1';
-var APP_URL='https://fincy-intelligence.streamlit.app';
+var APP = 'https://fincy-intelligence.streamlit.app';
+var PAYPAL = 'https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL';
+var STORE_KEY = 'fincy_user_v1';
+var _intent = 'app';
 
-// ── Persistence helpers ────────────────────────────────────────────────────
-function saveUser(name,email){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify({name:name,email:email,ts:Date.now()}));}catch(e){}
-}
-function getUser(){
-  try{var d=localStorage.getItem(STORAGE_KEY);return d?JSON.parse(d):null;}catch(e){return null;}
-}
-function clearUser(){
-  try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
-}
+/* ── Persistence ─────────────────────────────────────────────────────────── */
+function saveUser(n,e){try{localStorage.setItem(STORE_KEY,JSON.stringify({n:n,e:e,t:Date.now()}));}catch(x){}}
+function getUser(){try{var d=localStorage.getItem(STORE_KEY);return d?JSON.parse(d):null;}catch(x){return null;}}
+function clearUser(){try{localStorage.removeItem(STORE_KEY);}catch(x){}}
 
-// ── On page load: check if user already signed up ─────────────────────────
+/* ── On load: recognise returning users ──────────────────────────────────── */
 window.addEventListener('DOMContentLoaded',function(){
   var u=getUser();
-  if(!u) return;  // first-time visitor — show normal page
+  if(!u) return;
+  var first=u.n.split(' ')[0];
 
-  // Returning user — update all primary CTAs to skip modal
-  var first = u.name.split(' ')[0];
+  // Nav buttons → direct to app
+  var nb=document.getElementById('nav-signup-btn');
+  if(nb){nb.textContent='✓ '+first;nb.style.borderColor='var(--green)';nb.style.color='var(--green)';nb.onclick=function(){window.open(APP,'_blank');};}
+  var lb=document.getElementById('nav-launch-btn');
+  if(lb){lb.textContent='Launch App →';lb.onclick=function(){window.open(APP,'_blank');};}
 
-  // Nav "Sign Up Free" → "Welcome, {first}"
-  var navGhost = document.querySelector('nav .btn-ghost');
-  if(navGhost){
-    navGhost.textContent='✓ Welcome, '+first;
-    navGhost.style.borderColor='var(--green)';
-    navGhost.style.color='var(--green)';
-    navGhost.onclick=null;
-    navGhost.href=APP_URL;
-    navGhost.setAttribute('target','_blank');
-    navGhost.setAttribute('href',APP_URL);
-  }
-
-  // Nav "Launch App →" → direct to app
-  var navGold = document.querySelector('nav .btn-gold');
-  if(navGold){
-    navGold.textContent='Launch App →';
-    navGold.removeAttribute('onclick');
-    navGold.setAttribute('href',APP_URL);
-    navGold.setAttribute('target','_blank');
-    navGold.tagName==='BUTTON'&&navGold.parentNode.replaceChild(
-      Object.assign(document.createElement('a'),
-        {href:APP_URL,target:'_blank',className:navGold.className,textContent:'Launch App →'}),
-      navGold);
-  }
-
-  // Hero "Start Free Trial" → direct to app
-  var heroBtn = document.querySelector('.hero .btn-gold');
-  if(heroBtn){
-    heroBtn.textContent='Launch App →';
-    heroBtn.removeAttribute('onclick');
-    heroBtn.setAttribute('href',APP_URL);
-    heroBtn.setAttribute('target','_blank');
-  }
-
-  // Module "Sign Up & Launch" buttons → direct to app
-  document.querySelectorAll('.mod-cta').forEach(function(b){
-    b.removeAttribute('onclick');
-    b.setAttribute('href',APP_URL);
-    b.setAttribute('target','_blank');
+  // Module buttons → direct to app
+  document.querySelectorAll('.mod-cta-btn').forEach(function(b){
     b.textContent='Launch Module →';
+    b.onclick=function(){window.open(APP,'_blank');};
   });
 
-  // Pricing "Start Free Trial" → direct to app
-  document.querySelectorAll('.p-btn-gold').forEach(function(b){
-    if(b.tagName==='BUTTON'){
-      // keep pro button as-is (still needs payment)
-      if(b.textContent.includes('Pro')) return;
-    }
-    b.removeAttribute('onclick');
-    b.setAttribute('href',APP_URL);
-    b.setAttribute('target','_blank');
-    b.textContent='Launch App →';
-  });
-
-  // Show a small "not you?" link near the nav
-  var nav = document.querySelector('nav');
+  // Add "not you?" link in nav
+  var nav=document.querySelector('nav');
   if(nav){
-    var tag = document.createElement('span');
-    tag.style.cssText='font-family:IBM Plex Mono,monospace;font-size:0.52rem;color:var(--text3);letter-spacing:0.08em;cursor:pointer;';
-    tag.innerHTML='Not '+first+'? <u onclick="signOut()" style="color:var(--text3);cursor:pointer;">Sign out</u>';
+    var tag=document.createElement('span');
+    tag.style.cssText='font-family:IBM Plex Mono,monospace;font-size:0.52rem;color:var(--text3);cursor:pointer;letter-spacing:0.08em;';
+    tag.innerHTML='Not '+first+'? <u onclick="signOut()" style="cursor:pointer;">Sign out</u>';
     nav.appendChild(tag);
   }
 });
 
-// ── Sign out ───────────────────────────────────────────────────────────────
-function signOut(){
-  clearUser();
-  location.reload();
-}
+function signOut(){clearUser();location.reload();}
 
-// ── Modal helpers ──────────────────────────────────────────────────────────
+/* ── Modal helpers ───────────────────────────────────────────────────────── */
 function toggleMenu(){
   var h=document.getElementById('hamburger'),m=document.getElementById('mobileNav');
   h.classList.toggle('open');m.classList.toggle('open');
   document.body.style.overflow=m.classList.contains('open')?'hidden':'';
 }
 
-function _reset(){
+function resetModal(){
   document.getElementById('mForm').style.display='';
   document.getElementById('fOk').style.display='none';
-  document.getElementById('m-ey-txt').textContent='Early Access';
-  document.getElementById('m-title-txt').textContent='Join Fincy Intelligence';
-  document.getElementById('m-sub-txt').textContent='Get early access to all 4 modules free for 7 days. No spam. No credit card.';
-  document.getElementById('m-submit-btn').textContent='Get Free Access →';
-  ['f_name','f_email','f_company','f_role','f_linkedin'].forEach(function(id){
-    document.getElementById(id).value='';
+  document.getElementById('mEy').textContent='Early Access';
+  document.getElementById('mTitle').textContent='Join Fincy Intelligence';
+  document.getElementById('mSub').textContent='Get early access to all 4 modules free for 7 days. No spam. No credit card.';
+  document.getElementById('mSubmit').textContent='Get Free Access →';
+  ['fName','fEmail','fCompany','fRole','fLinkedin'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
   });
 }
 
-// If already signed up and clicks "Sign Up Free" — go direct to app instead
 function openModal(){
   var u=getUser();
-  if(u){window.open(APP_URL,'_blank');return;}
-  _intent='app';_reset();
+  if(u){window.open(APP,'_blank');return;}  // already signed up — go direct
+  _intent='app';
+  resetModal();
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
 function openModalPro(){
-  _intent='pro';_reset();
-  document.getElementById('m-ey-txt').textContent='Pro Plan';
-  document.getElementById('m-title-txt').textContent='Get Pro Access';
-  document.getElementById('m-sub-txt').textContent='Enter your details to proceed to secure PayPal checkout. $29/month — cancel anytime.';
-  document.getElementById('m-submit-btn').textContent='Continue to Payment →';
+  _intent='pro';
+  resetModal();
+  document.getElementById('mEy').textContent='Pro Plan';
+  document.getElementById('mTitle').textContent='Get Pro Access';
+  document.getElementById('mSub').textContent='Enter your details to proceed to secure PayPal checkout. $29/month — cancel anytime.';
+  document.getElementById('mSubmit').textContent='Continue to Payment →';
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -705,20 +603,19 @@ function closeModal(){
 }
 
 document.getElementById('modal').addEventListener('click',function(e){
-  if(e.target===this)closeModal();
+  if(e.target===this) closeModal();
 });
 
 function submitSignup(){
-  var n=document.getElementById('f_name').value.trim();
-  var e=document.getElementById('f_email').value.trim();
-  var c=document.getElementById('f_company').value.trim();
-  var r=document.getElementById('f_role').value.trim();
-  var l=document.getElementById('f_linkedin').value.trim();
+  var n=(document.getElementById('fName').value||'').trim();
+  var e=(document.getElementById('fEmail').value||'').trim();
+  var c=(document.getElementById('fCompany').value||'').trim();
+  var r=(document.getElementById('fRole').value||'').trim();
+  var l=(document.getElementById('fLinkedin').value||'').trim();
   if(!n){alert('Please enter your name.');return;}
-  if(!e||!e.includes('@')){alert('Please enter a valid email.');return;}
+  if(!e||e.indexOf('@')<0){alert('Please enter a valid email.');return;}
 
-  // ── Save to localStorage so they're recognised on return visits ──────────
-  saveUser(n, e);
+  saveUser(n,e);  // remember this user for future visits
 
   fetch('https://formspree.io/f/mvzvybpr',{
     method:'POST',
@@ -733,25 +630,31 @@ function submitSignup(){
   document.getElementById('mForm').style.display='none';
   document.getElementById('fOk').style.display='block';
 
+  var first=n.split(' ')[0];
   if(_intent==='pro'){
-    document.getElementById('f-ok-title-txt').textContent='Redirecting to PayPal…';
-    document.getElementById('f-ok-sub-txt').innerHTML='Signup saved. Taking you to secure PayPal checkout.<br>If not redirected, <a href="https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL" style="color:var(--gold);">click here →</a>';
-    setTimeout(function(){window.open('https://www.paypal.com/ncp/payment/2TFXRUQTCL7LL','_blank');},1800);
+    document.getElementById('fOkTitle').textContent='Redirecting to PayPal…';
+    document.getElementById('fOkSub').innerHTML='Signup saved. Taking you to secure checkout.<br>If not redirected, <a href="'+PAYPAL+'" style="color:var(--gold);">click here →</a>';
+    setTimeout(function(){window.open(PAYPAL,'_blank');},1800);
   } else {
-    document.getElementById('f-ok-title-txt').textContent='You're in. Welcome, '+n.split(' ')[0]+'!';
-    document.getElementById('f-ok-sub-txt').innerHTML=(
-      'Your access is saved. You won't need to sign up again on this device.<br><br>'
-      +'<a href="'+APP_URL+'" style="color:var(--gold);" target="_blank">Launch the app now →</a>'
+    document.getElementById('fOkTitle').textContent='You\'re in, '+first+'!';
+    document.getElementById('fOkSub').innerHTML=(
+      'Access saved on this device — you won\'t be asked to sign up again.<br><br>'
+      +'<a href="'+APP+'" style="color:var(--gold);" target="_blank">Launch the app now →</a>'
     );
   }
 }
 
-function showPrivacy(){document.getElementById('privacy-modal').classList.add('open');document.body.style.overflow='hidden';}
+function showPrivacy(){
+  document.getElementById('privacyModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
 
 window.addEventListener('resize',function(){
   if(window.innerWidth>768){
-    document.getElementById('mobileNav').classList.remove('open');
-    document.getElementById('hamburger').classList.remove('open');
+    var mn=document.getElementById('mobileNav');
+    var hb=document.getElementById('hamburger');
+    if(mn) mn.classList.remove('open');
+    if(hb) hb.classList.remove('open');
     document.body.style.overflow='';
   }
 });
