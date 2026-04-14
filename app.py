@@ -292,6 +292,14 @@ def send_to_formspree(name, email, company, role, linkedin):
         pass  # Never block the user
 
 
+# ── QUERY PARAM ROUTING — HTML card clicks set ?m=xxx ────────────────────────
+_qp = st.query_params.get("m", None)
+if _qp and _qp in ("fpa", "recon", "budget", "cost"):
+    if st.session_state.active_module != _qp:
+        st.session_state.active_module = _qp
+    st.query_params.clear()   # clean URL after routing
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # SAMPLE DATA
 # ══════════════════════════════════════════════════════════════════════════════
@@ -526,10 +534,10 @@ def goto_module(mod_key):
 def show_home():
     page_header("AI-POWERED CFO DECISION PLATFORM")
 
-    # Value proposition strip
+    # Value prop strip
     st.markdown("""
 <div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #c9a84c;
-padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
   <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
   text-transform:uppercase;color:#c9a84c;flex-shrink:0;">Free 7-Day Trial</div>
   <div style="width:1px;height:14px;background:#2a2a20;flex-shrink:0;"></div>
@@ -540,50 +548,101 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
   color:#3a3a34;letter-spacing:0.1em;">No credit card · No code · Session isolated</div>
 </div>""", unsafe_allow_html=True)
 
-    # 2×2 module grid — button INSIDE the card via CSS trick
-    # Each card contains the launch button using Streamlit columns + CSS margin collapse
-    top_l, top_r = st.columns(2, gap="small")
-    bot_l, bot_r = st.columns(2, gap="small")
+    # ── Full HTML module cards with embedded launch links ──────────────────────
+    # Each card is a single <a> tag — clicking anywhere on the card navigates
+    # via ?m=xxx query param, which is handled at the top of the app.
+    app_url = "https://fincy-intelligence.streamlit.app"
 
-    _CARDS = [
-        (top_l, "fpa",    "#c9a84c", "📊", "Core Module", "FP&A Intelligence",
-         "Instant P&L dashboards, variance analysis, brand scorecards, and AI CFO chat from any CSV — in 60 seconds.",
-         "10+ KPIs · 7 Charts · AI CFO · PDF Export"),
-        (top_r, "recon",  "#4ade80", "🔁", "New", "Reconciliation Engine",
-         "Upload ERP vs Bank, GL vs Sub-ledger, or PO vs Invoice. Auto-match, flag breaks, download exceptions.",
-         "Auto-Match · Break Flags · Exceptions CSV"),
-        (bot_l, "budget", "#fbbf24", "🎯", "New", "Budget vs Actuals Tracker",
-         "RAG-status tracker with prior year overlays, trend detection, and AI-generated board commentary in minutes.",
-         "RAG Status · Prior Year · AI Trend Analysis"),
-        (bot_r, "cost",   "#f472b6", "💡", "New", "Cost Intelligence",
-         "COGS and OPEX benchmarking with segment efficiency scores and AI-driven cost reduction recommendations.",
-         "Benchmarks · Flagged Lines · AI Recommendations"),
-    ]
+    st.markdown(f"""
+<style>
+.mod-home-grid{{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;background:#1e1e18;}}
+.mod-home-card{{
+  display:block;background:#101010;padding:0;text-decoration:none;
+  position:relative;overflow:hidden;transition:background 0.2s;
+}}
+.mod-home-card:hover{{background:#141410;}}
+.mod-home-card::before{{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--mc);
+}}
+.mod-home-body{{padding:28px 26px 0;}}
+.mod-home-icon{{font-size:1.9rem;margin-bottom:12px;display:block;}}
+.mod-home-badge{{
+  font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--mc);border:1px solid var(--mc);
+  padding:2px 8px;display:inline-block;margin-bottom:14px;
+}}
+.mod-home-title{{
+  font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;
+  color:#fafaf8;margin-bottom:9px;line-height:1.2;
+}}
+.mod-home-desc{{font-size:0.76rem;color:#5a5648;line-height:1.75;margin-bottom:12px;}}
+.mod-home-tags{{
+  font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#3a3a34;
+  letter-spacing:0.08em;margin-bottom:20px;
+}}
+.mod-home-btn{{
+  display:block;
+  background:var(--mc);color:#0a0a08;
+  font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:13px 26px;text-align:left;margin:0;
+  border-top:1px solid rgba(0,0,0,0.15);
+  transition:opacity 0.15s;
+}}
+.mod-home-card:hover .mod-home-btn{{opacity:0.88;}}
+@media(max-width:640px){{
+  .mod-home-grid{{grid-template-columns:1fr;}}
+}}
+</style>
 
-    for col, mod_key, color, icon, badge, title, desc, tags in _CARDS:
-        with col:
-            # Card top section (HTML)
-            st.markdown(f"""
-<div style="background:#101010;border:1px solid #1e1e18;border-top:3px solid {color};
-padding:26px 24px 16px;margin-bottom:-8px;">
-  <div style="font-size:1.8rem;margin-bottom:12px;">{icon}</div>
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;
-  text-transform:uppercase;color:{color};border:1px solid {color};padding:2px 8px;
-  display:inline-block;margin-bottom:14px;">{badge}</div>
-  <div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;
-  color:#fafaf8 !important;margin-bottom:9px;line-height:1.2;">{title}</div>
-  <div style="font-size:0.76rem;color:#5a5648;line-height:1.75;margin-bottom:14px;">{desc}</div>
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#3a3a34;
-  letter-spacing:0.08em;margin-bottom:16px;">{tags}</div>
+<div class="mod-home-grid">
+
+  <a class="mod-home-card" href="{app_url}/?m=fpa" target="_self" style="--mc:#c9a84c;">
+    <div class="mod-home-body">
+      <span class="mod-home-icon">📊</span>
+      <div class="mod-home-badge">Core Module</div>
+      <div class="mod-home-title">FP&amp;A Intelligence</div>
+      <div class="mod-home-desc">Instant P&amp;L dashboards, variance analysis, brand scorecards, and AI CFO chat from any CSV — in 60 seconds.</div>
+      <div class="mod-home-tags">10+ KPIs · 7 Charts · AI CFO · PDF Export</div>
+    </div>
+    <div class="mod-home-btn">→ Launch FP&amp;A Intelligence</div>
+  </a>
+
+  <a class="mod-home-card" href="{app_url}/?m=recon" target="_self" style="--mc:#4ade80;">
+    <div class="mod-home-body">
+      <span class="mod-home-icon">🔁</span>
+      <div class="mod-home-badge">New</div>
+      <div class="mod-home-title">Reconciliation Engine</div>
+      <div class="mod-home-desc">Upload ERP vs Bank, GL vs Sub-ledger, or PO vs Invoice. Auto-match, flag breaks, download exceptions.</div>
+      <div class="mod-home-tags">Auto-Match · Break Flags · Exceptions CSV</div>
+    </div>
+    <div class="mod-home-btn">→ Launch Reconciliation Engine</div>
+  </a>
+
+  <a class="mod-home-card" href="{app_url}/?m=budget" target="_self" style="--mc:#fbbf24;">
+    <div class="mod-home-body">
+      <span class="mod-home-icon">🎯</span>
+      <div class="mod-home-badge">New</div>
+      <div class="mod-home-title">Budget vs Actuals Tracker</div>
+      <div class="mod-home-desc">RAG-status tracker with prior year overlays, trend detection, and AI-generated board commentary in minutes.</div>
+      <div class="mod-home-tags">RAG Status · Prior Year · AI Trend Analysis</div>
+    </div>
+    <div class="mod-home-btn">→ Launch Budget Tracker</div>
+  </a>
+
+  <a class="mod-home-card" href="{app_url}/?m=cost" target="_self" style="--mc:#f472b6;">
+    <div class="mod-home-body">
+      <span class="mod-home-icon">💡</span>
+      <div class="mod-home-badge">New</div>
+      <div class="mod-home-title">Cost Intelligence</div>
+      <div class="mod-home-desc">COGS and OPEX benchmarking with segment efficiency scores and AI-driven cost reduction recommendations.</div>
+      <div class="mod-home-tags">Benchmarks · Flagged Lines · AI Recommendations</div>
+    </div>
+    <div class="mod-home-btn">→ Launch Cost Intelligence</div>
+  </a>
+
 </div>""", unsafe_allow_html=True)
-            # Button flush against card bottom (negative margin bridges the gap)
-            st.markdown(f"""<div style="background:#101010;border:1px solid #1e1e18;
-border-top:none;padding:0 24px 20px;">""", unsafe_allow_html=True)
-            if st.button(f"→  Launch {title}", use_container_width=True, key=f"h_{mod_key}",
-                         help=f"Open the {title} module"):
-                st.session_state.active_module = mod_key
-                st.rerun()
-            st.markdown("</div>", unsafe_allow_html=True)
 
     # Stats row
     st.markdown("""
