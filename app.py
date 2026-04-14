@@ -304,36 +304,36 @@ if _qp and _qp in ("fpa", "recon", "budget", "cost"):
 # SAMPLE DATA
 # ══════════════════════════════════════════════════════════════════════════════
 SAMPLE_FMCG = """Year,Quarter,Month,Month_Num,Market,Brand,Channel,Category,Net_Revenue,Gross_Profit,EBITDA,COGS,OPEX,Volume_Units,Base_NR,Trade_Promo,Budget_NR,Variance_NR,PY_NR
-2023,Q1,Jan,1,UK,Alpha,Online,Haircare,1200,660,300,540,360,12000,1350,-150,1150,50,1100
-2023,Q1,Jan,1,UK,Beta,Retail,Skincare,980,490,200,490,290,9800,1100,-120,1000,-20,950
-2023,Q1,Jan,1,DE,Alpha,Online,Haircare,870,435,180,435,255,8700,980,-110,850,20,820
-2023,Q1,Jan,1,DE,Gamma,B2B,Bodycare,650,325,130,325,195,6500,730,-80,620,30,610
-2023,Q1,Jan,1,FR,Beta,Retail,Skincare,780,390,155,390,235,7800,880,-100,760,20,740
-2023,Q1,Feb,2,UK,Alpha,Online,Haircare,1250,688,312,563,375,12500,1400,-150,1200,50,1140
-2023,Q1,Feb,2,UK,Beta,Retail,Skincare,1020,510,210,510,300,10200,1150,-130,1050,-30,980
-2023,Q1,Feb,2,DE,Alpha,Online,Haircare,900,450,185,450,265,9000,1010,-110,880,20,840
-2023,Q1,Feb,2,DE,Gamma,B2B,Bodycare,680,340,136,340,204,6800,760,-80,650,30,630
-2023,Q1,Feb,2,FR,Beta,Retail,Skincare,810,405,162,405,243,8100,910,-100,790,20,760
-2023,Q1,Mar,3,UK,Alpha,Online,Haircare,1300,715,325,585,390,13000,1450,-150,1250,50,1180
-2023,Q1,Mar,3,UK,Beta,Retail,Skincare,1060,530,218,530,312,10600,1200,-140,1100,-40,1010
-2023,Q1,Mar,3,DE,Alpha,Online,Haircare,930,465,191,465,274,9300,1040,-110,910,20,860
-2023,Q1,Mar,3,DE,Gamma,B2B,Bodycare,700,350,140,350,210,7000,790,-90,670,30,650
-2023,Q1,Mar,3,FR,Beta,Retail,Skincare,840,420,168,420,252,8400,945,-105,820,20,780
-2024,Q1,Jan,1,UK,Alpha,Online,Haircare,1380,759,345,621,414,13800,1540,-160,1350,30,1200
-2024,Q1,Jan,1,UK,Beta,Retail,Skincare,1100,550,226,550,324,11000,1240,-140,1120,-20,980
-2024,Q1,Jan,1,DE,Alpha,Online,Haircare,1010,505,207,505,298,10100,1130,-120,980,30,870
-2024,Q1,Jan,1,DE,Gamma,B2B,Bodycare,760,380,152,380,228,7600,850,-90,730,30,650
-2024,Q1,Jan,1,FR,Beta,Retail,Skincare,920,460,184,460,276,9200,1030,-110,890,30,780
-2024,Q1,Feb,2,UK,Alpha,Online,Haircare,1420,781,355,639,426,14200,1580,-160,1390,30,1250
-2024,Q1,Feb,2,UK,Beta,Retail,Skincare,1140,570,234,570,336,11400,1280,-140,1160,-20,1020
-2024,Q1,Feb,2,DE,Alpha,Online,Haircare,1040,520,213,520,307,10400,1160,-120,1010,30,900
-2024,Q1,Feb,2,DE,Gamma,B2B,Bodycare,790,395,158,395,237,7900,885,-95,760,30,680
-2024,Q1,Feb,2,FR,Beta,Retail,Skincare,950,475,190,475,285,9500,1065,-115,920,30,810
-2024,Q1,Mar,3,UK,Alpha,Online,Haircare,1460,803,365,657,438,14600,1620,-160,1430,30,1300
-2024,Q1,Mar,3,UK,Beta,Retail,Skincare,1180,590,242,590,348,11800,1320,-140,1200,-20,1060
-2024,Q1,Mar,3,DE,Alpha,Online,Haircare,1070,535,219,535,316,10700,1190,-120,1040,30,930
-2024,Q1,Mar,3,DE,Gamma,B2B,Bodycare,820,410,164,410,246,8200,920,-100,790,30,700
-2024,Q1,Mar,3,FR,Beta,Retail,Skincare,980,490,196,490,294,9800,1100,-120,950,30,840
+2023,Q1,Jan,1,UK,Alpha,Online,Haircare,1200,660,300,540,360,12000,1350,150,1150,50,1100
+2023,Q1,Jan,1,UK,Beta,Retail,Skincare,980,490,200,490,290,9800,1100,120,1000,-20,950
+2023,Q1,Jan,1,DE,Alpha,Online,Haircare,870,435,180,435,255,8700,980,110,850,20,820
+2023,Q1,Jan,1,DE,Gamma,B2B,Bodycare,650,325,130,325,195,6500,730,80,620,30,610
+2023,Q1,Jan,1,FR,Beta,Retail,Skincare,780,390,155,390,235,7800,880,100,760,20,740
+2023,Q1,Feb,2,UK,Alpha,Online,Haircare,1250,687,311,563,376,12500,1400,150,1200,50,1140
+2023,Q1,Feb,2,UK,Beta,Retail,Skincare,1020,510,210,510,300,10200,1150,130,1050,-30,980
+2023,Q1,Feb,2,DE,Alpha,Online,Haircare,900,450,185,450,265,9000,1010,110,880,20,840
+2023,Q1,Feb,2,DE,Gamma,B2B,Bodycare,680,340,136,340,204,6800,760,80,650,30,630
+2023,Q1,Feb,2,FR,Beta,Retail,Skincare,810,405,162,405,243,8100,910,100,790,20,760
+2023,Q1,Mar,3,UK,Alpha,Online,Haircare,1300,715,325,585,390,13000,1450,150,1250,50,1180
+2023,Q1,Mar,3,UK,Beta,Retail,Skincare,1060,530,218,530,312,10600,1200,140,1100,-40,1010
+2023,Q1,Mar,3,DE,Alpha,Online,Haircare,930,465,191,465,274,9300,1040,110,910,20,860
+2023,Q1,Mar,3,DE,Gamma,B2B,Bodycare,700,350,140,350,210,7000,790,90,670,30,650
+2023,Q1,Mar,3,FR,Beta,Retail,Skincare,840,420,168,420,252,8400,945,105,820,20,780
+2024,Q1,Jan,1,UK,Alpha,Online,Haircare,1380,759,345,621,414,13800,1540,160,1350,30,1200
+2024,Q1,Jan,1,UK,Beta,Retail,Skincare,1100,550,226,550,324,11000,1240,140,1120,-20,980
+2024,Q1,Jan,1,DE,Alpha,Online,Haircare,1010,505,207,505,298,10100,1130,120,980,30,870
+2024,Q1,Jan,1,DE,Gamma,B2B,Bodycare,760,380,152,380,228,7600,850,90,730,30,650
+2024,Q1,Jan,1,FR,Beta,Retail,Skincare,920,460,184,460,276,9200,1030,110,890,30,780
+2024,Q1,Feb,2,UK,Alpha,Online,Haircare,1420,781,355,639,426,14200,1580,160,1390,30,1250
+2024,Q1,Feb,2,UK,Beta,Retail,Skincare,1140,570,234,570,336,11400,1280,140,1160,-20,1020
+2024,Q1,Feb,2,DE,Alpha,Online,Haircare,1040,520,213,520,307,10400,1160,120,1010,30,900
+2024,Q1,Feb,2,DE,Gamma,B2B,Bodycare,790,395,158,395,237,7900,885,95,760,30,680
+2024,Q1,Feb,2,FR,Beta,Retail,Skincare,950,475,190,475,285,9500,1065,115,920,30,810
+2024,Q1,Mar,3,UK,Alpha,Online,Haircare,1460,803,365,657,438,14600,1620,160,1430,30,1300
+2024,Q1,Mar,3,UK,Beta,Retail,Skincare,1180,590,242,590,348,11800,1320,140,1200,-20,1060
+2024,Q1,Mar,3,DE,Alpha,Online,Haircare,1070,535,219,535,316,10700,1190,120,1040,30,930
+2024,Q1,Mar,3,DE,Gamma,B2B,Bodycare,820,410,164,410,246,8200,920,100,790,30,700
+2024,Q1,Mar,3,FR,Beta,Retail,Skincare,980,490,196,490,294,9800,1100,120,950,30,840
 """
 
 SAMPLE_BUDGET = """Period,Category,Actual,Budget,Prior_Year
@@ -367,6 +367,12 @@ Mar-2024,OPEX,904,900,840
 Apr-2024,OPEX,920,920,860
 May-2024,OPEX,896,940,870
 Jun-2024,OPEX,870,960,880
+Jul-2024,OPEX,840,920,850
+Aug-2024,OPEX,862,905,860
+Sep-2024,OPEX,895,940,875
+Oct-2024,OPEX,920,960,890
+Nov-2024,OPEX,945,980,900
+Dec-2024,OPEX,975,1000,920
 """
 
 SAMPLE_RECON_A = """Invoice_ID,Vendor,Amount_ERP,Date
@@ -402,30 +408,30 @@ INV-016,Supplier F,3900.00,2024-02-14
 """
 
 SAMPLE_COST = """Period,SKU,Market,Revenue,COGS,OPEX
-Jan-2024,SKU-A,UK,4200,1890,840
-Jan-2024,SKU-B,UK,3100,1550,620
-Jan-2024,SKU-C,DE,2800,1540,560
-Jan-2024,SKU-D,FR,1900,1140,380
-Feb-2024,SKU-A,UK,4350,1958,870
-Feb-2024,SKU-B,UK,3200,1760,640
-Feb-2024,SKU-C,DE,2900,1595,580
-Feb-2024,SKU-D,FR,1950,1170,390
-Mar-2024,SKU-A,UK,4500,2025,900
-Mar-2024,SKU-B,UK,3300,1815,660
-Mar-2024,SKU-C,DE,3000,1650,600
-Mar-2024,SKU-D,FR,2000,1200,400
-Apr-2024,SKU-A,UK,4600,2070,920
-Apr-2024,SKU-B,UK,3350,1843,670
-Apr-2024,SKU-C,DE,3050,1678,610
-Apr-2024,SKU-D,FR,2050,1230,410
-May-2024,SKU-A,UK,4480,2016,896
-May-2024,SKU-B,UK,3280,1804,656
-May-2024,SKU-C,DE,2980,1639,596
-May-2024,SKU-D,FR,2020,1212,404
-Jun-2024,SKU-A,UK,4350,1958,870
-Jun-2024,SKU-B,UK,3180,1749,636
-Jun-2024,SKU-C,DE,2900,1595,580
-Jun-2024,SKU-D,FR,1980,1188,396
+Jan-2024,SKU-A,UK,4200,1890,756
+Jan-2024,SKU-B,UK,3100,1550,698
+Jan-2024,SKU-C,DE,2800,1540,644
+Jan-2024,SKU-D,FR,1900,1140,494
+Feb-2024,SKU-A,UK,4350,1958,762
+Feb-2024,SKU-B,UK,3200,1760,720
+Feb-2024,SKU-C,DE,2900,1595,667
+Feb-2024,SKU-D,FR,1950,1170,507
+Mar-2024,SKU-A,UK,4500,2025,765
+Mar-2024,SKU-B,UK,3300,1815,726
+Mar-2024,SKU-C,DE,3000,1650,690
+Mar-2024,SKU-D,FR,2000,1200,520
+Apr-2024,SKU-A,UK,4600,2070,782
+Apr-2024,SKU-B,UK,3350,1843,738
+Apr-2024,SKU-C,DE,3050,1678,702
+Apr-2024,SKU-D,FR,2050,1230,534
+May-2024,SKU-A,UK,4480,2016,762
+May-2024,SKU-B,UK,3280,1804,754
+May-2024,SKU-C,DE,2980,1639,716
+May-2024,SKU-D,FR,2020,1212,525
+Jun-2024,SKU-A,UK,4350,1958,739
+Jun-2024,SKU-B,UK,3180,1749,762
+Jun-2024,SKU-C,DE,2900,1595,696
+Jun-2024,SKU-D,FR,1980,1188,515
 """
 
 
@@ -456,7 +462,9 @@ margin:-2.5rem -2rem 2rem -2rem;position:sticky;top:0;z-index:100;">
   </div>
   <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#3a3a34;
   margin-top:6px;letter-spacing:0.1em;">
-    By Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt
+    By Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt &nbsp;·&nbsp;
+    <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank"
+    style="color:#c9a84c;text-decoration:none;">LinkedIn ↗</a>
   </div>
 </div>""", unsafe_allow_html=True)
 
@@ -644,9 +652,44 @@ padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:20px;fl
 
 </div>""", unsafe_allow_html=True)
 
+    # Founder + privacy trust strip
+    st.markdown("""
+<div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:1px;
+background:#1e1e18;border:1px solid #1e1e18;margin-bottom:1px;">
+  <div style="background:#101010;padding:18px 22px;display:flex;align-items:center;gap:14px;">
+    <div style="width:38px;height:38px;background:#1a1a12;border:1px solid #c9a84c;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display',serif;font-size:0.9rem;color:#c9a84c;flex-shrink:0;">JP</div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.12em;
+      text-transform:uppercase;color:#c9a84c;margin-bottom:3px;">Built by a Finance Practitioner</div>
+      <div style="font-size:0.76rem;color:#a09880;font-weight:300;line-height:1.5;">
+        Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt<br>
+        <span style="color:#5a5648;font-size:0.68rem;">6+ years FMCG finance · MENARP &amp; Africa markets</span>
+      </div>
+      <div style="margin-top:5px;">
+        <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank"
+        style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;
+        text-transform:uppercase;color:#c9a84c;text-decoration:none;">View LinkedIn ↗</a>
+      </div>
+    </div>
+  </div>
+  <div style="background:#101010;padding:18px 22px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#4ade80;margin-bottom:8px;">🔒 Data Privacy</div>
+    <div style="font-size:0.74rem;color:#a09880;font-weight:300;line-height:1.65;">
+      Your data <strong style="color:#e8e2d4;">never leaves your session.</strong>
+      No server storage. No cross-tenant access. Every upload is processed
+      in-memory and discarded when you close the tab.
+    </div>
+    <div style="margin-top:7px;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
+    letter-spacing:0.08em;color:#3a3a34;">Session-isolated · No logging · No sharing</div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
     # Stats row
     st.markdown("""
-<div style="margin-top:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
 background:#1e1e18;border:1px solid #1e1e18;">
   <div style="background:#101010;padding:18px;text-align:center;">
     <div style="font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:#c9a84c;">4</div>
@@ -751,6 +794,20 @@ def run_fpa():
     if "df_raw" not in st.session_state:
         page_header("FP&A INTELLIGENCE", "Upload Data")
 
+        st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #818cf8;
+padding:12px 18px;margin-bottom:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#818cf8;margin-bottom:4px;">Step 1</div>
+  <div style="font-size:0.75rem;color:#a09880;font-weight:300;">Upload any P&amp;L CSV or use the FMCG sample to explore instantly</div></div>
+  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#818cf8;margin-bottom:4px;">Step 2</div>
+  <div style="font-size:0.75rem;color:#a09880;font-weight:300;">Map your CSV columns to Revenue, GP, EBITDA — auto-detected in most cases</div></div>
+  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#818cf8;margin-bottom:4px;">Step 3</div>
+  <div style="font-size:0.75rem;color:#a09880;font-weight:300;">Dashboard is live — 10+ KPIs, 7 charts, AI CFO answering your questions</div></div>
+</div>""", unsafe_allow_html=True)
+
         _, cc, _ = st.columns([1, 2, 1])
         with cc:
             use_sample = st.button(
@@ -765,9 +822,11 @@ font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:#3a3a34;letter-spa
                 "Upload Financial Data (CSV)", type=["csv"], key="fpa_upload",
                 help="Any P&L CSV. You'll map columns in the next step.")
 
-            st.markdown("""<div style="margin-top:12px;font-family:'IBM Plex Mono',monospace;
-font-size:0.56rem;color:#3a3a34;text-align:center;letter-spacing:0.08em;">
-Your data stays in your session only · Nothing stored on our servers</div>""", unsafe_allow_html=True)
+            st.markdown("""<div style="margin-top:12px;background:#041508;border:1px solid rgba(74,222,128,0.15);
+padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:0.56rem;
+color:#4ade80;letter-spacing:0.08em;text-align:center;">
+🔒 Your data stays in your browser session only · Never stored on any server · Discarded on tab close
+</div>""", unsafe_allow_html=True)
 
         if use_sample:
             st.session_state.df_raw = pd.read_csv(io.StringIO(SAMPLE_FMCG))
@@ -775,10 +834,17 @@ Your data stays in your session only · Nothing stored on our servers</div>""", 
             st.session_state.col_map = {}
             st.rerun()
         if uploaded is not None:
-            st.session_state.df_raw = pd.read_csv(uploaded)
-            st.session_state.mapping_confirmed = False
-            st.session_state.col_map = {}
-            st.rerun()
+            try:
+                st.session_state.df_raw = pd.read_csv(uploaded)
+                if st.session_state.df_raw.empty:
+                    st.error("⚠️ Your file appears to be empty. Please check and re-upload.")
+                    st.session_state.pop("df_raw", None)
+                else:
+                    st.session_state.mapping_confirmed = False
+                    st.session_state.col_map = {}
+                    st.rerun()
+            except Exception as e:
+                st.error(f"⚠️ Could not read your CSV: {e}\n\nPlease check the file is a valid CSV and try again.")
         st.stop()
 
     df_raw = st.session_state.df_raw
@@ -870,7 +936,7 @@ Match your CSV columns to the metrics Fincy needs.<br>
     ebitdam= ebitda/nr*100 if nr  else 0
     cogsp  = cogs/nr*100  if nr   else 0
     opexp  = opex/nr*100  if nr   else 0
-    tradep = trd/bnr*100  if bnr  else 0
+    tradep = abs(trd)/bnr*100 if bnr else 0
     yoy    = (nr-py)/py*100 if py else 0
     bach   = nr/bdgt*100  if bdgt else 0
     varp   = var/bdgt*100 if bdgt else 0
@@ -1019,6 +1085,16 @@ def run_recon():
 
     page_header("RECONCILIATION ENGINE", "Match & Flag")
 
+    st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #4ade80;
+padding:11px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#4ade80;">How it works: </span>
+Upload two CSVs — e.g. ERP export and Bank statement. Both need a common ID column
+(Invoice ID, Transaction ID etc.) and an amount column. Fincy auto-matches rows,
+flags amount breaks and missing records, and downloads a clean exceptions report.
+</div>""", unsafe_allow_html=True)
+
     c1, c2 = st.columns(2)
     with c1:
         st.markdown('<div class="sec-label">Source A — ERP / System 1</div>', unsafe_allow_html=True)
@@ -1035,8 +1111,16 @@ def run_recon():
 
     use_a = st.session_state.recon_sample_a
     use_b = st.session_state.recon_sample_b
-    df1   = pd.read_csv(io.StringIO(SAMPLE_RECON_A)) if (use_a and not f1) else (pd.read_csv(f1) if f1 else None)
-    df2   = pd.read_csv(io.StringIO(SAMPLE_RECON_B)) if (use_b and not f2) else (pd.read_csv(f2) if f2 else None)
+    def _safe_csv(fileobj, fallback_str):
+        if fileobj is None: return pd.read_csv(io.StringIO(fallback_str))
+        try:
+            result = pd.read_csv(fileobj)
+            if result.empty: st.error("⚠️ Uploaded file is empty."); return None
+            return result
+        except Exception as e:
+            st.error(f"⚠️ Could not read CSV: {e}"); return None
+    df1 = _safe_csv(f1 if f1 else None, SAMPLE_RECON_A) if (use_a or f1) else None
+    df2 = _safe_csv(f2 if f2 else None, SAMPLE_RECON_B) if (use_b or f2) else None
 
     if df1 is None or df2 is None:
         st.markdown("""<div class="box" style="opacity:0.6;font-size:0.74rem;">
@@ -1170,6 +1254,16 @@ def run_budget():
 
     page_header("BUDGET vs ACTUALS", "RAG Tracker")
 
+    st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #fbbf24;
+padding:11px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#fbbf24;">How it works: </span>
+Upload a CSV with Period, Actual, and Budget columns (+ optional Prior Year).
+Fincy auto-maps columns, computes RAG status per line, draws trend charts,
+and the AI CFO writes board commentary — all in under 30 seconds.
+</div>""", unsafe_allow_html=True)
+
     _, cc, _ = st.columns([1, 2, 1])
     with cc:
         if st.button("📊 Use Budget Sample Data  (no upload needed)",
@@ -1183,8 +1277,19 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
                                  key="bfile", help="Needs Period, Actual, Budget columns")
 
     use_s = st.session_state.budget_use_sample
-    df    = pd.read_csv(io.StringIO(SAMPLE_BUDGET)) if (use_s and not bfile) \
-            else (pd.read_csv(bfile) if bfile else None)
+    if use_s and not bfile:
+        df = pd.read_csv(io.StringIO(SAMPLE_BUDGET))
+    elif bfile:
+        try:
+            df = pd.read_csv(bfile)
+            if df.empty:
+                st.error("⚠️ Uploaded file is empty. Please check and re-upload.")
+                df = None
+        except Exception as e:
+            st.error(f"⚠️ Could not read your CSV: {e}. Ensure it is a valid comma-separated file.")
+            df = None
+    else:
+        df = None
 
     if df is None:
         st.markdown("""<div class="box" style="opacity:0.6;font-size:0.74rem;">
@@ -1223,8 +1328,20 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         dim_col  = st.selectbox("Dimension (opt)", dim_opts,
                                 index=dim_opts.index(dg) if dg in dim_opts else 0, key="b_dim")
 
-    if not st.button("🎯 Run Budget Tracker", use_container_width=True, key="run_budget"):
+    run_clicked = st.button("🎯 Run Budget Tracker", use_container_width=True, key="run_budget")
+    if run_clicked:
+        st.session_state["_budget_df"]      = df.copy()
+        st.session_state["_budget_cols"]    = (per_col, act_col, bud_col, py_col, dim_col)
+        st.session_state["_budget_ready"]   = True
+
+    if not st.session_state.get("_budget_ready"):
+        st.markdown('''<div class="box" style="opacity:0.5;font-size:0.74rem;">
+← Configure columns above and click Run Budget Tracker to generate the dashboard.
+</div>''', unsafe_allow_html=True)
         return
+
+    df      = st.session_state["_budget_df"].copy()
+    per_col, act_col, bud_col, py_col, dim_col = st.session_state["_budget_cols"]
 
     df["_A"] = pd.to_numeric(df[act_col], errors="coerce").fillna(0)
     df["_B"] = pd.to_numeric(df[bud_col], errors="coerce").fillna(0)
@@ -1357,6 +1474,16 @@ def run_cost():
 
     page_header("COST INTELLIGENCE", "Benchmarking")
 
+    st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #f472b6;
+padding:11px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#f472b6;">How it works: </span>
+Upload a CSV with Revenue, COGS, and OPEX columns (+ optional Period and Segment/SKU).
+Set your own COGS and OPEX benchmarks in the sidebar. Fincy flags every line above
+threshold, draws efficiency charts, and the AI CFO gives specific cost reduction actions.
+</div>""", unsafe_allow_html=True)
+
     _, cc, _ = st.columns([1, 2, 1])
     with cc:
         if st.button("📊 Use Cost Sample Data  (no upload needed)",
@@ -1370,8 +1497,19 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
                                  key="cfile", help="Revenue, COGS, OPEX columns + optional Period/Segment")
 
     use_s = st.session_state.cost_use_sample
-    df    = pd.read_csv(io.StringIO(SAMPLE_COST)) if (use_s and not cfile) \
-            else (pd.read_csv(cfile) if cfile else None)
+    if use_s and not cfile:
+        df = pd.read_csv(io.StringIO(SAMPLE_COST))
+    elif cfile:
+        try:
+            df = pd.read_csv(cfile)
+            if df.empty:
+                st.error("⚠️ Uploaded file is empty. Please check and re-upload.")
+                df = None
+        except Exception as e:
+            st.error(f"⚠️ Could not read your CSV: {e}. Ensure it is a valid comma-separated file.")
+            df = None
+    else:
+        df = None
 
     if df is None:
         st.markdown("""<div class="box" style="opacity:0.6;font-size:0.74rem;">
@@ -1406,8 +1544,20 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
         dim_col  = st.selectbox("Segment/SKU (opt)", dim_opts,
                                 index=dim_opts.index(dg) if dg in dim_opts else 0, key="c_dim")
 
-    if not st.button("💡 Run Cost Intelligence", use_container_width=True, key="run_cost"):
+    run_clicked = st.button("💡 Run Cost Intelligence", use_container_width=True, key="run_cost")
+    if run_clicked:
+        st.session_state["_cost_df"]    = df.copy()
+        st.session_state["_cost_cols"]  = (per_col, rev_col, cogs_col, opex_col, dim_col)
+        st.session_state["_cost_ready"] = True
+
+    if not st.session_state.get("_cost_ready"):
+        st.markdown('''<div class="box" style="opacity:0.5;font-size:0.74rem;">
+← Configure columns above and click Run Cost Intelligence to generate the dashboard.
+</div>''', unsafe_allow_html=True)
         return
+
+    df     = st.session_state["_cost_df"].copy()
+    per_col, rev_col, cogs_col, opex_col, dim_col = st.session_state["_cost_cols"]
 
     df["_R"]  = pd.to_numeric(df[rev_col],  errors="coerce").fillna(0)
     df["_C"]  = pd.to_numeric(df[cogs_col], errors="coerce").fillna(0)
