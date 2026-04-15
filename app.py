@@ -294,10 +294,10 @@ def send_to_formspree(name, email, company, role, linkedin):
 
 # ── QUERY PARAM ROUTING — HTML card clicks set ?m=xxx ────────────────────────
 _qp = st.query_params.get("m", None)
-if _qp and _qp in ("fpa", "recon", "budget", "cost", "invoice", "dataanalyst"):
+if _qp and _qp in ("fpa","recon","budget","cost","invoice","dataanalyst"):
     if st.session_state.active_module != _qp:
         st.session_state.active_module = _qp
-    st.query_params.clear()
+    st.query_params.clear()   # clean URL after routing
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -440,6 +440,12 @@ Jun-2024,SKU-D,FR,1980,1188,515
 # ══════════════════════════════════════════════════════════════════════════════
 def page_header(subtitle="AI-POWERED CFO DECISION PLATFORM", module=""):
     """Renders sticky nav bar + forced-visible page title on every screen."""
+    # Back button — visible at top of every module page
+    if st.session_state.get("active_module"):
+        if st.button("⬅ All Modules", key=f"back_btn_{subtitle[:6].replace(' ','_')}",
+                     help="Return to module selection"):
+            st.session_state.active_module = None
+            st.rerun()
     mod_tag = f'<span style="color:#3a3a34;font-weight:400;"> · {module}</span>' if module else ""
     st.markdown(f"""
 <div style="background:#0f0f0c;border-bottom:1px solid #1e1e18;padding:0 28px;
@@ -544,255 +550,253 @@ def show_home():
 
     st.markdown("""
 <div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #c9a84c;
-padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#c9a84c;flex-shrink:0;">Free 7-Day Trial</div>
-  <div style="width:1px;height:14px;background:#2a2a20;flex-shrink:0;"></div>
-  <div style="font-size:0.8rem;color:#a09880;font-weight:300;">
-    6 AI modules · FP&amp;A Intelligence · Reconciliation · Budget · Cost Analysis · Invoice Agent · Data Analyst
-  </div>
-  <div style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.55rem;
-  color:#3a3a34;letter-spacing:0.1em;">No credit card · No code · Session isolated</div>
+padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#c9a84c;">Free 7-Day Trial</span>
+  <span style="width:1px;height:14px;background:#2a2a20;"></span>
+  <span style="font-size:0.8rem;color:#a09880;font-weight:300;">
+    6 AI modules · FP&amp;A Decision Intelligence · Reconciliation · Budget Tracker
+    · Cost Intelligence · Invoice Agent · Data Analysis Agent
+  </span>
+  <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
+  color:#3a3a34;">Session isolated · No code · No credit card</span>
 </div>""", unsafe_allow_html=True)
 
+    # ── 6-card grid (plain st.markdown, no f-string — CSS braces safe) ──────
     app_url = "https://fincy-intelligence.streamlit.app"
-
-    st.markdown(f"""
+    cards_html = """
 <style>
-.mod-home-grid{{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#1e1e18;}}
-.mod-home-card{{
-  display:block;background:#101010;padding:0;text-decoration:none;
-  position:relative;overflow:hidden;transition:background 0.18s,transform 0.18s;
-}}
-.mod-home-card:hover{{background:#141410;transform:translateY(-2px);}}
-.mod-home-card::before{{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--mc);}}
-.mod-home-body{{padding:26px 22px 0;}}
-.mod-home-icon{{font-size:1.7rem;margin-bottom:10px;display:block;}}
-.mod-home-badge{{
-  font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;
+.mhg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#1e1e18;}
+.mhc{display:block;background:#101010;padding:0;text-decoration:none;
+  position:relative;overflow:hidden;transition:background .18s,transform .18s;}
+.mhc:hover{background:#141410;transform:translateY(-2px);}
+.mhc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--mc);}
+.mhb{padding:22px 20px 0;}
+.mhi{font-size:1.5rem;margin-bottom:9px;display:block;}
+.mhbdg{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.15em;
   text-transform:uppercase;color:var(--mc);border:1px solid var(--mc);
-  padding:2px 8px;display:inline-block;margin-bottom:12px;
-}}
-.mod-home-title{{
-  font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;
-  color:#fafaf8;margin-bottom:8px;line-height:1.2;
-}}
-.mod-home-desc{{font-size:0.75rem;color:#a09880;line-height:1.7;margin-bottom:10px;font-weight:300;}}
-.mod-home-tags{{
-  font-family:'IBM Plex Mono',monospace;font-size:0.49rem;color:#5a5648;
-  letter-spacing:0.08em;margin-bottom:18px;
-}}
-.mod-home-btn{{
-  display:block;background:var(--mc);color:#0a0a08;
-  font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;
-  letter-spacing:0.08em;text-transform:uppercase;
-  padding:12px 22px;text-align:left;margin:0;
-  border-top:1px solid rgba(0,0,0,0.2);
-  transition:opacity 0.15s;
-}}
-.mod-home-card:hover .mod-home-btn{{opacity:0.85;}}
-.mod-agent-badge{{
-  display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.46rem;
-  letter-spacing:0.14em;text-transform:uppercase;padding:2px 7px;margin-left:6px;
-  background:rgba(129,140,248,0.12);border:1px solid #818cf8;color:#818cf8;vertical-align:middle;
-}}
-@media(max-width:900px){{.mod-home-grid{{grid-template-columns:repeat(2,1fr);}}}}
-@media(max-width:560px){{.mod-home-grid{{grid-template-columns:1fr;}}}}
+  padding:2px 8px;display:inline-block;margin-bottom:10px;}
+.mht{font-family:'Playfair Display',serif;font-size:0.94rem;font-weight:700;
+  color:#fafaf8;margin-bottom:6px;line-height:1.2;}
+.mhd{font-size:0.74rem;color:#a09880;line-height:1.68;margin-bottom:8px;font-weight:300;}
+.mhk{font-family:'IBM Plex Mono',monospace;font-size:0.47rem;color:#5a5648;
+  letter-spacing:0.07em;margin-bottom:14px;}
+.mhbtn{display:block;background:var(--mc);color:#0a0a08;
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:700;
+  letter-spacing:0.06em;text-transform:uppercase;padding:11px 18px;
+  border-top:1px solid rgba(0,0,0,0.18);transition:opacity .15s;}
+.mhc:hover .mhbtn{opacity:0.85;}
+@media(max-width:900px){.mhg{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:540px){.mhg{grid-template-columns:1fr;}}
 </style>
-
-<div class="mod-home-grid">
-
-  <a class="mod-home-card" href="{app_url}/?m=fpa" target="_self" style="--mc:#c9a84c;">
-    <div class="mod-home-body">
-      <span class="mod-home-icon">📊</span>
-      <div class="mod-home-badge">Core Module</div>
-      <div class="mod-home-title">FP&amp;A Decision Intelligence</div>
-      <div class="mod-home-desc">Complete P&amp;L suite — dashboards, variance analysis, budget tracking, financial modelling, and AI CFO insights from any CSV in 60 seconds.</div>
-      <div class="mod-home-tags">P&amp;L · Variance · Budget vs Actual · Financial Modelling · AI CFO</div>
+""" + f"""
+<div class="mhg">
+  <a class="mhc" href="{app_url}/?m=fpa" target="_self" style="--mc:#c9a84c;">
+    <div class="mhb"><span class="mhi">📊</span>
+      <div class="mhbdg">Core · Decision Suite</div>
+      <div class="mht">FP&amp;A Decision Intelligence</div>
+      <div class="mhd">Complete P&amp;L suite — dashboards, variance analysis, budget vs actuals, and AI CFO. From any CSV in 60 seconds.</div>
+      <div class="mhk">P&amp;L · Variance · Budget Snapshot · AI CFO</div>
     </div>
-    <div class="mod-home-btn">→ Launch FP&amp;A Decision Intelligence</div>
+    <div class="mhbtn">→ Launch FP&amp;A Decision Intelligence</div>
   </a>
-
-  <a class="mod-home-card" href="{app_url}/?m=recon" target="_self" style="--mc:#4ade80;">
-    <div class="mod-home-body">
-      <span class="mod-home-icon">🔁</span>
-      <div class="mod-home-badge">Reconciliation</div>
-      <div class="mod-home-title">Reconciliation Engine</div>
-      <div class="mod-home-desc">ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Composite key matching — zero false breaks. AI CFO flags reconciliation risks instantly.</div>
-      <div class="mod-home-tags">Composite Key · Auto-Match · Break Flags · AI CFO</div>
+  <a class="mhc" href="{app_url}/?m=recon" target="_self" style="--mc:#4ade80;">
+    <div class="mhb"><span class="mhi">🔁</span>
+      <div class="mhbdg">Reconciliation</div>
+      <div class="mht">Reconciliation Engine</div>
+      <div class="mhd">ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. 3-part composite key — zero false breaks. Exceptions CSV.</div>
+      <div class="mhk">Composite Key · Auto-Match · Exceptions · AI CFO</div>
     </div>
-    <div class="mod-home-btn">→ Launch Reconciliation Engine</div>
+    <div class="mhbtn">→ Launch Reconciliation Engine</div>
   </a>
-
-  <a class="mod-home-card" href="{app_url}/?m=cost" target="_self" style="--mc:#f472b6;">
-    <div class="mod-home-body">
-      <span class="mod-home-icon">💡</span>
-      <div class="mod-home-badge">Cost Analysis</div>
-      <div class="mod-home-title">Cost Intelligence</div>
-      <div class="mod-home-desc">COGS and OPEX benchmarking with segment efficiency scores, waterfall analysis, and AI-driven cost reduction recommendations per flagged line.</div>
-      <div class="mod-home-tags">Benchmarks · Flagged Lines · Segment Efficiency · AI CFO</div>
+  <a class="mhc" href="{app_url}/?m=budget" target="_self" style="--mc:#fbbf24;">
+    <div class="mhb"><span class="mhi">🎯</span>
+      <div class="mhbdg">Budget Tracker</div>
+      <div class="mht">Budget vs Actuals Tracker</div>
+      <div class="mhd">RAG-status variance tracker with prior year overlays, trend detection, and AI-generated board commentary.</div>
+      <div class="mhk">RAG Status · Prior Year · Board Commentary · AI CFO</div>
     </div>
-    <div class="mod-home-btn">→ Launch Cost Intelligence</div>
+    <div class="mhbtn">→ Launch Budget Tracker</div>
   </a>
-
-  <a class="mod-home-card" href="{app_url}/?m=invoice" target="_self" style="--mc:#818cf8;">
-    <div class="mod-home-body">
-      <span class="mod-home-icon">🧾</span>
-      <div class="mod-home-badge">AI Agent <span class="mod-agent-badge">New</span></div>
-      <div class="mod-home-title">Invoice Processing Agent</div>
-      <div class="mod-home-desc">Upload invoices or AP/AR CSV exports. The AI agent extracts key fields, detects anomalies, flags duplicates, and generates a structured payment action plan.</div>
-      <div class="mod-home-tags">AP/AR · Duplicate Detection · Anomaly Flags · AI Agent</div>
+  <a class="mhc" href="{app_url}/?m=cost" target="_self" style="--mc:#f472b6;">
+    <div class="mhb"><span class="mhi">💡</span>
+      <div class="mhbdg">Cost Analysis</div>
+      <div class="mht">Cost Intelligence</div>
+      <div class="mhd">COGS and OPEX benchmarking with segment efficiency scores, waterfall charts, and AI cost reduction recommendations.</div>
+      <div class="mhk">Benchmarks · Flagged Lines · Waterfall · AI CFO</div>
     </div>
-    <div class="mod-home-btn">→ Launch Invoice Agent</div>
+    <div class="mhbtn">→ Launch Cost Intelligence</div>
   </a>
-
-  <a class="mod-home-card" href="{app_url}/?m=dataanalyst" target="_self" style="--mc:#2dd4bf;">
-    <div class="mod-home-body">
-      <span class="mod-home-icon">🤖</span>
-      <div class="mod-home-badge">AI Agent <span class="mod-agent-badge">New</span></div>
-      <div class="mod-home-title">Data Analysis Agent</div>
-      <div class="mod-home-desc">Upload any financial dataset and ask anything in plain English. The agent runs statistical analysis, identifies trends, builds charts, and writes executive summaries autonomously.</div>
-      <div class="mod-home-tags">Natural Language · Auto Charts · Stats · Executive Summary</div>
+  <a class="mhc" href="{app_url}/?m=invoice" target="_self" style="--mc:#818cf8;">
+    <div class="mhb"><span class="mhi">🧾</span>
+      <div class="mhbdg">AI Agent · New</div>
+      <div class="mht">Invoice Processing Agent</div>
+      <div class="mhd">Upload AP/AR invoice CSV. Detects duplicates, flags overdue payments, identifies anomalies, generates payment action plans.</div>
+      <div class="mhk">Duplicate Detection · Overdue · AP/AR · AI CFO</div>
     </div>
-    <div class="mod-home-btn">→ Launch Data Agent</div>
+    <div class="mhbtn">→ Launch Invoice Agent</div>
   </a>
-
-  <div style="background:#0d0d0a;border:1px solid #1e1e18;padding:26px 22px;
-  display:flex;flex-direction:column;justify-content:space-between;">
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.16em;
-      text-transform:uppercase;color:#5a5648;margin-bottom:16px;">Built by a Practitioner</div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-        <div style="width:36px;height:36px;background:#1a1a12;border:1px solid #c9a84c;
-        border-radius:50%;display:flex;align-items:center;justify-content:center;
-        font-family:'Playfair Display',serif;font-size:0.85rem;color:#c9a84c;flex-shrink:0;">JP</div>
-        <div>
-          <div style="font-size:0.78rem;color:#e8e2d4;font-weight:500;">Jitendra Parida</div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#5a5648;margin-top:2px;">Senior FP&amp;A Analyst · IBM / Reckitt</div>
-        </div>
-      </div>
-      <div style="font-size:0.74rem;color:#a09880;font-weight:300;line-height:1.65;margin-bottom:12px;">
-        6+ years FMCG finance · MENARP &amp; Africa · Built from real FP&amp;A practice.
-      </div>
-      <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank"
-      style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;
-      text-transform:uppercase;color:#c9a84c;text-decoration:none;">View LinkedIn ↗</a>
+  <a class="mhc" href="{app_url}/?m=dataanalyst" target="_self" style="--mc:#2dd4bf;">
+    <div class="mhb"><span class="mhi">🤖</span>
+      <div class="mhbdg">AI Agent · New</div>
+      <div class="mht">Data Analysis Agent</div>
+      <div class="mhd">Upload any financial dataset. Auto-profiles data, runs statistics, builds correlation heatmaps, answers anything in plain English.</div>
+      <div class="mhk">Auto Profiling · Correlation · Charts · AI CFO</div>
     </div>
-    <div style="margin-top:16px;padding-top:14px;border-top:1px solid #1e1e18;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.1em;
-      text-transform:uppercase;color:#4ade80;margin-bottom:5px;">🔒 Data Privacy</div>
-      <div style="font-size:0.7rem;color:#5a5648;font-weight:300;line-height:1.6;">
-        Data never leaves your session. No server storage. Session-isolated.
-      </div>
-    </div>
-  </div>
-
-</div>""", unsafe_allow_html=True)
+    <div class="mhbtn">→ Launch Data Agent</div>
+  </a>
+</div>"""
+    st.markdown(cards_html, unsafe_allow_html=True)
 
     st.markdown("""
-<div style="margin-top:2px;display:grid;grid-template-columns:repeat(6,1fr);gap:1px;
-background:#1e1e18;border:1px solid #1e1e18;">
-  <div style="background:#101010;padding:16px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#c9a84c;">6</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.12em;text-transform:uppercase;color:#5a5648;margin-top:4px;">AI Modules</div>
+<div style="margin-top:2px;display:grid;grid-template-columns:1fr 1fr;gap:1px;
+background:#1e1e18;border:1px solid #1e1e18;margin-bottom:2px;">
+  <div style="background:#101010;padding:15px 18px;display:flex;align-items:center;gap:12px;">
+    <div style="width:34px;height:34px;background:#1a1a12;border:1px solid #c9a84c;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'Playfair Display',serif;font-size:0.85rem;color:#c9a84c;flex-shrink:0;">JP</div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;
+      text-transform:uppercase;color:#c9a84c;margin-bottom:3px;">Built by a Finance Practitioner</div>
+      <div style="font-size:0.74rem;color:#a09880;font-weight:300;">
+        Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt &nbsp;·&nbsp;
+        <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank"
+        style="color:#c9a84c;text-decoration:none;">LinkedIn ↗</a>
+      </div>
+    </div>
   </div>
-  <div style="background:#101010;padding:16px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#c9a84c;">20+</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.12em;text-transform:uppercase;color:#5a5648;margin-top:4px;">KPI Metrics</div>
-  </div>
-  <div style="background:#101010;padding:16px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#c9a84c;">60s</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.12em;text-transform:uppercase;color:#5a5648;margin-top:4px;">To Insights</div>
-  </div>
-  <div style="background:#101010;padding:16px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#c9a84c;">2</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.12em;text-transform:uppercase;color:#5a5648;margin-top:4px;">AI Agents</div>
-  </div>
-  <div style="background:#101010;padding:16px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#c9a84c;">0</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.12em;text-transform:uppercase;color:#5a5648;margin-top:4px;">Code Needed</div>
-  </div>
-  <div style="background:#101010;padding:16px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#c9a84c;">∞</div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.12em;text-transform:uppercase;color:#5a5648;margin-top:4px;">Questions</div>
+  <div style="background:#101010;padding:15px 18px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#4ade80;margin-bottom:5px;">🔒 Data Privacy</div>
+    <div style="font-size:0.73rem;color:#a09880;font-weight:300;line-height:1.6;">
+      Data <strong style="color:#e8e2d4;">never leaves your session.</strong>
+      No server storage. Session-isolated. No logging.
+    </div>
   </div>
 </div>
-<div style="margin-top:28px;border-top:1px solid #1a1a14;padding-top:16px;
-font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:#2a2a24;
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#1e1e18;
+border:1px solid #1e1e18;margin-bottom:2px;">
+  <div style="background:#101010;padding:13px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">6</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#5a5648;margin-top:3px;">AI Modules</div>
+  </div>
+  <div style="background:#101010;padding:13px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">20+</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#5a5648;margin-top:3px;">KPI Metrics</div>
+  </div>
+  <div style="background:#101010;padding:13px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">60s</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#5a5648;margin-top:3px;">To Insights</div>
+  </div>
+  <div style="background:#101010;padding:13px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">2</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#5a5648;margin-top:3px;">AI Agents</div>
+  </div>
+  <div style="background:#101010;padding:13px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">0</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#5a5648;margin-top:3px;">Code Needed</div>
+  </div>
+  <div style="background:#101010;padding:13px;text-align:center;">
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">∞</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
+    text-transform:uppercase;color:#5a5648;margin-top:3px;">Questions</div>
+  </div>
+</div>
+<div style="margin-top:24px;border-top:1px solid #1a1a14;padding-top:14px;
+font-family:'IBM Plex Mono',monospace;font-size:0.48rem;color:#2a2a24;
 letter-spacing:0.12em;text-align:center;">
 FINCY INTELLIGENCE · AI CFO PLATFORM · CONFIDENTIAL · FP&amp;A DECISION ENGINE
 </div>""", unsafe_allow_html=True)
 
-def ai_cfo_section(context_str: str, module_key: str, placeholder: str = "Ask about this data…"):
-    """Renders an inline AI CFO chat panel for any module."""
-    st.markdown('''<div class="sec-label">🧠 AI CFO — Ask About This Data</div>''', unsafe_allow_html=True)
+def _get_groq_key():
+    """st.secrets first (Streamlit Cloud), os.getenv fallback (local)."""
+    try:
+        k = st.secrets.get("GROQ_API_KEY", "") or ""
+        if k: return k
+    except Exception:
+        pass
+    return os.getenv("GROQ_API_KEY", "") or ""
+
+
+def ai_cfo_section(context_str, module_key, placeholder="Ask about this data…"):
+    """Inline AI CFO — Problem / Insight / Action format. All modules."""
+    st.markdown('''<div class="sec-label">🧠 AI CFO — Ask About This Data</div>''',
+                unsafe_allow_html=True)
+    api_key = _get_groq_key()
+    if not api_key:
+        st.markdown("""
+<div style="background:#150404;border:1px solid #f87171;border-left:3px solid #f87171;
+padding:11px 16px;font-size:0.76rem;color:#a09880;">
+<strong style="color:#f87171;">AI CFO offline</strong> — GROQ_API_KEY not found.<br>
+Go to Streamlit Dashboard → Your app → ⋮ Settings → Secrets and add:<br>
+<code style="color:#c9a84c;">GROQ_API_KEY = "gsk_..."</code>
+&nbsp;·&nbsp; Free key: <a href="https://console.groq.com" target="_blank"
+style="color:#c9a84c;">console.groq.com ↗</a>
+</div>""", unsafe_allow_html=True)
+        return
+
     hist_key = f"chat_{module_key}"
     if hist_key not in st.session_state:
         st.session_state[hist_key] = []
 
-    # Show history
-    if st.session_state[hist_key]:
-        for chat in reversed(st.session_state[hist_key][-3:]):  # last 3 only
-            st.markdown(f'''
-<div class="box" style="margin-bottom:8px;">
-<span style="color:#3a3a34;font-size:0.62rem;font-family:\'IBM Plex Mono\',monospace;">YOU:</span>
-{chat["q"]}<br><br>
-<span style="color:#3a3a34;font-size:0.62rem;font-family:\'IBM Plex Mono\',monospace;">AI CFO:</span><br>
-{chat["a"]}
+    for chat in reversed(st.session_state[hist_key][-3:]):
+        st.markdown(f'''
+<div class="box" style="margin-bottom:10px;">
+<span style="color:#5a5648;font-size:0.58rem;font-family:'IBM Plex Mono',monospace;
+letter-spacing:0.12em;text-transform:uppercase;">You</span><br>
+<span style="font-size:0.82rem;color:#e8e2d4;">{chat["q"]}</span><br><br>
+<span style="color:#c9a84c;font-size:0.58rem;font-family:'IBM Plex Mono',monospace;
+letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
+<span style="font-size:0.81rem;color:#a09880;line-height:1.85;">{chat["a"]}</span>
 </div>''', unsafe_allow_html=True)
 
-    qa1, qa2, qa3 = st.columns([4, 1, 1])
-    with qa1:
-        question = st.text_input("", placeholder=placeholder, key=f"ai_q_{module_key}", label_visibility="collapsed")
-    with qa2:
+    c1, c2, c3 = st.columns([5,1,1])
+    with c1:
+        question = st.text_input("", placeholder=placeholder,
+                                 key=f"ai_q_{module_key}", label_visibility="collapsed")
+    with c2:
         ask = st.button("🚀 Ask CFO", use_container_width=True, key=f"ai_ask_{module_key}")
-    with qa3:
-        if st.button("🧹", use_container_width=True, key=f"ai_clear_{module_key}"):
+    with c3:
+        if st.button("🗑️", use_container_width=True, key=f"ai_clr_{module_key}",
+                     help="Clear"):
             st.session_state[hist_key] = []
             st.rerun()
 
     if ask and question.strip():
-        with st.spinner("AI CFO is thinking…"):
+        with st.spinner("AI CFO analysing…"):
             try:
                 from groq import Groq
-                # Read key: Streamlit Cloud (st.secrets) first, then env var
-                api_key = ""
-                try:
-                    api_key = st.secrets.get("GROQ_API_KEY", "") or ""
-                except Exception:
-                    pass
-                if not api_key:
-                    api_key = os.getenv("GROQ_API_KEY", "") or ""
-
-                if not api_key:
-                    ans = ("⚠️ GROQ_API_KEY not configured.\n"
-                           "Add it in Streamlit Dashboard → App Settings → Secrets:\n"
-                           "GROQ_API_KEY = \"gsk_your_key_here\"")
-                else:
-                    client = Groq(api_key=api_key)
-                    prompt = (
-                        "You are a world-class CFO analyst. Be precise and actionable.\n\n"
-                        f"Data context: {context_str}\n\n"
-                        f"Question: {question.strip()}\n\n"
-                        "Respond STRICTLY in this format for each insight:\n"
-                        "👉 **Problem:** [what the data shows is wrong]\n"
-                        "👉 **Insight:** [why it matters / root cause]\n"
-                        "👉 **Action:** [specific next step with numbers]\n\n"
-                        "Give 2-3 insights maximum. Reference specific numbers from the data context."
-                    )
-                    resp = client.chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role": "user", "content": prompt}],
-                        max_tokens=700,
-                        temperature=0.3)
-                    ans = resp.choices[0].message.content
+                prompt = (
+                    "You are a world-class CFO analyst. Analyse the data and give sharp actionable insights.\n\n"
+                    f"DATA CONTEXT:\n{context_str}\n\n"
+                    f"QUESTION: {question.strip()}\n\n"
+                    "Give EXACTLY 2-3 insights. Use this EXACT format for each:\n\n"
+                    "👉 **Problem:** [specific issue with numbers from the data]\n"
+                    "👉 **Insight:** [root cause — why this is happening]\n"
+                    "👉 **Action:** [concrete measurable next step with target and timeline]\n\n"
+                    "Rules: quote specific numbers from context, no filler, be direct."
+                )
+                resp = Groq(api_key=api_key).chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[{"role":"user","content":prompt}],
+                    max_tokens=800, temperature=0.25)
+                ans = resp.choices[0].message.content
             except Exception as e:
-                ans = f"Error: {e}"
-        st.markdown(f'''<div class="ai-box">{ans}</div>''', unsafe_allow_html=True)
-        st.session_state[hist_key].append({"q": question.strip(), "a": ans})
+                ans = f"⚠️ Groq API error: {e}"
+        st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ans}</div>''',
+                    unsafe_allow_html=True)
+        st.session_state[hist_key].append({"q":question.strip(),"a":ans})
     elif not ask:
-        st.markdown('''<div class="box" style="opacity:0.4;font-size:0.72rem;">
-Type a question above and click Ask CFO. Try: "What are the key risks?", "Where should we focus?", "What actions do you recommend?"
+        st.markdown('''<div class="box" style="opacity:0.45;font-size:0.74rem;">
+💡 Ask anything. Each answer gives:<br>
+👉 <strong>Problem</strong> — specific issue with numbers<br>
+👉 <strong>Insight</strong> — root cause<br>
+👉 <strong>Action</strong> — concrete next step
 </div>''', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -875,7 +879,7 @@ color:#4ade80;letter-spacing:0.08em;text-align:center;">
 
     # ── Step 2: Column Mapper ─────────────────────────────────────────────────
     if not st.session_state.mapping_confirmed:
-        page_header(f"MAP COLUMNS · {len(df_raw):,} ROWS", "FP&A Decision Intelligence")
+        page_header(f"MAP COLUMNS · {len(df_raw):,} ROWS", "Column Mapper")
 
         st.markdown("""<div class="mapper-box">
 <div style="font-size:0.78rem;color:#a09880;line-height:1.75;">
@@ -1083,26 +1087,36 @@ EBITDA Margin <strong>{ebitdam:.1f}%</strong>. COGS {cogsp:.1f}% NR · OPEX {ope
 3. Tighten OPEX in markets below EBITDA threshold.
 </div>""", unsafe_allow_html=True)
 
-    # ── Budget Quick Snapshot (merged from Budget module) ──────────────────
+    # ── Budget vs Actuals Snapshot ────────────────────────────────────────
     if bdgt > 0:
-        st.markdown('<div class="sec-label">Budget vs Actuals Snapshot</div>', unsafe_allow_html=True)
-        _bv_color  = '#4ade80' if nr >= bdgt else '#f87171'
-        _yoy_color = '#4ade80' if yoy >= 0 else '#f87171'
-        _ach_color = '#4ade80' if bach >= 100 else '#fbbf24'
+        st.markdown('<div class="sec-label">Budget vs Actuals Snapshot</div>',
+                    unsafe_allow_html=True)
+        _var_str  = ("+" if nr >= bdgt else "") + fmt_m(nr - bdgt)
+        _var_col  = "#4ade80" if nr >= bdgt else "#f87171"
+        _ach_col  = "#4ade80" if bach >= 100 else "#fbbf24"
+        _yoy_col  = "#4ade80" if yoy >= 0 else "#f87171"
         st.markdown(f"""
 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">
-  <div class="kpi-card" style="--ac:{_bv_color}"><div class="kpi-label">Actual vs Budget</div>
-    <div class="kpi-value" style="color:{_bv_color};">{fmt_m(nr-bdgt):+}</div>
-    <div class="kpi-delta">Achieved {nr/bdgt*100:.1f}%</div></div>
-  <div class="kpi-card" style="--ac:#c9a84c"><div class="kpi-label">Variance %</div>
-    <div class="kpi-value" style="color:{_bv_color};">{varp:+.1f}%</div>
-    <div class="kpi-delta">vs Budget</div></div>
-  <div class="kpi-card" style="--ac:{_ach_color}"><div class="kpi-label">Budget Achievement</div>
-    <div class="kpi-value" style="color:{_ach_color};">{bach:.1f}%</div>
-    <div class="kpi-delta">Target: 100%</div></div>
-  <div class="kpi-card" style="--ac:{_yoy_color}"><div class="kpi-label">YoY Growth</div>
-    <div class="kpi-value" style="color:{_yoy_color};">{yoy:+.1f}%</div>
-    <div class="kpi-delta">vs Prior Year</div></div>
+  <div class="kpi-card" style="--ac:{_var_col}">
+    <div class="kpi-label">Actual vs Budget</div>
+    <div class="kpi-value" style="color:{_var_col};">{_var_str}</div>
+    <div class="kpi-delta">Achieved {nr/bdgt*100:.1f}%</div>
+  </div>
+  <div class="kpi-card" style="--ac:#c9a84c">
+    <div class="kpi-label">Variance %</div>
+    <div class="kpi-value" style="color:{_var_col};">{varp:+.1f}%</div>
+    <div class="kpi-delta">vs Budget</div>
+  </div>
+  <div class="kpi-card" style="--ac:{_ach_col}">
+    <div class="kpi-label">Budget Achievement</div>
+    <div class="kpi-value" style="color:{_ach_col};">{bach:.1f}%</div>
+    <div class="kpi-delta">Target: 100%</div>
+  </div>
+  <div class="kpi-card" style="--ac:{_yoy_col}">
+    <div class="kpi-label">YoY Growth</div>
+    <div class="kpi-value" style="color:{_yoy_col};">{yoy:+.1f}%</div>
+    <div class="kpi-delta">vs Prior Year</div>
+  </div>
 </div>""", unsafe_allow_html=True)
 
     # Inline AI CFO
@@ -1261,38 +1275,44 @@ Use <em>Category + Date + Amount</em> as a 3-part key for the most accurate matc
         df1["_full_key"] = df1["_match_key"] + "||" + df1["_seq"].astype(str)
         df2["_full_key"] = df2["_match_key"] + "||" + df2["_seq"].astype(str)
 
-        # ── Carry original columns into merged output ────────────────────────
-        a_cols = [c for c in df1.columns if c not in ["_match_key","_seq","_full_key",a1_col]]
-        b_cols = [c for c in df2.columns if c not in ["_match_key","_seq","_full_key",a2_col]]
-
-        left  = df1[a_cols + [a1_col, "_full_key"]].rename(columns={a1_col: "Amt_A"})
-        right = df2[b_cols + [a2_col, "_full_key"]].rename(
-            columns={a2_col: "Amt_B", **{c: c+"_B" for c in b_cols if c in a_cols}})
-
+        # ── Build left/right with correct column renaming ────────────────────
+        # Exclude a2_col from b_rename so it becomes Amt_B (not Amt_B + n_amount_B clash)
+        _df1 = df1.copy(); _df2 = df2.copy()
+        b_rename = {c: c+"_B" for c in _df2.columns
+                    if c in _df1.columns and c not in ["_match_key","_seq","_full_key", a2_col]}
+        left  = _df1.drop(columns=["_match_key","_seq"]).rename(columns={a1_col:"Amt_A"})
+        right = _df2.drop(columns=["_match_key","_seq"]).rename(
+                    columns={**{a2_col:"Amt_B"}, **b_rename})
         merged = pd.merge(left, right, on="_full_key", how="outer", indicator=True)
 
         def classify(r):
             if r["_merge"] == "left_only":  return "Missing in B"
             if r["_merge"] == "right_only": return "Missing in A"
-            return "Matched" if abs(r["Amt_A"] - r["Amt_B"]) <= tolerance else "Amount Break"
+            a, b = r["Amt_A"], r["Amt_B"]
+            if pd.isna(a) or pd.isna(b): return "Amount Break"
+            return "Matched" if abs(float(a)-float(b)) <= tolerance else "Amount Break"
 
         merged["Status"]     = merged.apply(classify, axis=1)
         merged["Difference"] = merged["Amt_A"].fillna(0) - merged["Amt_B"].fillna(0)
 
-        # ── Drop internal columns from display ───────────────────────────────
-        display_cols = [c for c in merged.columns
-                        if c not in ["_full_key","_merge"] and not c.endswith("_B")
-                        or c in [mkey, a1_col, "Amt_A", "Amt_B", "Status", "Difference"]]
-        # Clean final output: key + amounts + status + diff
-        out_cols = [mkey]
-        if secondary_key and secondary_key in merged.columns:
-            out_cols.append(secondary_key)
-        if tertiary_key and tertiary_key in merged.columns:
-            out_cols.append(tertiary_key)
-        out_cols += ["Amt_A", "Amt_B", "Status", "Difference"]
-        out_cols = [c for c in out_cols if c in merged.columns]
+        # Fill NaN key columns for Missing-in-A rows from B-side equivalents
+        for _col in [mkey, secondary_key, tertiary_key]:
+            if not _col: continue
+            _bcol = _col + "_B"
+            if _bcol in merged.columns and _col in merged.columns:
+                merged[_col] = merged[_col].fillna(merged[_bcol])
+        # Also fill non-key original columns
+        for _orig in list(_df1.columns):
+            _bc = _orig + "_B"
+            if _bc in merged.columns and _orig in merged.columns:
+                merged[_orig] = merged[_orig].fillna(merged[_bc])
 
-        merged_out = merged[out_cols].copy()
+        # Clean output: key cols + amounts + status + diff (drop internal + _B cols)
+        _drop = {"_full_key","_merge"} | {c for c in merged.columns if c.endswith("_B")}
+        _meta = [c for c in merged.columns if c not in _drop
+                 and c not in ["Amt_A","Amt_B","Status","Difference"]]
+        out_cols = _meta + ["Amt_A","Amt_B","Status","Difference"]
+        merged_out = merged[[c for c in out_cols if c in merged.columns]].copy()
 
         total   = len(merged_out)
         matched = (merged_out["Status"]=="Matched").sum()
@@ -1365,12 +1385,14 @@ font-size:0.6rem;letter-spacing:0.1em;color:#4ade80;">
                            merged_out.to_csv(index=False).encode(),
                            "Fincy_Recon_Full.csv", "text/csv")
 
-    # AI CFO — always shown after run
-    if df1 is not None and df2 is not None:
-        recon_ctx = f"Reconciliation: {total} records total | Matched={matched} ({mrate:.1f}%) | Amount Breaks={breaks} (diff={t_break:,.2f}) | Missing in B={miss_b} | Missing in A={miss_a}" if "total" in dir() else "Reconciliation data loaded"
-        ai_cfo_section(
-            f"Two-source reconciliation complete. Match rate context depends on data loaded.",
-            "recon", "e.g. What caused the amount breaks? Where are the biggest discrepancies?")
+        # AI CFO — inside the button block so vars are in scope
+        recon_ctx = (f"Reconciliation: {total} records | "
+                     f"Matched={matched} ({mrate:.1f}%) | "
+                     f"Amount Breaks={breaks} (total diff={t_break:,.0f}) | "
+                     f"Missing in B={miss_b} | Missing in A={miss_a} | "
+                     f"Key used: {'+'.join([k for k in [mkey,secondary_key,tertiary_key] if k])}")
+        ai_cfo_section(recon_ctx, "recon",
+            "e.g. What caused the missing records? Which breaks need urgent action?")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1795,163 +1817,169 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+
 # ══════════════════════════════════════════════════════════════════════════════
 # MODULE 5 — INVOICE PROCESSING AGENT
 # ══════════════════════════════════════════════════════════════════════════════
+SAMPLE_INV = """Invoice_ID,Vendor,Amount,Currency,Invoice_Date,Due_Date,Status,Category
+INV-001,Abbott India,125000,INR,2024-01-05,2024-01-20,Paid,Raw Materials
+INV-002,Lupin Limited,87500,INR,2024-01-08,2024-01-23,Overdue,Packaging
+INV-003,Baxter India,152000,INR,2024-01-10,2024-01-25,Paid,Raw Materials
+INV-004,Abbott India,98000,INR,2024-01-12,2024-01-27,Pending,Raw Materials
+INV-005,Alkem Labs,63000,INR,2024-01-15,2024-01-30,Overdue,Logistics
+INV-006,Lupin Limited,87500,INR,2024-01-08,2024-01-23,Pending,Packaging
+INV-007,Baxter India,45000,INR,2024-01-20,2024-02-04,Paid,Services
+INV-008,Abbott India,125000,INR,2024-01-05,2024-01-20,Pending,Raw Materials
+INV-009,Dr Reddys,32000,INR,2024-01-25,2024-02-09,Paid,IT Services
+INV-010,Lupin Limited,195000,INR,2024-01-28,2024-02-12,Overdue,Packaging
+INV-011,Alkem Labs,48000,INR,2024-02-01,2024-02-16,Paid,Logistics
+INV-012,Abbott India,165000,INR,2024-02-03,2024-02-18,Pending,Raw Materials
+INV-013,Baxter India,82000,INR,2024-02-05,2024-02-20,Paid,Raw Materials
+INV-014,Lupin Limited,87500,INR,2024-01-08,2024-01-23,Pending,Packaging
+INV-015,Vision Sales,210000,INR,2024-02-10,2024-02-25,Overdue,Equipment"""
+
 def run_invoice():
     with st.sidebar:
         st.markdown("### 🧾 Invoice Agent")
         st.markdown("---")
         if st.button("🏠 Module Home", use_container_width=True, key="inv_home"):
+            st.session_state.pop("_inv_sample", None)
             st.session_state.active_module = None
             st.rerun()
         st.markdown("---")
-        st.caption("AI Agent · Powered by Groq · Llama 3.1")
+        st.caption("AI Agent · Groq Llama 3.1")
 
     page_header("INVOICE PROCESSING AGENT", "AP/AR Intelligence")
 
     st.markdown("""
 <div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #818cf8;
-padding:12px 18px;margin-bottom:20px;font-size:0.76rem;color:#a09880;font-weight:300;">
+padding:12px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
 <span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-text-transform:uppercase;color:#818cf8;">AI Agent · How it works: </span>
-Upload an AP/AR invoice CSV. The agent extracts key fields, detects duplicate invoices,
-flags overdue payments, identifies anomalies, and generates a structured payment action plan.
-<strong style="color:#e8e2d4;">Columns needed:</strong> Invoice ID · Vendor · Amount · Date · Status (optional).
+text-transform:uppercase;color:#818cf8;">Invoice AI Agent: </span>
+Upload an AP/AR invoice CSV. The agent detects <strong>duplicate invoices</strong>,
+flags <strong>overdue payments</strong>, identifies <strong>anomalies</strong>,
+and generates a structured <strong>payment action plan</strong>.
+Columns needed: Invoice ID · Vendor · Amount · Date · Status (optional).
 </div>""", unsafe_allow_html=True)
 
-    _, cc, _ = st.columns([1, 2, 1])
+    # Email-to-accounting workflow concept
+    st.markdown("""
+<div style="background:#0d0b18;border:1px solid #818cf8;padding:13px 18px;margin-bottom:18px;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#818cf8;margin-bottom:8px;">📧 Email → Accounting Workflow</div>
+  <div style="font-size:0.76rem;color:#a09880;font-weight:300;line-height:1.7;">
+    <strong style="color:#e8e2d4;">Coming soon:</strong> Forward invoices received on email
+    directly to your accounting software. Fincy AI will extract vendor, amount, due date,
+    and category automatically — eliminating manual data entry.<br>
+    <span style="color:#5a5648;font-size:0.68rem;">Register your interest via the landing page
+    to be notified when this feature launches.</span>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+    _, cc, _ = st.columns([1,2,1])
     with cc:
-        inv_file = st.file_uploader("Upload Invoice/AP CSV", type=["csv"], key="inv_upload",
-                                    help="AP/AR export, invoice register, payment file")
-        st.markdown("""<div style="text-align:center;margin:10px 0 6px;
-font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:#3a3a34;">— or use sample data —</div>""",
+        inv_file = st.file_uploader("Upload Invoice/AP CSV", type=["csv"], key="inv_upload")
+        st.markdown('''<div style="text-align:center;margin:8px 0 5px;
+font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#3a3a34;">— or use sample —</div>''',
                     unsafe_allow_html=True)
-        if st.button("🧾 Use Sample Invoice Data", use_container_width=True, key="inv_sample"):
-            st.session_state["_inv_use_sample"] = True
+        if st.button("🧾 Use Sample Invoice Data", use_container_width=True, key="inv_smpl"):
+            st.session_state["_inv_sample"] = True
             st.rerun()
 
-    SAMPLE_INV = """Invoice_ID,Vendor,Amount,Currency,Invoice_Date,Due_Date,Status,Category
-INV-2024-001,Supplier Alpha,125000,INR,2024-01-05,2024-01-20,Paid,Raw Materials
-INV-2024-002,Supplier Beta,87500,INR,2024-01-08,2024-01-23,Overdue,Packaging
-INV-2024-003,Supplier Gamma,152000,INR,2024-01-10,2024-01-25,Paid,Raw Materials
-INV-2024-004,Supplier Alpha,98000,INR,2024-01-12,2024-01-27,Pending,Raw Materials
-INV-2024-005,Supplier Delta,63000,INR,2024-01-15,2024-01-30,Overdue,Logistics
-INV-2024-006,Supplier Beta,87500,INR,2024-01-08,2024-01-23,Pending,Packaging
-INV-2024-007,Supplier Gamma,45000,INR,2024-01-20,2024-02-04,Paid,Services
-INV-2024-008,Supplier Alpha,125000,INR,2024-01-05,2024-01-20,Pending,Raw Materials
-INV-2024-009,Supplier Epsilon,32000,INR,2024-01-25,2024-02-09,Paid,IT Services
-INV-2024-010,Supplier Beta,195000,INR,2024-01-28,2024-02-12,Overdue,Packaging
-INV-2024-011,Supplier Delta,48000,INR,2024-02-01,2024-02-16,Paid,Logistics
-INV-2024-012,Supplier Alpha,165000,INR,2024-02-03,2024-02-18,Pending,Raw Materials
-INV-2024-013,Supplier Gamma,82000,INR,2024-02-05,2024-02-20,Paid,Raw Materials
-INV-2024-014,Supplier Beta,87500,INR,2024-01-08,2024-01-23,Pending,Packaging
-INV-2024-015,Supplier Zeta,210000,INR,2024-02-10,2024-02-25,Overdue,Equipment
-"""
-
-    use_sample = st.session_state.get("_inv_use_sample", False)
+    use_sample = st.session_state.get("_inv_sample", False)
     if use_sample and not inv_file:
         df = pd.read_csv(io.StringIO(SAMPLE_INV))
     elif inv_file:
         try:
             df = pd.read_csv(inv_file)
-            st.session_state["_inv_use_sample"] = False
+            st.session_state["_inv_sample"] = False
         except Exception as e:
-            st.error(f"⚠️ Could not read CSV: {e}")
-            return
+            st.error(f"⚠️ Could not read CSV: {e}"); return
     else:
-        st.markdown("""<div class="box" style="opacity:0.6;font-size:0.74rem;">
-↑ Upload your invoice/AP CSV or use the sample data.<br><br>
-<strong>Output:</strong> Invoice summary · Duplicate detection · Overdue flags ·
-Anomaly detection · AI payment action plan
-</div>""", unsafe_allow_html=True)
+        st.markdown('''<div class="box" style="opacity:0.6;font-size:0.74rem;">
+↑ Upload your invoice/AP CSV or use the sample data above.<br><br>
+<strong>Output:</strong> Invoice summary · Duplicate flags · Overdue alerts ·
+Vendor breakdown · Payment action plan
+</div>''', unsafe_allow_html=True)
         return
 
-    # ── Analysis ──────────────────────────────────────────────────────────────
-    st.markdown('<div class="sec-label">Invoice Summary</div>', unsafe_allow_html=True)
-
-    # Detect key columns flexibly
-    cols = list(df.columns)
-    amt_col    = next((c for c in cols if any(k in c.lower() for k in ["amount","amt","value","total"])), cols[0])
-    id_col     = next((c for c in cols if any(k in c.lower() for k in ["id","no","number","ref","invoice"])), cols[0])
-    vendor_col = next((c for c in cols if any(k in c.lower() for k in ["vendor","supplier","party","company"])), None)
-    date_col   = next((c for c in cols if any(k in c.lower() for k in ["date","invoice_date","created"])), None)
-    status_col = next((c for c in cols if "status" in c.lower()), None)
+    cols     = list(df.columns)
+    amt_col  = next((c for c in cols if any(k in c.lower() for k in ["amount","amt","value","total"])), cols[0])
+    id_col   = next((c for c in cols if any(k in c.lower() for k in ["id","no","number","ref","invoice"])), cols[0])
+    ven_col  = next((c for c in cols if any(k in c.lower() for k in ["vendor","supplier","party"])), None)
+    sts_col  = next((c for c in cols if "status" in c.lower()), None)
+    cat_col  = next((c for c in cols if "cat" in c.lower()), None)
 
     df[amt_col] = pd.to_numeric(df[amt_col], errors="coerce").fillna(0)
-    total_inv   = len(df)
-    total_val   = df[amt_col].sum()
-    avg_val     = df[amt_col].mean()
+    total_inv  = len(df)
+    total_val  = df[amt_col].sum()
+    avg_val    = df[amt_col].mean()
 
-    # Duplicate detection (same amount + vendor)
-    dup_mask = pd.Series([False]*len(df))
-    if vendor_col:
-        dup_mask = df.duplicated(subset=[amt_col, vendor_col], keep=False)
-    dup_count = dup_mask.sum()
+    dup_mask = df.duplicated(subset=[amt_col, ven_col], keep=False) if ven_col else pd.Series([False]*len(df))
+    dup_count   = int(dup_mask.sum())
+    ov_count    = int(df[sts_col].str.lower().str.contains("overdue|past due",na=False).sum()) if sts_col else 0
+    pend_count  = int(df[sts_col].str.lower().str.contains("pending|open",na=False).sum()) if sts_col else 0
+    top_vendor  = df.groupby(ven_col)[amt_col].sum().idxmax() if ven_col else "N/A"
 
-    # Overdue / status
-    overdue_count = 0
-    pending_count = 0
-    if status_col:
-        overdue_count = df[status_col].str.lower().str.contains("overdue|past due", na=False).sum()
-        pending_count = df[status_col].str.lower().str.contains("pending|open", na=False).sum()
-
-    # Top vendor by value
-    top_vendor = "N/A"
-    if vendor_col:
-        top_vendor = df.groupby(vendor_col)[amt_col].sum().idxmax()
-
-    # KPI cards
+    st.markdown('<div class="sec-label">Invoice Summary</div>', unsafe_allow_html=True)
+    _dc = "#f87171" if dup_count > 0 else "#4ade80"
+    _oc = "#f87171" if ov_count  > 0 else "#4ade80"
     st.markdown(f"""
 <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">
-  <div class="kpi-card" style="--ac:#818cf8"><div class="kpi-label">Total Invoices</div><div class="kpi-value">{total_inv:,}</div></div>
-  <div class="kpi-card" style="--ac:#c9a84c"><div class="kpi-label">Total Value</div><div class="kpi-value">{fmt_m(total_val)}</div></div>
-  <div class="kpi-card" style="--ac:#{'f87171' if dup_count>0 else '4ade80'}"><div class="kpi-label">Duplicates</div><div class="kpi-value">{dup_count:,}</div><div class="kpi-delta {'neg' if dup_count>0 else 'pos'}">{('⚠️ Flag' if dup_count>0 else '✅ Clean')}</div></div>
-  <div class="kpi-card" style="--ac:#{'f87171' if overdue_count>0 else '4ade80'}"><div class="kpi-label">Overdue</div><div class="kpi-value">{overdue_count:,}</div><div class="kpi-delta {'neg' if overdue_count>0 else 'pos'}">{('⚠️ Urgent' if overdue_count>0 else '✅ None')}</div></div>
-  <div class="kpi-card" style="--ac:#fbbf24"><div class="kpi-label">Pending</div><div class="kpi-value">{pending_count:,}</div></div>
+  <div class="kpi-card" style="--ac:#818cf8"><div class="kpi-label">Total Invoices</div>
+    <div class="kpi-value">{total_inv:,}</div></div>
+  <div class="kpi-card" style="--ac:#c9a84c"><div class="kpi-label">Total Value</div>
+    <div class="kpi-value">{fmt_m(total_val)}</div></div>
+  <div class="kpi-card" style="--ac:{_dc}"><div class="kpi-label">Duplicates</div>
+    <div class="kpi-value" style="color:{_dc};">{dup_count:,}</div>
+    <div class="kpi-delta">{"⚠️ Flag" if dup_count>0 else "✅ Clean"}</div></div>
+  <div class="kpi-card" style="--ac:{_oc}"><div class="kpi-label">Overdue</div>
+    <div class="kpi-value" style="color:{_oc};">{ov_count:,}</div>
+    <div class="kpi-delta">{"⚠️ Urgent" if ov_count>0 else "✅ None"}</div></div>
+  <div class="kpi-card" style="--ac:#fbbf24"><div class="kpi-label">Pending</div>
+    <div class="kpi-value">{pend_count:,}</div></div>
 </div>""", unsafe_allow_html=True)
 
-    # Charts
     c1, c2 = st.columns(2)
     with c1:
-        if vendor_col:
-            vg = df.groupby(vendor_col)[amt_col].sum().sort_values(ascending=False).head(8)
+        if ven_col:
+            vg = df.groupby(ven_col)[amt_col].sum().sort_values(ascending=False).head(8)
             fig = go.Figure(go.Bar(x=vg.values, y=vg.index, orientation="h",
                 marker_color="#818cf8",
-                text=vg.values.tolist(), texttemplate="%{text:,.0f}", textposition="auto"))
-            fig.update_layout(**PLOTLY_BASE, title="Invoice Value by Vendor", height=280, xaxis=AXIS, yaxis=AXIS)
+                text=[f"{v:,.0f}" for v in vg.values], textposition="auto"))
+            fig.update_layout(**PLOTLY_BASE, title="Invoice Value by Vendor",
+                              height=280, xaxis=AXIS, yaxis=AXIS)
             st.plotly_chart(fig, use_container_width=True)
     with c2:
-        if status_col:
-            sg = df.groupby(status_col)[amt_col].sum().reset_index()
+        if sts_col:
+            sg = df.groupby(sts_col)[amt_col].sum().reset_index()
             clrs = {"Paid":"#4ade80","Overdue":"#f87171","Pending":"#fbbf24","Open":"#60a5fa"}
             fig = go.Figure(go.Pie(
-                labels=sg[status_col], values=sg[amt_col], hole=0.55,
-                marker=dict(colors=[clrs.get(s,"#818cf8") for s in sg[status_col]],
+                labels=sg[sts_col], values=sg[amt_col], hole=0.55,
+                marker=dict(colors=[clrs.get(str(s),"#818cf8") for s in sg[sts_col]],
                             line=dict(color="#0a0a08",width=2)),
                 textinfo="label+percent", textfont=dict(size=9)))
-            fig.update_layout(**PLOTLY_BASE, title="Invoice Value by Status", height=280, showlegend=False)
+            fig.update_layout(**PLOTLY_BASE, title="Invoice Value by Status",
+                              height=280, showlegend=False)
             st.plotly_chart(fig, use_container_width=True)
 
-    # Duplicate flag table
     if dup_count > 0:
-        st.markdown(f'<div class="sec-label">⚠️ Duplicate Invoice Flags ({dup_count} rows)</div>', unsafe_allow_html=True)
-        st.dataframe(df[dup_mask].sort_values(amt_col, ascending=False),
+        st.markdown(f'<div class="sec-label">⚠️ Duplicate Invoice Flags ({dup_count} rows)</div>',
+                    unsafe_allow_html=True)
+        st.dataframe(df[dup_mask].sort_values(amt_col,ascending=False),
                      use_container_width=True, hide_index=True)
 
-    # Full data
     st.markdown('<div class="sec-label">Full Invoice Register</div>', unsafe_allow_html=True)
     st.dataframe(df, use_container_width=True, hide_index=True)
     st.download_button("📥 Download Invoice Report (CSV)",
                        df.to_csv(index=False).encode(),
-                       "Fincy_Invoice_Report.csv", "text/csv")
+                       "Fincy_Invoice_Report.csv","text/csv")
 
-    # AI Agent
-    inv_ctx = (f"Invoice Processing: {total_inv} invoices | Total Value={fmt_m(total_val)} | "
-               f"Avg Invoice={fmt_m(avg_val)} | Duplicates={dup_count} | "
-               f"Overdue={overdue_count} | Pending={pending_count} | Top Vendor={top_vendor}")
+    inv_ctx = (f"Invoice Processing: {total_inv} invoices | Total={fmt_m(total_val)} | "
+               f"Avg={fmt_m(avg_val)} | Duplicates={dup_count} | "
+               f"Overdue={ov_count} | Pending={pend_count} | Top Vendor={top_vendor}")
     ai_cfo_section(inv_ctx, "invoice",
-        "e.g. Which invoices need urgent action? Are there duplicate payments? What's the payment priority?")
+        "e.g. Which invoices need urgent action? Any duplicate payments? Payment priority?")
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1972,126 +2000,123 @@ def run_dataanalyst():
                     st.session_state.pop(k, None)
                 st.rerun()
         st.markdown("---")
-        st.caption("AI Agent · Powered by Groq · Llama 3.1")
+        st.caption("AI Agent · Groq Llama 3.1")
 
-    page_header("DATA ANALYSIS AGENT", "Ask Anything About Your Data")
-
-    st.markdown("""
-<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #2dd4bf;
-padding:12px 18px;margin-bottom:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#2dd4bf;margin-bottom:4px;">Step 1</div>
-  <div style="font-size:0.75rem;color:#a09880;font-weight:300;">Upload any financial CSV — no template required</div></div>
-  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#2dd4bf;margin-bottom:4px;">Step 2</div>
-  <div style="font-size:0.75rem;color:#a09880;font-weight:300;">The agent profiles your data automatically</div></div>
-  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#2dd4bf;margin-bottom:4px;">Step 3</div>
-  <div style="font-size:0.75rem;color:#a09880;font-weight:300;">Ask anything — agent runs analysis and gives executive summary</div></div>
-</div>""", unsafe_allow_html=True)
+    page_header("DATA ANALYSIS AGENT", "Ask Anything")
 
     if not st.session_state.get("_da_ready"):
-        _, cc, _ = st.columns([1, 2, 1])
+        st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #2dd4bf;
+padding:12px 18px;margin-bottom:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#2dd4bf;margin-bottom:4px;">Step 1</div>
+  <div style="font-size:0.74rem;color:#a09880;font-weight:300;">Upload any financial CSV — no template needed</div></div>
+  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#2dd4bf;margin-bottom:4px;">Step 2</div>
+  <div style="font-size:0.74rem;color:#a09880;font-weight:300;">Agent auto-profiles your data instantly</div></div>
+  <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#2dd4bf;margin-bottom:4px;">Step 3</div>
+  <div style="font-size:0.74rem;color:#a09880;font-weight:300;">Ask anything — get executive summary</div></div>
+</div>""", unsafe_allow_html=True)
+
+        _, cc, _ = st.columns([1,2,1])
         with cc:
-            da_file = st.file_uploader("Upload Any Financial CSV", type=["csv"], key="da_upload")
-            st.markdown("""<div style="text-align:center;margin:10px 0 6px;
-font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:#3a3a34;">— or use FMCG sample —</div>""",
+            da_file = st.file_uploader("Upload Any Financial CSV", type=["csv"], key="da_up")
+            st.markdown('''<div style="text-align:center;margin:8px 0 5px;
+font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#3a3a34;">— or use FMCG sample —</div>''',
                         unsafe_allow_html=True)
-            if st.button("📊 Use FMCG Sample Data", use_container_width=True, key="da_sample"):
-                st.session_state["_da_df"] = pd.read_csv(io.StringIO(SAMPLE_FMCG))
+            if st.button("📊 Use FMCG Sample", use_container_width=True, key="da_smpl"):
+                st.session_state["_da_df"]    = pd.read_csv(io.StringIO(SAMPLE_FMCG))
                 st.session_state["_da_ready"] = True
                 st.rerun()
-
         if da_file:
             try:
-                st.session_state["_da_df"] = pd.read_csv(da_file)
+                st.session_state["_da_df"]    = pd.read_csv(da_file)
                 st.session_state["_da_ready"] = True
                 st.rerun()
             except Exception as e:
-                st.error(f"⚠️ Could not read CSV: {e}")
+                st.error(f"⚠️ {e}")
         return
 
     df = st.session_state["_da_df"]
-    page_header("DATA ANALYSIS AGENT", f"{len(df):,} rows · {len(df.columns)} columns")
-
-    # ── Auto data profile ─────────────────────────────────────────────────────
-    st.markdown('<div class="sec-label">Automatic Data Profile</div>', unsafe_allow_html=True)
     num_cols = df.select_dtypes(include="number").columns.tolist()
     cat_cols = df.select_dtypes(exclude="number").columns.tolist()
     missing  = int(df.isnull().sum().sum())
     dups     = int(df.duplicated().sum())
 
+    st.markdown('<div class="sec-label">Automatic Data Profile</div>', unsafe_allow_html=True)
+    _mc = "#f87171" if missing > 0 else "#4ade80"
+    _dc2 = "#fbbf24" if dups > 0 else "#4ade80"
     st.markdown(f"""
 <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">
-  <div class="kpi-card" style="--ac:#2dd4bf"><div class="kpi-label">Rows</div><div class="kpi-value">{len(df):,}</div></div>
-  <div class="kpi-card" style="--ac:#818cf8"><div class="kpi-label">Columns</div><div class="kpi-value">{len(df.columns)}</div></div>
-  <div class="kpi-card" style="--ac:#c9a84c"><div class="kpi-label">Numeric Cols</div><div class="kpi-value">{len(num_cols)}</div></div>
-  <div class="kpi-card" style="--ac:#{'f87171' if missing>0 else '4ade80'}"><div class="kpi-label">Missing Values</div><div class="kpi-value">{missing:,}</div><div class="kpi-delta {'neg' if missing>0 else 'pos'}">{'⚠️ Has nulls' if missing>0 else '✅ Complete'}</div></div>
-  <div class="kpi-card" style="--ac:#{'fbbf24' if dups>0 else '4ade80'}"><div class="kpi-label">Duplicate Rows</div><div class="kpi-value">{dups:,}</div><div class="kpi-delta {'neg' if dups>0 else 'pos'}">{'⚠️ Found' if dups>0 else '✅ None'}</div></div>
+  <div class="kpi-card" style="--ac:#2dd4bf"><div class="kpi-label">Rows</div>
+    <div class="kpi-value">{len(df):,}</div></div>
+  <div class="kpi-card" style="--ac:#818cf8"><div class="kpi-label">Columns</div>
+    <div class="kpi-value">{len(df.columns)}</div></div>
+  <div class="kpi-card" style="--ac:#c9a84c"><div class="kpi-label">Numeric Cols</div>
+    <div class="kpi-value">{len(num_cols)}</div></div>
+  <div class="kpi-card" style="--ac:{_mc}"><div class="kpi-label">Missing Values</div>
+    <div class="kpi-value" style="color:{_mc};">{missing:,}</div>
+    <div class="kpi-delta">{"⚠️ Nulls" if missing>0 else "✅ Complete"}</div></div>
+  <div class="kpi-card" style="--ac:{_dc2}"><div class="kpi-label">Duplicate Rows</div>
+    <div class="kpi-value" style="color:{_dc2};">{dups:,}</div>
+    <div class="kpi-delta">{"⚠️ Found" if dups>0 else "✅ None"}</div></div>
 </div>""", unsafe_allow_html=True)
 
-    # Numeric summary stats
     if num_cols:
         st.markdown('<div class="sec-label">Statistical Summary</div>', unsafe_allow_html=True)
-        desc = df[num_cols].describe().round(2)
-        st.dataframe(desc, use_container_width=True)
+        st.dataframe(df[num_cols].describe().round(2), use_container_width=True)
 
-    # Distribution charts — top 2 numeric cols
     if len(num_cols) >= 2:
         st.markdown('<div class="sec-label">Distribution Analysis</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
         for i, col in enumerate(num_cols[:2]):
-            with (c1 if i == 0 else c2):
+            with (c1 if i==0 else c2):
                 fig = go.Figure(go.Histogram(x=df[col].dropna(), nbinsx=20,
                     marker_color="#2dd4bf", marker_line=dict(color="#0a0a08",width=0.5)))
-                fig.update_layout(**PLOTLY_BASE, title=f"Distribution: {col}", height=240, xaxis=AXIS, yaxis=AXIS)
+                fig.update_layout(**PLOTLY_BASE, title=f"Distribution: {col}",
+                                  height=240, xaxis=AXIS, yaxis=AXIS)
                 st.plotly_chart(fig, use_container_width=True)
 
-    # Correlation heatmap if enough numeric cols
     if len(num_cols) >= 3:
         st.markdown('<div class="sec-label">Correlation Matrix</div>', unsafe_allow_html=True)
-        corr = df[num_cols].corr().round(2)
+        corr = df[num_cols[:8]].corr().round(2)
         fig = go.Figure(go.Heatmap(
-            z=corr.values, x=corr.columns, y=corr.index,
+            z=corr.values, x=corr.columns.tolist(), y=corr.index.tolist(),
             colorscale=[[0,"#f87171"],[0.5,"#101010"],[1,"#4ade80"]],
             zmin=-1, zmax=1,
-            text=corr.values.round(2), texttemplate="%{text}",
-            textfont=dict(size=9)))
+            text=corr.values.round(2), texttemplate="%{text}", textfont=dict(size=9)))
         fig.update_layout(**PLOTLY_BASE, title="Numeric Column Correlations", height=320)
         st.plotly_chart(fig, use_container_width=True)
 
-    # Category breakdowns
     if cat_cols and num_cols:
         st.markdown('<div class="sec-label">Category Breakdown</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
         for i, cat in enumerate(cat_cols[:2]):
-            with (c1 if i == 0 else c2):
+            with (c1 if i==0 else c2):
                 if df[cat].nunique() <= 20:
                     gb = df.groupby(cat)[num_cols[0]].sum().sort_values(ascending=False)
-                    fig = go.Figure(go.Bar(x=gb.index, y=gb.values,
+                    fig = go.Figure(go.Bar(x=gb.index.tolist(), y=gb.values.tolist(),
                         marker_color=PAL[:len(gb)],
-                        text=gb.values.tolist(), texttemplate="%{text:,.0f}", textposition="auto"))
-                    fig.update_layout(**PLOTLY_BASE, title=f"{num_cols[0]} by {cat}",
-                                      height=260, xaxis=AXIS, yaxis=AXIS)
+                        text=[f"{v:,.0f}" for v in gb.values], textposition="auto"))
+                    fig.update_layout(**PLOTLY_BASE,
+                        title=f"{num_cols[0]} by {cat}", height=260, xaxis=AXIS, yaxis=AXIS)
                     st.plotly_chart(fig, use_container_width=True)
 
-    # Full data preview
-    st.markdown('<div class="sec-label">Data Preview</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-label">Data Preview (first 50 rows)</div>',
+                unsafe_allow_html=True)
     st.dataframe(df.head(50), use_container_width=True, hide_index=True)
     st.download_button("📥 Download Data (CSV)", df.to_csv(index=False).encode(),
-                       "Fincy_DataAnalysis.csv", "text/csv")
+                       "Fincy_DataAnalysis.csv","text/csv")
 
-    # AI Agent — richer context
-    profile_str = (f"Dataset: {len(df)} rows × {len(df.columns)} cols | "
-                   f"Numeric columns: {', '.join(num_cols[:5])} | "
-                   f"Category columns: {', '.join(cat_cols[:4])} | "
-                   f"Missing values: {missing} | Duplicate rows: {dups}")
+    profile_str = (f"Dataset: {len(df)} rows x {len(df.columns)} cols | "
+                   f"Numeric: {', '.join(num_cols[:5])} | "
+                   f"Category: {', '.join(cat_cols[:4])} | "
+                   f"Missing: {missing} | Dups: {dups}")
     if num_cols:
-        desc_s = df[num_cols].describe().to_string()
-        profile_str += f" | Stats summary: {desc_s[:400]}"
+        profile_str += f" | Stats: {df[num_cols].describe().to_string()[:400]}"
     ai_cfo_section(profile_str, "dataanalyst",
-        "e.g. What are the key trends? Which categories drive performance? What anomalies do you see?")
-
+        "e.g. What are the key trends? Which categories drive performance? Any anomalies?")
 
 
 # MAIN ROUTER

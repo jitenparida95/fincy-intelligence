@@ -1,0 +1,22 @@
+c_year,c_prefix,transactiondate,n_amount,c_remark
+26,P,01-04-2026,-410890,Payment Reconciliation
+26,P,01-04-2026,-409795,Payment Reconciliation
+26,P,01-04-2026,-198288,Payment Reconciliation
+26,P,01-04-2026,-95280,Payment Reconciliation
+26,P,13-04-2026,-540000,Payment Reconciliation
+26,P,13-04-2026,-3887,Payment Reconciliation
+26,P,13-04-2026,-2691,Payment Reconciliation
+26,Q,09-04-2026,-87500,Payment Reconciliation
+26,Q,09-04-2026,-43250,Payment Reconciliation
+26,Q,09-04-2026,-19900,Payment Reconciliation
+25,H,26-03-2026,2142,Receipt Reconciliation
+25,H,23-03-2026,196483,Receipt Reconciliation
+25,H,17-03-2026,132770,Receipt Reconciliation
+25,H,31-03-2026,128160,Receipt Reconciliation
+25,H,31-03-2026,966659,Receipt Reconciliation
+25,H,28-02-2026,25980,Receipt Reconciliation
+25,H,17-03-2026,38850,Receipt Reconciliation
+25,H,23-03-2026,56700,Receipt Reconciliation
+26,J,09-04-2026,-170748,NEFT/IDFB609976906340/BAXTER INDIA/CITI0000002
+26,J,10-04-2026,-89784,NEFT/IDFB610077141852/ABBOTT HEALTHCARE/HSBC0400002
+26,J,13-04-2026,-42687,NEFT/IDFB610377749041/BAXTER INDIA/CITI0000002
