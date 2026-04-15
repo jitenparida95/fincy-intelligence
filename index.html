@@ -457,14 +457,57 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 <section class="sec" id="templates">
   <div class="ey">Sample Data</div>
   <h2>No data? No problem.<br><em>Start with a template.</em></h2>
-  <p class="sub">Download a ready-made CSV for each module and see your AI CFO in action instantly.</p>
-  <div class="sample-grid">
-    <div class="s-card"><span class="s-icon">🛒</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">FMCG / Consumer Goods</div><div class="s-desc">Multi-market P&amp;L with brands, channels, trade promo and variance. Modelled on real FMCG supply chain data.</div><a class="s-dl" href="fincy_sample_fmcg.csv" download>↓ Download FMCG Template</a></div>
-    <div class="s-card"><span class="s-icon">💻</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">SaaS / Tech Company</div><div class="s-desc">Subscription revenue with ARR, gross margin, regional breakdown and budget tracking across product tiers.</div><a class="s-dl" href="fincy_sample_saas.csv" download>↓ Download SaaS Template</a></div>
-    <div class="s-card"><span class="s-icon">🏢</span><div class="s-mod">FP&amp;A Module</div><div class="s-title">Generic / Any Industry</div><div class="s-desc">Neutral template with generic regions, product lines and channels. Works for retail, manufacturing, services.</div><a class="s-dl" href="fincy_sample_generic.csv" download>↓ Download Generic Template</a></div>
+  <p class="sub">Download a ready-made CSV for each module. Upload it and see your AI CFO in action instantly.</p>
+  <div class="sample-grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="s-card">
+      <span class="s-icon">📊</span>
+      <div class="s-mod">FP&amp;A Decision Intelligence</div>
+      <div class="s-title">FMCG / Consumer Goods</div>
+      <div class="s-desc">Multi-market P&amp;L with brands, channels, trade promo, budget and variance. Modelled on real FMCG supply chain data.</div>
+      <a class="s-dl" href="fincy_sample_fmcg.csv" download>↓ FMCG P&amp;L Template</a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--text3);">360 rows · 2 years · 5 markets · 19 columns</div>
+    </div>
+    <div class="s-card">
+      <span class="s-icon">🔁</span>
+      <div class="s-mod">Reconciliation Engine</div>
+      <div class="s-title">ERP vs Bank Sample</div>
+      <div class="s-desc">Two-source reconciliation dataset with matching transaction IDs, amounts, dates, and 10 intentionally unmatched J-prefix entries.</div>
+      <a class="s-dl" href="fincy_sample_recon_a.csv" download>↓ Source A (ERP) Template</a>
+      <a class="s-dl" href="fincy_sample_recon_b.csv" download>↓ Source B (Bank) Template</a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--text3);">172+182 rows · 10 exceptions built in</div>
+    </div>
+    <div class="s-card">
+      <span class="s-icon">🎯</span>
+      <div class="s-mod">Budget vs Actuals Tracker</div>
+      <div class="s-title">Budget RAG Template</div>
+      <div class="s-desc">Period-by-period budget vs actual with prior year data, covering 12 months and multiple P&amp;L line items with RAG status.</div>
+      <a class="s-dl" href="fincy_sample_budget.csv" download>↓ Budget Template</a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--text3);">30 rows · 12 periods · Revenue, COGS, OPEX</div>
+    </div>
+    <div class="s-card">
+      <span class="s-icon">💡</span>
+      <div class="s-mod">Cost Intelligence</div>
+      <div class="s-title">COGS &amp; OPEX Template</div>
+      <div class="s-desc">SKU-level cost data across markets with Revenue, COGS, and OPEX columns. Designed to trigger benchmark flags and AI recommendations.</div>
+      <a class="s-dl" href="fincy_sample_cost.csv" download>↓ Cost Template</a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--text3);">24 rows · 4 SKUs · 3 markets</div>
+    </div>
+    <div class="s-card">
+      <span class="s-icon">🤖</span>
+      <div class="s-mod">Data Analysis Agent</div>
+      <div class="s-title">Generic Financial Dataset</div>
+      <div class="s-desc">Neutral multi-industry template with regions, product lines, channels and financial metrics. Works for any business type.</div>
+      <a class="s-dl" href="fincy_sample_generic.csv" download>↓ Generic Template</a>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;color:var(--text3);">288 rows · 2 years · 4 regions</div>
+    </div>
+    <div class="s-card" style="background:#0d0d0a;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+      <span class="s-icon">🧾</span>
+      <div class="s-mod">Invoice Processing Agent</div>
+      <div class="s-title">Use Built-in Sample</div>
+      <div class="s-desc" style="margin-bottom:0;">The Invoice Agent includes a built-in AP/AR sample. Click "Use Sample Invoice Data" inside the module — no download needed.</div>
+    </div>
   </div>
 </section>
-
 <!-- CTA -->
 <div class="cta-wrap">
   <h2>Ready to meet<br><em>your AI CFO?</em></h2>
