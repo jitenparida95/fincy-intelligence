@@ -1304,7 +1304,7 @@ function sendFincyMessage(){
 
   var msgs=document.getElementById('fincy-chat-msgs');
 
-  /* User message */
+  /* User bubble */
   var uDiv=document.createElement('div');
   uDiv.className='fc-msg-you';
   uDiv.innerHTML='You <span>'+String(q).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>';
@@ -1313,48 +1313,74 @@ function sendFincyMessage(){
   /* Typing indicator */
   var typing=document.createElement('div');
   typing.className='fc-typing';
-  typing.id='fc-typing';
-  typing.textContent='◆ Fincy is thinking…';
+  typing.id='fc-typing-'+Date.now();
+  var typingId=typing.id;
+  typing.textContent='\u25c6 Fincy AI is thinking\u2026';
   msgs.appendChild(typing);
   msgs.scrollTop=msgs.scrollHeight;
 
   _fcHistory.push({role:'user',content:q});
 
-  var sysPr='You are Fincy AI CFO — a professional AI assistant for the Fincy Intelligence platform. '+
-    'Always prefix replies with "Fincy AI:". Answer in 2-3 sentences max. '+
-    'Topics: FP&A analytics, India tax FY2024-25, reconciliation, cash flow, '+
-    'cost intelligence, personal finance, how to use any Fincy module. '+
-    'Be concise, direct, and professional. Never say you cannot help.';
+  /* System prompt — no apostrophes in string delimiters */
+  var sysPr=(
+    "You are Fincy AI CFO, a professional AI assistant for the Fincy Intelligence platform. "+
+    "Always start your reply with 'Fincy AI:'. Answer in 2-3 sentences. "+
+    "Topics: FP&A analytics, India tax FY2024-25, reconciliation, cash flow, "+
+    "cost intelligence, personal finance, and how to use Fincy modules. "+
+    "Be concise, direct, and helpful. Never say you cannot help."
+  );
 
   var apiMsgs=[{role:'system',content:sysPr}];
   _fcHistory.slice(-6).forEach(function(m){apiMsgs.push(m);});
+  apiMsgs.push({role:'user',content:q});
 
   var groqKey=window.GROQ_KEY||'';
+
+  /* No Groq key — show styled fallback linking to Streamlit app */
   if(!groqKey){
-    /* Redirect to Streamlit app — always gives real AI answer */
-    _appendFincyReply(q,
-      'Fincy AI: I'm fully live inside the Fincy app. Click below to open your AI CFO and ask anything — runs on Groq Llama 3.1, zero setup. '+
-      '<br><br><a href="'+APP+'" target="_blank" '+
-      'style="display:inline-block;background:var(--gold);color:var(--bg);'+
-      'font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:700;'+
-      'letter-spacing:0.08em;text-transform:uppercase;padding:8px 16px;'+
-      'text-decoration:none;margin-top:4px;">Open Fincy App — Chat with AI CFO →</a>'
+    var fbMsg=(
+      "Fincy AI: I am fully live inside the Fincy app \u2014 running on Groq Llama 3.1, zero setup required. "+
+      "<br><br>"+
+      "<a href='"+APP+"' target='_blank' "+
+      "style='display:inline-block;background:#c9a84c;color:#0a0a08;"+
+      "font-family:IBM Plex Mono,monospace;font-size:0.62rem;font-weight:700;"+
+      "letter-spacing:0.08em;text-transform:uppercase;padding:9px 18px;"+
+      "text-decoration:none;margin-top:4px;'>"+
+      "Open Fincy App \u2014 Chat with AI CFO \u2192</a>"
     );
+    document.getElementById(typingId).remove();
+    _appendFincyReply(q,fbMsg);
     return;
   }
 
   fetch('https://api.groq.com/openai/v1/chat/completions',{
     method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
-    body:JSON.stringify({model:'llama-3.1-8b-instant',messages:apiMsgs,max_tokens:300,temperature:0.3})
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+groqKey
+    },
+    body:JSON.stringify({
+      model:'llama-3.1-8b-instant',
+      messages:apiMsgs,
+      max_tokens:250,
+      temperature:0.3
+    })
   })
   .then(function(r){return r.json();})
   .then(function(d){
-    var ans=(d.choices&&d.choices[0]&&d.choices[0].message)?d.choices[0].message.content:'Sorry, try again.';
+    document.getElementById(typingId) && document.getElementById(typingId).remove();
+    var ans=(d.choices&&d.choices[0]&&d.choices[0].message)
+      ? d.choices[0].message.content
+      : 'Fincy AI: Sorry, could not get a response. Please try again.';
     _appendFincyReply(q,ans);
   })
-  .catch(function(e){_appendFincyReply(q,'Error: '+e.message);});
+  .catch(function(e){
+    document.getElementById(typingId) && document.getElementById(typingId).remove();
+    _appendFincyReply(q,'Fincy AI: Connection error \u2014 '+e.message+
+      '. <a href="'+APP+'" target="_blank" style="color:#c9a84c;">Open Fincy App</a>');
+  });
 }
+
 
 function openFincyChat(){
   var box=document.getElementById('fincy-chat-box');
@@ -1364,8 +1390,9 @@ function openFincyChat(){
 }
 
 function _appendFincyReply(q,ans){
-  var typing=document.getElementById('fc-typing');
-  if(typing) typing.remove();
+  /* Remove any typing indicator (now uses unique IDs) */
+  var typingEls=document.querySelectorAll('.fc-typing');
+  typingEls.forEach(function(el){el.remove();});
   _fcHistory.push({role:'assistant',content:ans});
   var msgs=document.getElementById('fincy-chat-msgs');
   var aDiv=document.createElement('div');

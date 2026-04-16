@@ -575,14 +575,15 @@ def show_global_chat():
     with st.sidebar:
         st.markdown("---")
         # Header with live indicator
-        st.markdown(f'''
+        st.markdown('''
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
   <div style="width:7px;height:7px;background:#4ade80;border-radius:50%;
-  flex-shrink:0;animation:pulse 2s infinite;"></div>
+  flex-shrink:0;"></div>
   <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
-  letter-spacing:0.12em;text-transform:uppercase;color:#c9a84c;">
+  letter-spacing:0.12em;text-transform:uppercase;color:#c9a84c;font-weight:700;">
   💬 Chat with Fincy</div>
 </div>''', unsafe_allow_html=True)
+        st.caption("Ask about tax, modules, FP&A, finance…")
 
         with st.container():
             chat_q = st.text_input(
@@ -632,9 +633,13 @@ def show_global_chat():
                 except Exception as e:
                     err = str(e)
                     if "429" in err or "rate_limit" in err.lower():
-                        reply = "⚠️ Rate limit — please wait 30 seconds and try again."
+                        reply = ("⏳ Fincy AI: Rate limit reached — please wait 30 seconds "
+                                 "and try again. (Free Groq tier: 6,000 tokens/min)")
+                    elif "api_key" in err.lower() or "auth" in err.lower():
+                        reply = ("🔑 Fincy AI: API key issue — check GROQ_API_KEY in "
+                                 "Streamlit Secrets. Get a free key at console.groq.com")
                     else:
-                        reply = f"Error: {err}"
+                        reply = f"⚠️ Fincy AI: {err}"
 
             st.session_state.chat_history.append((chat_q.strip(), reply))
             st.rerun()
@@ -3249,9 +3254,7 @@ Runway forecasting · Operating cash health<br>
 # ══════════════════════════════════════════════════════════════════════════════
 _mod = st.session_state.active_module
 
-# ── Chat with Fincy — always-on sidebar chatbot ─────────────────────────────
-show_global_chat()
-
+# ── Route to module — show_global_chat renders its sidebar section ───────────
 if   _mod is None:           show_home()
 elif _mod == "fpa":          run_fpa()
 elif _mod == "recon":        run_recon()
@@ -3260,6 +3263,9 @@ elif _mod == "cost":         run_cost()
 elif _mod == "dataanalyst":  run_dataanalyst()
 elif _mod == "personal":     run_personal()
 elif _mod == "cashflow":     run_cashflow()
+
+# ── Chat with Fincy — always-on; renders AFTER module sidebar items ───────────
+show_global_chat()
 
 st.markdown("""
 <div style="margin-top:40px;border-top:1px solid #1a1a14;padding-top:16px;
