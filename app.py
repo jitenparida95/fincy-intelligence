@@ -294,7 +294,7 @@ def send_to_formspree(name, email, company, role, linkedin):
 
 # ── QUERY PARAM ROUTING — HTML card clicks set ?m=xxx ────────────────────────
 _qp = st.query_params.get("m", None)
-if _qp and _qp in ("fpa","recon","budget","cost","invoice","dataanalyst","personal"):
+if _qp and _qp in ("fpa","recon","budget","cost","dataanalyst","personal"):
     if st.session_state.active_module != _qp:
         st.session_state.active_module = _qp
     st.query_params.clear()   # clean URL after routing
@@ -556,7 +556,7 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
   <span style="width:1px;height:14px;background:#2a2a20;"></span>
   <span style="font-size:0.8rem;color:#a09880;font-weight:300;">
     6 AI modules · FP&amp;A Decision Intelligence · Reconciliation · Budget Tracker
-    · Cost Intelligence · Invoice Agent · Data Analysis Agent
+    · Cost Intelligence · Data Analysis Agent · Personal Finance
   </span>
   <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
   color:#3a3a34;">Session isolated · No code · No credit card</span>
@@ -627,15 +627,7 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
     </div>
     <div class="mhbtn">→ Launch Cost Intelligence</div>
   </a>
-  <a class="mhc" href="{app_url}/?m=invoice" target="_self" style="--mc:#818cf8;">
-    <div class="mhb"><span class="mhi">🧾</span>
-      <div class="mhbdg">AI Agent · New</div>
-      <div class="mht">Invoice Processing Agent</div>
-      <div class="mhd">Upload AP/AR invoice CSV. Detects duplicates, flags overdue payments, identifies anomalies, generates payment action plans.</div>
-      <div class="mhk">Duplicate Detection · Overdue · AP/AR · AI CFO</div>
-    </div>
-    <div class="mhbtn">→ Launch Invoice Agent</div>
-  </a>
+
   <a class="mhc" href="{app_url}/?m=dataanalyst" target="_self" style="--mc:#2dd4bf;">
     <div class="mhb"><span class="mhi">🤖</span>
       <div class="mhbdg">AI Agent · New</div>
@@ -666,7 +658,7 @@ background:#1e1e18;border:1px solid #1e1e18;margin-bottom:2px;">
     font-family:'Playfair Display',serif;font-size:0.85rem;color:#c9a84c;flex-shrink:0;">JP</div>
     <div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;
-      text-transform:uppercase;color:#c9a84c;margin-bottom:3px;">Built by a Finance Practitioner</div>
+      text-transform:uppercase;color:#c9a84c;margin-bottom:3px;">Founder · Jitendra Parida</div>
       <div style="font-size:0.74rem;color:#a09880;font-weight:300;">
         Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt &nbsp;·&nbsp;
         <a href="https://www.linkedin.com/in/jitendraparida95/" target="_blank"
@@ -686,7 +678,7 @@ background:#1e1e18;border:1px solid #1e1e18;margin-bottom:2px;">
 <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#1e1e18;
 border:1px solid #1e1e18;margin-bottom:2px;">
   <div style="background:#101010;padding:13px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">7</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">6</div>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
     text-transform:uppercase;color:#5a5648;margin-top:3px;">AI Modules</div>
   </div>
@@ -1855,172 +1847,9 @@ font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#3a3a34;">
 
 # ══════════════════════════════════════════════════════════════════════════════
 
-# ══════════════════════════════════════════════════════════════════════════════
-# MODULE 5 — INVOICE PROCESSING AGENT
-# ══════════════════════════════════════════════════════════════════════════════
-SAMPLE_INV = """Invoice_ID,Vendor,Amount,Currency,Invoice_Date,Due_Date,Status,Category
-INV-001,Abbott India,125000,INR,2024-01-05,2024-01-20,Paid,Raw Materials
-INV-002,Lupin Limited,87500,INR,2024-01-08,2024-01-23,Overdue,Packaging
-INV-003,Baxter India,152000,INR,2024-01-10,2024-01-25,Paid,Raw Materials
-INV-004,Abbott India,98000,INR,2024-01-12,2024-01-27,Pending,Raw Materials
-INV-005,Alkem Labs,63000,INR,2024-01-15,2024-01-30,Overdue,Logistics
-INV-006,Lupin Limited,87500,INR,2024-01-08,2024-01-23,Pending,Packaging
-INV-007,Baxter India,45000,INR,2024-01-20,2024-02-04,Paid,Services
-INV-008,Abbott India,125000,INR,2024-01-05,2024-01-20,Pending,Raw Materials
-INV-009,Dr Reddys,32000,INR,2024-01-25,2024-02-09,Paid,IT Services
-INV-010,Lupin Limited,195000,INR,2024-01-28,2024-02-12,Overdue,Packaging
-INV-011,Alkem Labs,48000,INR,2024-02-01,2024-02-16,Paid,Logistics
-INV-012,Abbott India,165000,INR,2024-02-03,2024-02-18,Pending,Raw Materials
-INV-013,Baxter India,82000,INR,2024-02-05,2024-02-20,Paid,Raw Materials
-INV-014,Lupin Limited,87500,INR,2024-01-08,2024-01-23,Pending,Packaging
-INV-015,Vision Sales,210000,INR,2024-02-10,2024-02-25,Overdue,Equipment"""
-
-def run_invoice():
-    with st.sidebar:
-        st.markdown("### 🧾 Invoice Agent")
-        st.markdown("---")
-        if st.button("🏠 Module Home", use_container_width=True, key="inv_home"):
-            st.session_state.pop("_inv_sample", None)
-            st.session_state.active_module = None
-            st.rerun()
-        st.markdown("---")
-        st.caption("AI Agent · Groq Llama 3.1")
-
-    page_header("INVOICE PROCESSING AGENT", "AP/AR Intelligence")
-
-    st.markdown("""
-<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #818cf8;
-padding:12px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
-<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-text-transform:uppercase;color:#818cf8;">Invoice AI Agent: </span>
-Upload an AP/AR invoice CSV. The agent detects <strong>duplicate invoices</strong>,
-flags <strong>overdue payments</strong>, identifies <strong>anomalies</strong>,
-and generates a structured <strong>payment action plan</strong>.
-Columns needed: Invoice ID · Vendor · Amount · Date · Status (optional).
-</div>""", unsafe_allow_html=True)
-
-    # Email-to-accounting workflow concept
-    st.markdown("""
-<div style="background:#0d0b18;border:1px solid #818cf8;padding:13px 18px;margin-bottom:18px;">
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-  text-transform:uppercase;color:#818cf8;margin-bottom:8px;">📧 Email → Accounting Workflow</div>
-  <div style="font-size:0.76rem;color:#a09880;font-weight:300;line-height:1.7;">
-    <strong style="color:#e8e2d4;">Coming soon:</strong> Forward invoices received on email
-    directly to your accounting software. Fincy AI will extract vendor, amount, due date,
-    and category automatically — eliminating manual data entry.<br>
-    <span style="color:#5a5648;font-size:0.68rem;">Register your interest via the landing page
-    to be notified when this feature launches.</span>
-  </div>
-</div>""", unsafe_allow_html=True)
-
-    _, cc, _ = st.columns([1,2,1])
-    with cc:
-        inv_file = st.file_uploader("Upload Invoice/AP CSV", type=["csv"], key="inv_upload")
-        st.markdown('''<div style="text-align:center;margin:8px 0 5px;
-font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#3a3a34;">— or use sample —</div>''',
-                    unsafe_allow_html=True)
-        if st.button("🧾 Use Sample Invoice Data", use_container_width=True, key="inv_smpl"):
-            st.session_state["_inv_sample"] = True
-            st.rerun()
-
-    use_sample = st.session_state.get("_inv_sample", False)
-    if use_sample and not inv_file:
-        df = pd.read_csv(io.StringIO(SAMPLE_INV))
-    elif inv_file:
-        try:
-            df = pd.read_csv(inv_file)
-            st.session_state["_inv_sample"] = False
-        except Exception as e:
-            st.error(f"⚠️ Could not read CSV: {e}"); return
-    else:
-        st.markdown('''<div class="box" style="opacity:0.6;font-size:0.74rem;">
-↑ Upload your invoice/AP CSV or use the sample data above.<br><br>
-<strong>Output:</strong> Invoice summary · Duplicate flags · Overdue alerts ·
-Vendor breakdown · Payment action plan
-</div>''', unsafe_allow_html=True)
-        return
-
-    cols     = list(df.columns)
-    amt_col  = next((c for c in cols if any(k in c.lower() for k in ["amount","amt","value","total"])), cols[0])
-    id_col   = next((c for c in cols if any(k in c.lower() for k in ["id","no","number","ref","invoice"])), cols[0])
-    ven_col  = next((c for c in cols if any(k in c.lower() for k in ["vendor","supplier","party"])), None)
-    sts_col  = next((c for c in cols if "status" in c.lower()), None)
-    cat_col  = next((c for c in cols if "cat" in c.lower()), None)
-
-    df[amt_col] = pd.to_numeric(df[amt_col], errors="coerce").fillna(0)
-    total_inv  = len(df)
-    total_val  = df[amt_col].sum()
-    avg_val    = df[amt_col].mean()
-
-    dup_mask = df.duplicated(subset=[amt_col, ven_col], keep=False) if ven_col else pd.Series([False]*len(df))
-    dup_count   = int(dup_mask.sum())
-    ov_count    = int(df[sts_col].str.lower().str.contains("overdue|past due",na=False).sum()) if sts_col else 0
-    pend_count  = int(df[sts_col].str.lower().str.contains("pending|open",na=False).sum()) if sts_col else 0
-    top_vendor  = df.groupby(ven_col)[amt_col].sum().idxmax() if ven_col else "N/A"
-
-    st.markdown('<div class="sec-label">Invoice Summary</div>', unsafe_allow_html=True)
-    _dc = "#f87171" if dup_count > 0 else "#4ade80"
-    _oc = "#f87171" if ov_count  > 0 else "#4ade80"
-    st.markdown(f"""
-<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">
-  <div class="kpi-card" style="--ac:#818cf8"><div class="kpi-label">Total Invoices</div>
-    <div class="kpi-value">{total_inv:,}</div></div>
-  <div class="kpi-card" style="--ac:#c9a84c"><div class="kpi-label">Total Value</div>
-    <div class="kpi-value">{fmt_m(total_val)}</div></div>
-  <div class="kpi-card" style="--ac:{_dc}"><div class="kpi-label">Duplicates</div>
-    <div class="kpi-value" style="color:{_dc};">{dup_count:,}</div>
-    <div class="kpi-delta">{"⚠️ Flag" if dup_count>0 else "✅ Clean"}</div></div>
-  <div class="kpi-card" style="--ac:{_oc}"><div class="kpi-label">Overdue</div>
-    <div class="kpi-value" style="color:{_oc};">{ov_count:,}</div>
-    <div class="kpi-delta">{"⚠️ Urgent" if ov_count>0 else "✅ None"}</div></div>
-  <div class="kpi-card" style="--ac:#fbbf24"><div class="kpi-label">Pending</div>
-    <div class="kpi-value">{pend_count:,}</div></div>
-</div>""", unsafe_allow_html=True)
-
-    c1, c2 = st.columns(2)
-    with c1:
-        if ven_col:
-            vg = df.groupby(ven_col)[amt_col].sum().sort_values(ascending=False).head(8)
-            fig = go.Figure(go.Bar(x=vg.values, y=vg.index, orientation="h",
-                marker_color="#818cf8",
-                text=[f"{v:,.0f}" for v in vg.values], textposition="auto"))
-            fig.update_layout(**PLOTLY_BASE, title="Invoice Value by Vendor",
-                              height=280, xaxis=AXIS, yaxis=AXIS)
-            st.plotly_chart(fig, use_container_width=True)
-    with c2:
-        if sts_col:
-            sg = df.groupby(sts_col)[amt_col].sum().reset_index()
-            clrs = {"Paid":"#4ade80","Overdue":"#f87171","Pending":"#fbbf24","Open":"#60a5fa"}
-            fig = go.Figure(go.Pie(
-                labels=sg[sts_col], values=sg[amt_col], hole=0.55,
-                marker=dict(colors=[clrs.get(str(s),"#818cf8") for s in sg[sts_col]],
-                            line=dict(color="#0a0a08",width=2)),
-                textinfo="label+percent", textfont=dict(size=9)))
-            fig.update_layout(**PLOTLY_BASE, title="Invoice Value by Status",
-                              height=280, showlegend=False)
-            st.plotly_chart(fig, use_container_width=True)
-
-    if dup_count > 0:
-        st.markdown(f'<div class="sec-label">⚠️ Duplicate Invoice Flags ({dup_count} rows)</div>',
-                    unsafe_allow_html=True)
-        st.dataframe(df[dup_mask].sort_values(amt_col,ascending=False),
-                     use_container_width=True, hide_index=True)
-
-    st.markdown('<div class="sec-label">Full Invoice Register</div>', unsafe_allow_html=True)
-    st.dataframe(df, use_container_width=True, hide_index=True)
-    st.download_button("📥 Download Invoice Report (CSV)",
-                       df.to_csv(index=False).encode(),
-                       "Fincy_Invoice_Report.csv","text/csv")
-
-    inv_ctx = (f"Invoice Processing: {total_inv} invoices | Total={fmt_m(total_val)} | "
-               f"Avg={fmt_m(avg_val)} | Duplicates={dup_count} | "
-               f"Overdue={ov_count} | Pending={pend_count} | Top Vendor={top_vendor}")
-    ai_cfo_section(inv_ctx, "invoice",
-        "e.g. Which invoices need urgent action? Any duplicate payments? Payment priority?")
-
 
 # ══════════════════════════════════════════════════════════════════════════════
-# MODULE 6 — DATA ANALYSIS AGENT
+# MODULE 5 — DATA ANALYSIS AGENT
 # ══════════════════════════════════════════════════════════════════════════════
 def run_dataanalyst():
     with st.sidebar:
@@ -2157,99 +1986,205 @@ font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#3a3a34;">— or u
 
 
 
+
 # ══════════════════════════════════════════════════════════════════════════════
-# MODULE 7 — PERSONAL FINANCE DECISION INTELLIGENCE
+# MODULE 6 — PERSONAL FINANCE DECISION ENGINE
 # ══════════════════════════════════════════════════════════════════════════════
+
+# ── Tax engine helpers (India-specific, FY 2024-25) ───────────────────────────
+
+def _calc_old_tax(taxable_income):
+    """Old regime slabs FY 2024-25."""
+    if taxable_income <= 250000:  return 0
+    tax = 0
+    slabs = [(250000,500000,0.05),(500000,1000000,0.20),(1000000,float("inf"),0.30)]
+    prev = 0
+    for lo, hi, rate in [(0,250000,0),(250000,500000,0.05),(500000,1000000,0.20),(1000000,float("inf"),0.30)]:
+        if taxable_income > lo:
+            tax += min(taxable_income, hi) * rate - lo * rate
+    # Rebate 87A: if income <=500000, no tax
+    if taxable_income <= 500000: return 0
+    # Surcharge & cess (simplified)
+    return tax * 1.04  # 4% cess
+
+def _calc_new_tax(income):
+    """New regime slabs FY 2024-25 (Budget 2024)."""
+    slabs = [
+        (300000,  0.00),
+        (600000,  0.05),
+        (900000,  0.10),
+        (1200000, 0.15),
+        (1500000, 0.20),
+        (float("inf"), 0.30)
+    ]
+    # Standard deduction ₹75,000 under new regime
+    taxable = max(0, income - 75000)
+    if taxable <= 300000: return 0
+    tax = 0
+    prev_limit = 0
+    limits = [300000,600000,900000,1200000,1500000]
+    rates  = [0.00, 0.05, 0.10, 0.15, 0.20, 0.30]
+    for i, rate in enumerate(rates):
+        lo = limits[i-1] if i > 0 else 0
+        hi = limits[i] if i < len(limits) else float("inf")
+        if taxable <= lo: break
+        taxable_in_slab = min(taxable, hi) - lo
+        tax += taxable_in_slab * rate
+    # Rebate 87A: if income <=700000, no tax under new regime
+    if income <= 700000: return 0
+    return tax * 1.04  # 4% cess
+
+def _extract_amount(q):
+    """Robust amount extraction: handles K, lakh, cr, ₹ symbols, plain numbers."""
+    import re
+    q_lower = q.lower()
+    best = 0
+    patterns = [
+        (r"₹?\s*(\d+(?:\.\d+)?)\s*(?:lakh|l\b)",   lambda m: float(m.group(1)) * 100000),
+        (r"₹?\s*(\d+(?:\.\d+)?)\s*(?:cr(?:ore)?\b)", lambda m: float(m.group(1)) * 10000000),
+        (r"₹?\s*(\d+(?:\.\d+)?)\s*k\b",              lambda m: float(m.group(1)) * 1000),
+        (r"₹\s*(\d+(?:,\d+)*)",                          lambda m: float(m.group(1).replace(",",""))),
+        (r"\b(\d{4,})\b",                                lambda m: float(m.group(1))),
+    ]
+    for pat, fn in patterns:
+        for m in re.finditer(pat, q_lower):
+            try:
+                v = fn(m)
+                if v > best: best = v
+            except: pass
+    return best
+
+def _spending_alert(income, expense):
+    """Overspending detection."""
+    if income <= 0: return None, None
+    pct = expense / income * 100
+    if pct >= 80:
+        return "🚨 HIGH RISK", f"You are spending {pct:.1f}% of income. Overspending detected — immediate review needed."
+    elif pct >= 60:
+        return "⚠️ WARNING", f"You are spending {pct:.1f}% of income. Approaching the 80% danger threshold."
+    else:
+        return "✅ HEALTHY", f"Spending at {pct:.1f}% of income — within safe limits."
+
+def _wealth_projection(monthly_surplus, current_savings, annual_return=0.08):
+    """Simple wealth projection at 8% annual return."""
+    import math
+    results = {}
+    for years in [1, 3, 5, 10]:
+        months = years * 12
+        r = annual_return / 12
+        if r > 0:
+            fv = current_savings * (1+r)**months + monthly_surplus * ((1+r)**months - 1) / r
+        else:
+            fv = current_savings + monthly_surplus * months
+        results[years] = fv
+    return results
+
+
 def run_personal():
     with st.sidebar:
         st.markdown("### 💰 Personal Finance")
         st.markdown("---")
         if st.button("🏠 Module Home", use_container_width=True, key="pf_home"):
             for k in ["_pf_income","_pf_expense","_pf_savings","_pf_fixed",
-                      "_pf_goal","_pf_setup"]:
+                      "_pf_goal","_pf_setup","_pf_invest","_pf_regime"]:
                 st.session_state.pop(k, None)
             st.session_state.active_module = None
             st.rerun()
         st.markdown("---")
-        st.caption("AI Personal Finance Advisor")
+        st.caption("AI Personal CFO · Tax Advisor · Wealth Coach")
 
-    page_header("PERSONAL FINANCE DECISION ENGINE", "Can I Afford It?")
+    page_header("PERSONAL FINANCE DECISION ENGINE", "CFO · Tax Advisor · Wealth Coach")
 
     st.markdown("""
 <div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #a78bfa;
 padding:12px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
 <span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-text-transform:uppercase;color:#a78bfa;">How it works: </span>
-Enter your monthly financial data. Then ask any personal finance question —
-<em>"Can I afford a ₹20,000 phone?"</em> or <em>"Should I invest ₹10,000 this month?"</em>
-The AI gives you a <strong>Safe / Moderate / Risky</strong> decision with exact savings impact.
+text-transform:uppercase;color:#a78bfa;">Your Personal AI CFO: </span>
+Ask financial questions · Compare tax regimes · Get overspending alerts · Project wealth.
+Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — e.g. "Can I buy a 60K phone?" or "Invest 1.5 lakh?"
 </div>""", unsafe_allow_html=True)
 
-    # ── Step 1: Financial Profile Setup ──────────────────────────────────────
+    # ── Step 1: Financial Profile ─────────────────────────────────────────────
     if not st.session_state.get("_pf_setup"):
         st.markdown('<div class="sec-label">Step 1 — Your Financial Profile</div>',
                     unsafe_allow_html=True)
-        st.markdown("""
-<div class="box" style="font-size:0.74rem;color:#a09880;margin-bottom:16px;">
-Enter your monthly figures below. This data stays in your session only — never stored.
-</div>""", unsafe_allow_html=True)
-
         c1, c2 = st.columns(2)
         with c1:
-            income  = st.number_input("💵 Monthly Income (₹)", min_value=0, value=80000,
-                                      step=1000, key="pf_inc")
-            expense = st.number_input("💸 Monthly Expenses (₹)", min_value=0, value=50000,
-                                      step=1000, key="pf_exp")
-            savings = st.number_input("🏦 Current Savings (₹)", min_value=0, value=30000,
-                                      step=1000, key="pf_sav")
+            income  = st.number_input("💵 Annual Income (₹)", min_value=0,
+                                      value=960000, step=10000, key="pf_inc",
+                                      help="Annual gross income e.g. 9,60,000 = ₹80K/month")
+            expense = st.number_input("💸 Monthly Expenses (₹)", min_value=0,
+                                      value=50000, step=1000, key="pf_exp")
+            savings = st.number_input("🏦 Current Savings (₹)", min_value=0,
+                                      value=30000, step=1000, key="pf_sav")
         with c2:
-            fixed   = st.number_input("🔒 Fixed Expenses/month (₹)", min_value=0, value=30000,
-                                      step=1000, key="pf_fix",
-                                      help="Rent, EMI, insurance — expenses you cannot reduce")
-            goal    = st.text_input("🎯 Financial Goal", value="Save ₹5L in 12 months",
-                                    key="pf_goal_inp")
+            invest  = st.number_input("📈 Annual Investments for 80C (₹)", min_value=0,
+                                      value=50000, step=5000, key="pf_inv",
+                                      help="PF, ELSS, LIC, PPF etc. (max ₹1,50,000 for deduction)")
+            fixed   = st.number_input("🔒 Fixed Monthly Expenses (₹)", min_value=0,
+                                      value=30000, step=1000, key="pf_fix",
+                                      help="EMI, rent, insurance — cannot reduce")
+            goal    = st.text_input("🎯 Financial Goal",
+                                    value="Save ₹5L in 12 months", key="pf_goal_inp")
+            regime  = st.radio("Preferred Tax Regime", ["Compare Both","Old Regime","New Regime"],
+                               key="pf_regime_inp", horizontal=True)
 
         if st.button("✅ Set My Financial Profile", use_container_width=True, key="pf_confirm"):
             if income <= 0:
-                st.error("Please enter your monthly income.")
-            elif expense > income:
-                st.warning("⚠️ Your expenses exceed income — review your numbers.")
+                st.error("Please enter your annual income.")
             else:
-                st.session_state["_pf_income"]  = income
-                st.session_state["_pf_expense"] = expense
-                st.session_state["_pf_savings"] = savings
-                st.session_state["_pf_fixed"]   = fixed
-                st.session_state["_pf_goal"]    = goal
-                st.session_state["_pf_setup"]   = True
+                monthly_inc = income / 12
+                st.session_state.update({
+                    "_pf_income":  income,       # annual
+                    "_pf_expense": expense,      # monthly
+                    "_pf_savings": savings,
+                    "_pf_fixed":   fixed,
+                    "_pf_goal":    goal,
+                    "_pf_invest":  invest,
+                    "_pf_regime":  regime,
+                    "_pf_setup":   True,
+                })
                 st.rerun()
         return
 
-    # ── Profile loaded ────────────────────────────────────────────────────────
-    income  = st.session_state["_pf_income"]
-    expense = st.session_state["_pf_expense"]
-    savings = st.session_state["_pf_savings"]
-    fixed   = st.session_state["_pf_fixed"]
-    goal    = st.session_state["_pf_goal"]
-    surplus = income - expense
+    # ── Load profile ──────────────────────────────────────────────────────────
+    income   = st.session_state["_pf_income"]     # annual
+    expense  = st.session_state["_pf_expense"]    # monthly
+    savings  = st.session_state["_pf_savings"]
+    fixed    = st.session_state["_pf_fixed"]
+    goal     = st.session_state["_pf_goal"]
+    invest   = st.session_state.get("_pf_invest", 0)
+    regime   = st.session_state.get("_pf_regime", "Compare Both")
+    m_income = income / 12
+    surplus  = m_income - expense
 
-    # ── Profile summary ───────────────────────────────────────────────────────
-    st.markdown('<div class="sec-label">Your Financial Profile</div>', unsafe_allow_html=True)
-    _sur_col = "#4ade80" if surplus > 0 else "#f87171"
-    _sr_pct  = savings/income*100 if income else 0
-    st.markdown(f"""
-<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">
+    # ── TAB LAYOUT ────────────────────────────────────────────────────────────
+    tabs = st.tabs(["💬 Decision Engine", "🧾 Tax Advisor", "📈 Wealth Coach", "⚠️ Alerts"])
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 1 — DECISION ENGINE
+    # ════════════════════════════════════════════════════════════════
+    with tabs[0]:
+        st.markdown('<div class="sec-label">Your Financial Profile</div>',
+                    unsafe_allow_html=True)
+        _sur_col = "#4ade80" if surplus > 0 else "#f87171"
+        _sr_pct  = savings / m_income * 100 if m_income else 0
+        st.markdown(f"""
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;">
   <div class="kpi-card" style="--ac:#a78bfa">
     <div class="kpi-label">Monthly Income</div>
-    <div class="kpi-value">₹{income:,}</div>
+    <div class="kpi-value">₹{m_income:,.0f}</div>
+    <div class="kpi-delta">₹{income:,.0f}/yr</div>
   </div>
   <div class="kpi-card" style="--ac:#f87171">
     <div class="kpi-label">Monthly Expenses</div>
     <div class="kpi-value">₹{expense:,}</div>
+    <div class="kpi-delta">{expense/m_income*100:.1f}% of income</div>
   </div>
   <div class="kpi-card" style="--ac:{_sur_col}">
     <div class="kpi-label">Monthly Surplus</div>
-    <div class="kpi-value" style="color:{_sur_col};">₹{surplus:,}</div>
-    <div class="kpi-delta">{surplus/income*100:.1f}% of income</div>
+    <div class="kpi-value" style="color:{_sur_col};">₹{surplus:,.0f}</div>
+    <div class="kpi-delta">{surplus/m_income*100:.1f}% of income</div>
   </div>
   <div class="kpi-card" style="--ac:#c9a84c">
     <div class="kpi-label">Current Savings</div>
@@ -2262,190 +2197,419 @@ Enter your monthly figures below. This data stays in your session only — never
   </div>
 </div>""", unsafe_allow_html=True)
 
-    if st.button("✏️ Edit Profile", key="pf_edit"):
-        st.session_state["_pf_setup"] = False
-        st.rerun()
+        if st.button("✏️ Edit Profile", key="pf_edit"):
+            st.session_state["_pf_setup"] = False
+            st.rerun()
 
-    st.divider()
+        st.markdown('<div class="sec-label">Ask Your Financial Question</div>',
+                    unsafe_allow_html=True)
 
-    # ── Step 2: Ask a financial question ─────────────────────────────────────
-    st.markdown('<div class="sec-label">Step 2 — Ask Your Financial Question</div>',
-                unsafe_allow_html=True)
+        # Quick presets
+        qc1,qc2,qc3,qc4 = st.columns(4)
+        preset_q = None
+        with qc1:
+            if st.button("📱 Buy Gadget",    use_container_width=True, key="pf_q1"):
+                preset_q = "Can I afford a ₹20,000 phone this month?"
+        with qc2:
+            if st.button("✈️ Travel",         use_container_width=True, key="pf_q2"):
+                preset_q = "Should I go on a ₹15,000 weekend trip?"
+        with qc3:
+            if st.button("📈 Invest",         use_container_width=True, key="pf_q3"):
+                preset_q = "Can I invest ₹10,000 in mutual funds this month?"
+        with qc4:
+            if st.button("🛒 Big Purchase",   use_container_width=True, key="pf_q4"):
+                preset_q = "Can I buy a ₹50,000 laptop right now?"
+        if preset_q:
+            st.session_state["_pf_preset"] = preset_q
 
-    # Quick preset buttons
-    st.markdown("**Quick questions:**", unsafe_allow_html=False)
-    qc1, qc2, qc3, qc4 = st.columns(4)
-    preset_q = None
-    with qc1:
-        if st.button("📱 Buy Gadget", use_container_width=True, key="pf_q1"):
-            preset_q = "Can I afford a ₹20,000 phone this month?"
-    with qc2:
-        if st.button("✈️ Travel", use_container_width=True, key="pf_q2"):
-            preset_q = "Should I go on a ₹15,000 weekend trip?"
-    with qc3:
-        if st.button("📈 Invest", use_container_width=True, key="pf_q3"):
-            preset_q = "Can I invest ₹10,000 in mutual funds this month?"
-    with qc4:
-        if st.button("🛒 Big Purchase", use_container_width=True, key="pf_q4"):
-            preset_q = "Can I buy a ₹50,000 laptop right now?"
+        default_q = st.session_state.get("_pf_preset", "")
+        user_q = st.text_input(
+            "Ask:", value=default_q,
+            placeholder="e.g. Can I afford a 60K phone? Should I invest 1.5 lakh?",
+            key="pf_question", label_visibility="collapsed")
 
-    if preset_q:
-        st.session_state["_pf_preset"] = preset_q
+        if st.button("🔍 Analyze", use_container_width=True, key="pf_analyze"):
+            if not user_q.strip():
+                st.warning("Please enter a question.")
+                st.stop()
 
-    # Text input — pre-fill with preset if selected
-    default_q = st.session_state.get("_pf_preset", "")
-    user_q = st.text_input(
-        "Ask your personal finance question:",
-        value=default_q,
-        placeholder="e.g. Can I afford a ₹20,000 phone? Should I invest ₹10,000?",
-        key="pf_question",
-        label_visibility="collapsed"
-    )
+            # ── Fixed robust amount extraction ───────────────────────────
+            amount = _extract_amount(user_q)
 
-    analyze_btn = st.button("🔍 Analyze", use_container_width=True, key="pf_analyze",
-                             type="primary")
-
-    if analyze_btn and user_q.strip():
-        # ── Extract amount from question ──────────────────────────────────
-        import re as _re
-        amounts = _re.findall(r'₹?([0-9,]+)(?:,000)?', user_q.replace(",",""))
-        # Also catch written forms like "20000" or "20,000"
-        raw_amounts = _re.findall(r'[₹]?\s*([0-9]+(?:,[0-9]+)*)\s*(?:k|K|thousand|lakh|L)?',
-                                  user_q)
-        amount = 0
-        for a_str in amounts:
-            try:
-                v = float(a_str.replace(",",""))
-                if v > amount: amount = v
-            except: pass
-
-        # Decide: Safe / Moderate / Risky
-        if savings > 0:
-            pct_of_savings = (amount / savings * 100) if amount > 0 else 0
-            if amount <= savings * 0.30:
-                decision = "SAFE ✅"
-                decision_color = "#4ade80"
-                decision_bg    = "rgba(74,222,128,0.08)"
-            elif amount <= savings * 0.60:
-                decision = "MODERATE ⚠️"
-                decision_color = "#fbbf24"
-                decision_bg    = "rgba(251,191,36,0.08)"
+            # ── Decision logic ───────────────────────────────────────────
+            if savings > 0 and amount > 0:
+                pct_sav = amount / savings * 100
+                if amount <= savings * 0.30:
+                    decision, dcol, dbg = "SAFE ✅",     "#4ade80", "rgba(74,222,128,0.08)"
+                elif amount <= savings * 0.60:
+                    decision, dcol, dbg = "MODERATE ⚠️", "#fbbf24", "rgba(251,191,36,0.08)"
+                else:
+                    decision, dcol, dbg = "RISKY ❌",    "#f87171", "rgba(248,113,113,0.08)"
+            elif amount == 0:
+                decision, dcol, dbg = "ADVISORY 💡", "#a78bfa", "rgba(167,139,250,0.08)"
+                pct_sav = 0
             else:
-                decision = "RISKY ❌"
-                decision_color = "#f87171"
-                decision_bg    = "rgba(248,113,113,0.08)"
-        else:
-            decision = "RISKY ❌"
-            decision_color = "#f87171"
-            decision_bg    = "rgba(248,113,113,0.08)"
-            pct_of_savings = 100
+                decision, dcol, dbg = "RISKY ❌",    "#f87171", "rgba(248,113,113,0.08)"
+                pct_sav = 100
 
-        remaining_savings = max(0, savings - amount)
-        surplus_months    = (amount / surplus) if surplus > 0 else float('inf')
+            remaining = max(0, savings - amount)
+            months_needed = (amount / surplus) if surplus > 0 else float("inf")
 
-        # ── Show immediate decision card ──────────────────────────────────
-        st.markdown(f"""
-<div style="background:{decision_bg};border:2px solid {decision_color};
-padding:20px 24px;margin:16px 0;border-radius:0;">
-  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.18em;
+            # ── Decision card ─────────────────────────────────────────────
+            months_line = (f'<div style="margin-top:10px;font-size:0.74rem;color:#5a5648;">'
+                           f'Months of surplus to cover: <strong style="color:#e8e2d4;">{months_needed:.1f}</strong></div>'
+                           if amount > 0 and surplus > 0 else "")
+            st.markdown(f"""
+<div style="background:{dbg};border:2px solid {dcol};padding:20px 24px;margin:14px 0;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.16em;
   text-transform:uppercase;color:#5a5648;margin-bottom:8px;">Financial Decision</div>
-  <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
-  color:{decision_color};margin-bottom:12px;">{decision}</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;">
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
-      text-transform:uppercase;color:#5a5648;margin-bottom:4px;">Amount</div>
-      <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">₹{amount:,.0f}</div>
-    </div>
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
-      text-transform:uppercase;color:#5a5648;margin-bottom:4px;">Savings Impact</div>
-      <div style="font-size:1rem;font-weight:600;color:{decision_color};">
-        {pct_of_savings:.1f}% of savings
-      </div>
-    </div>
-    <div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
-      text-transform:uppercase;color:#5a5648;margin-bottom:4px;">Remaining Savings</div>
-      <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">₹{remaining_savings:,.0f}</div>
-    </div>
+  <div style="font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;
+  color:{dcol};margin-bottom:10px;">{decision}</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;text-transform:uppercase;
+    color:#5a5648;margin-bottom:3px;">Amount Detected</div>
+    <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">
+    {"₹{:,.0f}".format(amount) if amount > 0 else "N/A — Advisory question"}</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;text-transform:uppercase;
+    color:#5a5648;margin-bottom:3px;">Savings Impact</div>
+    <div style="font-size:1rem;font-weight:600;color:{dcol};">
+    {"{:.1f}%".format(pct_sav) if amount > 0 else "—"}</div></div>
+    <div><div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;text-transform:uppercase;
+    color:#5a5648;margin-bottom:3px;">Savings After</div>
+    <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">₹{remaining:,.0f}</div></div>
   </div>
-  {f'<div style="margin-top:12px;font-size:0.74rem;color:#5a5648;">Months of surplus needed: <strong style="color:#e8e2d4;">{surplus_months:.1f} months</strong></div>' if surplus > 0 and amount > 0 else ""}
+  {months_line}
 </div>""", unsafe_allow_html=True)
 
-        # ── AI Analysis ───────────────────────────────────────────────────
-        api_key = _get_groq_key()
-        if api_key:
-            with st.spinner("Personal Finance AI analysing…"):
-                try:
-                    from groq import Groq
-                    pf_prompt = (
-                        "You are a senior personal finance advisor. Be direct, practical, "
-                        "and speak like a trusted CFO advising an individual.\n\n"
-                        f"USER FINANCIAL PROFILE:\n"
-                        f"Monthly Income: ₹{income:,}\n"
-                        f"Monthly Expenses: ₹{expense:,}\n"
-                        f"Monthly Surplus: ₹{surplus:,}\n"
-                        f"Current Savings: ₹{savings:,}\n"
-                        f"Fixed Expenses: ₹{fixed:,}\n"
-                        f"Financial Goal: {goal}\n\n"
-                        f"USER QUESTION: {user_q.strip()}\n\n"
-                        f"SYSTEM DECISION: {decision}\n"
-                        f"Amount: ₹{amount:,.0f} | Impact: {pct_of_savings:.1f}% of savings "
-                        f"| Savings after: ₹{remaining_savings:,}\n\n"
-                        "Respond in this EXACT format:\n\n"
-                        "**Decision:** [Yes/No/Maybe — one clear answer]\n\n"
-                        "**Explanation:**\n"
-                        "[2-3 sentences with specific numbers — why this decision]\n\n"
-                        "**Savings Impact:**\n"
-                        f"Savings drop from ₹{savings:,} → ₹{remaining_savings:,} ({pct_of_savings:.1f}% reduction)\n"
-                        "[What this means for the financial goal]\n\n"
-                        "**Recommendation:**\n"
-                        "[1 specific actionable suggestion with a number]\n\n"
-                        "**Smart Alternative (if risky/moderate):**\n"
-                        "[A cheaper or better-timed option]\n\n"
-                        "Rules: use ₹ symbols, mention specific numbers, no generic advice."
-                    )
-                    resp = Groq(api_key=api_key).chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role":"user","content":pf_prompt}],
-                        max_tokens=600, temperature=0.3)
-                    ai_ans = resp.choices[0].message.content
-                except Exception as e:
-                    ai_ans = f"⚠️ AI error: {e}"
+            # ── AI response ───────────────────────────────────────────────
+            api_key = _get_groq_key()
+            if api_key:
+                # Calculate tax context for richer AI
+                old_t = _calc_old_tax(max(0, income - 150000 - invest))
+                new_t = _calc_new_tax(income)
+                better = "Old" if old_t < new_t else "New"
+                tax_context = (f"Annual tax (Old Regime): ₹{old_t:,.0f} | "
+                               f"Annual tax (New Regime): ₹{new_t:,.0f} | "
+                               f"Better regime: {better}")
+                wealth_proj = _wealth_projection(max(0,surplus), savings)
 
-            st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ai_ans}</div>''',
+                with st.spinner("AI CFO analysing…"):
+                    try:
+                        from groq import Groq
+                        pf_prompt = (
+                            "You are a senior personal finance advisor, tax expert, and wealth coach. "
+                            "Be direct, practical, and give specific numbers.\n\n"
+                            f"USER FINANCIAL PROFILE:\n"
+                            f"Annual Income: ₹{income:,} (Monthly: ₹{m_income:,.0f})\n"
+                            f"Monthly Expenses: ₹{expense:,} | Surplus: ₹{surplus:,.0f}\n"
+                            f"Current Savings: ₹{savings:,} | 80C Investments: ₹{invest:,}\n"
+                            f"Fixed Expenses: ₹{fixed:,} | Goal: {goal}\n"
+                            f"Tax Context: {tax_context}\n"
+                            f"Wealth Projection (at 8% returns): "
+                            f"1yr=₹{wealth_proj[1]:,.0f} | 3yr=₹{wealth_proj[3]:,.0f} | "
+                            f"5yr=₹{wealth_proj[5]:,.0f}\n\n"
+                            f"USER QUESTION: {user_q.strip()}\n"
+                            f"SYSTEM DECISION: {decision}\n"
+                            f"Amount: ₹{amount:,.0f} | Savings Impact: {pct_sav:.1f}%\n\n"
+                            "Respond in this EXACT format:\n\n"
+                            "**Decision:** [Yes/No/Maybe — one direct answer]\n\n"
+                            "**Explanation:** [2-3 sentences with ₹ numbers — why this decision]\n\n"
+                            "**Savings Impact:** [Exact calculation + what it means for the goal]\n\n"
+                            "**Tax Angle:** [How this decision relates to tax — e.g. if investing, mention 80C benefit]\n\n"
+                            "**Recommendation:** [1 specific actionable suggestion with ₹ target]\n\n"
+                            "**Smart Alternative:** [Better-timed or cheaper option if risky/moderate]\n\n"
+                            "Rules: use ₹, reference exact numbers, no generic advice."
+                        )
+                        resp = Groq(api_key=api_key).chat.completions.create(
+                            model="llama-3.1-8b-instant",
+                            messages=[{"role":"user","content":pf_prompt}],
+                            max_tokens=700, temperature=0.3)
+                        ai_ans = resp.choices[0].message.content
+                    except Exception as e:
+                        ai_ans = f"⚠️ {e}"
+
+                st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ai_ans}</div>''',
+                            unsafe_allow_html=True)
+                try:
+                    _pdf_text = (f"FINCY — PERSONAL FINANCE DECISION REPORT\n{'='*50}\n\n"
+                                 f"Question: {user_q}\nDecision: {decision}\n"
+                                 f"Amount: ₹{amount:,.0f} | Savings Impact: {pct_sav:.1f}%\n"
+                                 f"Remaining Savings: ₹{remaining:,.0f}\n\n"
+                                 f"AI Analysis:\n{ai_ans}\n\n"
+                                 f"Profile: Income=₹{income:,}/yr | Expenses=₹{expense:,}/mo | "
+                                 f"Savings=₹{savings:,} | Goal={goal}")
+                    st.download_button("📄 Download Finance Report (PDF)",
+                                       data=generate_pdf(_pdf_text),
+                                       file_name="Fincy_Personal_Finance_Report.pdf",
+                                       mime="application/pdf", key="pf_pdf")
+                except Exception:
+                    pass
+            else:
+                st.info("Configure GROQ_API_KEY in Streamlit Secrets for AI analysis.")
+
+            st.session_state.pop("_pf_preset", None)
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 2 — TAX ADVISOR
+    # ════════════════════════════════════════════════════════════════
+    with tabs[1]:
+        st.markdown('<div class="sec-label">India Tax Calculator — FY 2024-25</div>',
+                    unsafe_allow_html=True)
+
+        t1, t2, t3 = st.columns(3)
+        with t1:
+            tax_income = st.number_input("Annual Income (₹)", min_value=0,
+                                         value=income, step=10000, key="tax_inc")
+        with t2:
+            sec80c  = st.number_input("Section 80C Investments (₹)", min_value=0,
+                                      value=min(invest, 150000), max_value=150000,
+                                      step=5000, key="tax_80c",
+                                      help="PF, ELSS, LIC, PPF, NSC — max ₹1,50,000")
+        with t3:
+            sec80d  = st.number_input("Section 80D — Health Insurance (₹)", min_value=0,
+                                      value=25000, max_value=100000,
+                                      step=5000, key="tax_80d",
+                                      help="Self+Family up to ₹25,000; parents up to ₹50,000")
+
+        hra_exempt = st.number_input("HRA Exemption (₹, if applicable)", min_value=0,
+                                      value=0, step=5000, key="tax_hra",
+                                      help="Actual HRA received minus 10% of basic salary")
+
+        # Calculate
+        total_deductions_old = min(sec80c, 150000) + sec80d + hra_exempt + 50000  # +50K std deduction
+        taxable_old = max(0, tax_income - total_deductions_old)
+        old_tax     = _calc_old_tax(taxable_old)
+        new_tax     = _calc_new_tax(tax_income)
+        saving_diff = abs(old_tax - new_tax)
+        better_reg  = "Old Regime" if old_tax < new_tax else "New Regime"
+        better_col  = "#4ade80"
+        worse_col   = "#f87171"
+
+        st.markdown(f"""
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;">
+  <div class="kpi-card" style="--ac:#c9a84c">
+    <div class="kpi-label">Old Regime Tax</div>
+    <div class="kpi-value" style="color:{'#4ade80' if old_tax < new_tax else '#f87171'};">
+      ₹{old_tax:,.0f}</div>
+    <div class="kpi-delta">Deductions: ₹{total_deductions_old:,.0f}</div>
+  </div>
+  <div class="kpi-card" style="--ac:#818cf8">
+    <div class="kpi-label">New Regime Tax</div>
+    <div class="kpi-value" style="color:{'#4ade80' if new_tax < old_tax else '#f87171'};">
+      ₹{new_tax:,.0f}</div>
+    <div class="kpi-delta">Std deduction: ₹75,000</div>
+  </div>
+  <div class="kpi-card" style="--ac:#4ade80">
+    <div class="kpi-label">Better Regime</div>
+    <div class="kpi-value" style="color:#4ade80;">{better_reg}</div>
+    <div class="kpi-delta">Saves ₹{saving_diff:,.0f}</div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+        # Visual comparison bar
+        max_tax = max(old_tax, new_tax, 1)
+        old_pct = old_tax / max_tax * 100
+        new_pct = new_tax / max_tax * 100
+        st.markdown(f"""
+<div style="background:#101010;border:1px solid #1e1e18;padding:16px;margin-bottom:16px;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;
+  text-transform:uppercase;color:#5a5648;margin-bottom:12px;">Tax Comparison Visual</div>
+  <div style="margin-bottom:10px;">
+    <div style="font-size:0.74rem;color:#a09880;margin-bottom:4px;">Old Regime — ₹{old_tax:,.0f}</div>
+    <div style="background:#1e1e18;height:22px;border-radius:0;position:relative;">
+      <div style="background:{'#4ade80' if old_tax<new_tax else '#f87171'};width:{old_pct:.1f}%;
+      height:100%;display:flex;align-items:center;padding-left:8px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+        color:#0a0a08;font-weight:700;">{old_pct:.0f}%</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:0.74rem;color:#a09880;margin-bottom:4px;">New Regime — ₹{new_tax:,.0f}</div>
+    <div style="background:#1e1e18;height:22px;border-radius:0;position:relative;">
+      <div style="background:{'#4ade80' if new_tax<old_tax else '#f87171'};width:{new_pct:.1f}%;
+      height:100%;display:flex;align-items:center;padding-left:8px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+        color:#0a0a08;font-weight:700;">{new_pct:.0f}%</span>
+      </div>
+    </div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+        # Tax Saving Recommendations
+        st.markdown('<div class="sec-label">💡 Smart Tax Saving Recommendations</div>',
+                    unsafe_allow_html=True)
+        recs = []
+        gap_80c = 150000 - min(sec80c, 150000)
+        if gap_80c > 0:
+            tax_save = gap_80c * 0.20  # approx 20% bracket
+            recs.append(f"📌 Invest ₹{gap_80c:,.0f} more in 80C (ELSS/PPF) → save ₹{tax_save:,.0f} tax")
+        if sec80d < 25000:
+            recs.append(f"📌 Get health insurance — 80D deduction of ₹{25000-sec80d:,.0f} more possible")
+        if old_tax > new_tax and sec80c < 100000:
+            recs.append("📌 Old Regime is better for you — maximise 80C to widen the savings gap")
+        if new_tax < old_tax and tax_income > 1500000:
+            recs.append("📌 New Regime saves you tax — fewer deductions to track, simpler filing")
+        if not recs:
+            recs.append("✅ You are already in the optimal tax position for your income level")
+        recs.append(f"📌 Monthly tax provision: ₹{min(old_tax,new_tax)/12:,.0f} (set aside from salary)")
+
+        for r in recs:
+            st.markdown(f"""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #c9a84c;
+padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">{r}</div>""",
                         unsafe_allow_html=True)
 
-            # PDF download
-            try:
-                _pdf_text = (f"FINCY INTELLIGENCE — PERSONAL FINANCE REPORT\n{'='*50}\n\n"
-                             f"Question: {user_q}\n"
-                             f"Decision: {decision}\n"
-                             f"Amount: ₹{amount:,.0f} | Impact: {pct_of_savings:.1f}%\n\n"
-                             f"AI Analysis:\n{ai_ans}\n\n"
-                             f"Profile: Income=₹{income:,} Expenses=₹{expense:,} "
-                             f"Savings=₹{savings:,} Goal={goal}")
-                _pdf_bytes = generate_pdf(_pdf_text)
-                st.download_button("📄 Download Finance Report (PDF)",
-                                   data=_pdf_bytes,
-                                   file_name="Fincy_Personal_Finance_Report.pdf",
-                                   mime="application/pdf",
-                                   key="pf_pdf_dl")
-            except Exception:
-                pass
-        else:
-            st.markdown('''<div class="box" style="opacity:0.6;font-size:0.74rem;">
-Configure GROQ_API_KEY in Streamlit Secrets to get AI-powered analysis.
-</div>''', unsafe_allow_html=True)
+        # Tax PDF
+        try:
+            tax_report = (f"FINCY — TAX COMPARISON REPORT FY 2024-25\n{'='*50}\n\n"
+                          f"Annual Income: ₹{tax_income:,}\n"
+                          f"80C Investments: ₹{sec80c:,} | 80D: ₹{sec80d:,}\n\n"
+                          f"Old Regime Tax: ₹{old_tax:,.0f} (Taxable: ₹{taxable_old:,.0f})\n"
+                          f"New Regime Tax: ₹{new_tax:,.0f}\n"
+                          f"Better Regime: {better_reg} — saves ₹{saving_diff:,.0f}\n\n"
+                          f"Recommendations:\n" + "\n".join(recs))
+            st.download_button("📄 Download Tax Report (PDF)",
+                               data=generate_pdf(tax_report),
+                               file_name="Fincy_Tax_Report.pdf",
+                               mime="application/pdf", key="tax_pdf")
+        except Exception:
+            pass
 
-        # Clear preset
-        st.session_state.pop("_pf_preset", None)
+    # ════════════════════════════════════════════════════════════════
+    # TAB 3 — WEALTH COACH
+    # ════════════════════════════════════════════════════════════════
+    with tabs[2]:
+        st.markdown('<div class="sec-label">Wealth Building Dashboard</div>',
+                    unsafe_allow_html=True)
 
-    elif analyze_btn and not user_q.strip():
-        st.warning("Please enter a question or click one of the quick buttons above.")
+        sav_rate = (surplus / m_income * 100) if m_income > 0 else 0
+        proj     = _wealth_projection(max(0, surplus), savings)
 
+        # Savings rate gauge
+        sr_col = "#4ade80" if sav_rate >= 20 else ("#fbbf24" if sav_rate >= 10 else "#f87171")
+        sr_msg = ("✅ Excellent — on track for wealth building" if sav_rate >= 20 else
+                  "⚠️ Moderate — aim for 20%+" if sav_rate >= 10 else
+                  "❌ Low — prioritise cutting expenses")
 
+        st.markdown(f"""
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">
+  <div class="kpi-card" style="--ac:{sr_col}">
+    <div class="kpi-label">Savings Rate</div>
+    <div class="kpi-value" style="color:{sr_col};">{sav_rate:.1f}%</div>
+    <div class="kpi-delta">{sr_msg[:20]}</div>
+  </div>
+  <div class="kpi-card" style="--ac:#c9a84c">
+    <div class="kpi-label">Monthly Surplus</div>
+    <div class="kpi-value">₹{surplus:,.0f}</div>
+    <div class="kpi-delta">investable each month</div>
+  </div>
+  <div class="kpi-card" style="--ac:#818cf8">
+    <div class="kpi-label">In 3 Years</div>
+    <div class="kpi-value">₹{proj[3]/100000:.1f}L</div>
+    <div class="kpi-delta">at 8% annual return</div>
+  </div>
+  <div class="kpi-card" style="--ac:#4ade80">
+    <div class="kpi-label">In 10 Years</div>
+    <div class="kpi-value">₹{proj[10]/100000:.1f}L</div>
+    <div class="kpi-delta">at 8% annual return</div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+        # Wealth projection chart
+        years_list  = [1, 3, 5, 10]
+        wealth_vals = [proj[y] for y in years_list]
+        fig = go.Figure(go.Bar(
+            x=[f"{y}yr" for y in years_list],
+            y=wealth_vals,
+            marker_color=["#a78bfa","#818cf8","#c9a84c","#4ade80"],
+            text=[f"₹{v/100000:.1f}L" for v in wealth_vals],
+            textposition="auto"))
+        fig.update_layout(**PLOTLY_BASE, title="Wealth Projection at 8% Returns",
+                          height=260, xaxis=AXIS, yaxis=AXIS)
+        st.plotly_chart(fig, use_container_width=True)
+
+        # Wealth insights
+        st.markdown('<div class="sec-label">Wealth Building Insights</div>',
+                    unsafe_allow_html=True)
+        w_insights = [
+            f"📊 Current savings rate: {sav_rate:.1f}% — {'above' if sav_rate>=20 else 'below'} the 20% wealth-building threshold",
+            f"📈 At ₹{surplus:,.0f}/month surplus, you accumulate ₹{proj[3]/100000:.1f}L in 3 years at 8% returns",
+            f"🎯 Goal: {goal}",
+        ]
+        if sav_rate < 20:
+            shortfall = (0.20 - sav_rate/100) * m_income
+            w_insights.append(f"💡 Increase monthly savings by ₹{shortfall:,.0f} to reach 20% savings rate")
+        if surplus > 5000:
+            sip_5yr = _wealth_projection(surplus*0.5, 0)[5]
+            w_insights.append(f"💡 Invest 50% of surplus (₹{surplus*0.5:,.0f}) in SIP → ₹{sip_5yr/100000:.1f}L in 5 years")
+
+        for ins in w_insights:
+            st.markdown(f"""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #a78bfa;
+padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">{ins}</div>""",
+                        unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 4 — ALERTS
+    # ════════════════════════════════════════════════════════════════
+    with tabs[3]:
+        st.markdown('<div class="sec-label">Financial Health Alerts</div>',
+                    unsafe_allow_html=True)
+
+        alert_level, alert_msg = _spending_alert(m_income, expense)
+        alert_col = {"🚨 HIGH RISK":"#f87171","⚠️ WARNING":"#fbbf24","✅ HEALTHY":"#4ade80"}.get(
+            alert_level, "#5a5648")
+
+        st.markdown(f"""
+<div style="background:rgba(0,0,0,0.3);border:2px solid {alert_col};
+padding:18px 22px;margin-bottom:16px;">
+  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;
+  color:{alert_col};margin-bottom:8px;">{alert_level}</div>
+  <div style="font-size:0.82rem;color:#a09880;line-height:1.7;">{alert_msg}</div>
+</div>""", unsafe_allow_html=True)
+
+        alerts = []
+        spend_pct = expense/m_income*100 if m_income else 0
+        if spend_pct >= 80:
+            alerts.append(("🚨","HIGH","Spending ≥80% of income — emergency budget review required"))
+        elif spend_pct >= 60:
+            alerts.append(("⚠️","WARN",f"Spending at {spend_pct:.1f}% — reduce discretionary by ₹{expense*0.1:,.0f}"))
+        if surplus < 5000 and surplus >= 0:
+            alerts.append(("⚠️","WARN",f"Very low surplus (₹{surplus:,.0f}) — emergency fund at risk"))
+        if surplus < 0:
+            alerts.append(("🚨","HIGH",f"Negative surplus! Expenses exceed income by ₹{abs(surplus):,.0f}/month"))
+        if savings < m_income * 3:
+            alerts.append(("⚠️","WARN",f"Emergency fund low — target 3-6 months income = ₹{m_income*3:,.0f}"))
+        if invest < 50000 and income > 500000:
+            alerts.append(("💡","INFO",f"Only ₹{invest:,} in 80C investments — you can save more tax"))
+        if not any(a[1]=="HIGH" for a in alerts):
+            alerts.append(("✅","OK","No critical financial risks detected in your profile"))
+
+        for icon, level, msg in alerts:
+            _ac = {"HIGH":"#f87171","WARN":"#fbbf24","INFO":"#818cf8","OK":"#4ade80"}.get(level,"#5a5648")
+            st.markdown(f"""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid {_ac};
+padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">
+{icon} {msg}</div>""", unsafe_allow_html=True)
+
+        # Summary health score
+        risk_count = sum(1 for a in alerts if a[1]=="HIGH")
+        warn_count = sum(1 for a in alerts if a[1]=="WARN")
+        health_score = max(0, 100 - risk_count*30 - warn_count*10)
+        hs_col = "#4ade80" if health_score>=70 else ("#fbbf24" if health_score>=50 else "#f87171")
+        st.markdown(f"""
+<div style="margin-top:16px;background:#101010;border:1px solid #1e1e18;padding:16px;
+text-align:center;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#5a5648;margin-bottom:6px;">Financial Health Score</div>
+  <div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;
+  color:{hs_col};">{health_score}/100</div>
+  <div style="font-size:0.74rem;color:#5a5648;margin-top:4px;">
+  {"Excellent" if health_score>=80 else "Good" if health_score>=60 else "Needs Attention" if health_score>=40 else "Critical"}</div>
+</div>""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
 # MAIN ROUTER
 # ══════════════════════════════════════════════════════════════════════════════
 _mod = st.session_state.active_module
@@ -2455,7 +2619,6 @@ elif _mod == "fpa":          run_fpa()
 elif _mod == "recon":        run_recon()
 elif _mod == "budget":       run_budget()
 elif _mod == "cost":         run_cost()
-elif _mod == "invoice":      run_invoice()
 elif _mod == "dataanalyst":  run_dataanalyst()
 elif _mod == "personal":     run_personal()
 
@@ -2463,5 +2626,5 @@ st.markdown("""
 <div style="margin-top:40px;border-top:1px solid #1a1a14;padding-top:16px;
 font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:#2a2a24;
 letter-spacing:0.12em;text-align:center;">
-FINCY INTELLIGENCE · AI CFO PLATFORM · BUILT BY JITENDRA PARIDA · SENIOR FP&amp;A ANALYST
+FINCY INTELLIGENCE · AI CFO PLATFORM · FOUNDER: JITENDRA PARIDA · SENIOR FP&amp;A ANALYST
 </div>""", unsafe_allow_html=True)
