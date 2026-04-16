@@ -212,7 +212,9 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 #fincy-chat-btn{background:var(--gold);color:#0a0a08;border:none;border-radius:0;
   padding:12px 18px;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:700;
   letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;
-  box-shadow:0 4px 20px rgba(201,168,76,0.3);transition:all 0.2s;white-space:nowrap;}
+  box-shadow:0 4px 24px rgba(201,168,76,0.45);transition:all 0.2s;white-space:nowrap;
+  animation:chatPulse 3s ease-in-out infinite;}
+@keyframes chatPulse{0%,100%{box-shadow:0 4px 24px rgba(201,168,76,0.45);}50%{box-shadow:0 4px 32px rgba(201,168,76,0.7);}}
 #fincy-chat-btn:hover{background:var(--gold2);transform:translateY(-2px);}
 #fincy-chat-box{display:none;position:fixed;bottom:80px;right:24px;width:340px;max-width:calc(100vw - 48px);
   background:#101010;border:1px solid var(--b);box-shadow:0 8px 40px rgba(0,0,0,0.6);}
@@ -277,11 +279,15 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 <!-- HERO -->
 <div class="hero">
   <div class="hero-ey">AI-Powered · FP&amp;A Decision Intelligence</div>
-  <h1>Your AI CFO,<br><em>Always On.</em></h1>
+  <h1>Meet Your AI CFO —<br><em>Always On.</em></h1>
   <p class="hero-sub">Upload any financial dataset. Get instant P&amp;L intelligence, cash flow analysis, reconciliation, cost benchmarking, and AI CFO insights — across 6 specialist modules.</p>
+  <p style="font-size:0.88rem;color:var(--text2);margin-bottom:20px;font-weight:300;">
+    💬 Ask your AI CFO anything — get instant answers on tax, savings, and investments.
+  </p>
   <div class="hero-btns">
     <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
     <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">Get AI CFO Report – $12</button>
+    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;border-color:var(--gold);color:var(--gold);" onclick="openFincyChat()">💬 Chat with Fincy</button>
   </div>
   <div class="stats-row" style="grid-template-columns:repeat(6,1fr);">
     <div class="stat"><div class="stat-n">6</div><div class="stat-l">AI Modules</div></div>
@@ -1259,14 +1265,14 @@ window.addEventListener('resize',function(){
   <button id="fincy-chat-btn" onclick="toggleChat()">💬 Chat with Fincy</button>
   <div id="fincy-chat-box">
     <div id="fincy-chat-hdr">
-      <span id="fincy-chat-hdr-title">◆ Chat with Fincy AI</span>
+      <span id="fincy-chat-hdr-title">💬 Chat with Fincy</span>
       <button id="fincy-chat-close" onclick="toggleChat()" title="Close">✕</button>
     </div>
     <div id="fincy-chat-msgs">
       <!-- Welcome message -->
       <div class="fc-msg-ai">
         <div class="fc-msg-ai-lbl">Fincy AI</div>
-        Hi! I'm Fincy — your AI CFO assistant. Ask me about features, tax, reconciliation,
+        Fincy AI: Hi! I'm your AI CFO. Ask me about tax, savings, FP&A, reconciliation, or how to use any Fincy module. Ask me about features, tax, reconciliation,
         or how to use any module. What can I help you with?
       </div>
     </div>
@@ -1314,20 +1320,26 @@ function sendFincyMessage(){
 
   _fcHistory.push({role:'user',content:q});
 
-  var sysPr='You are Fincy, an AI CFO assistant for the Fincy Intelligence platform. '+
-    'Answer questions about: platform modules (FP&A, Reconciliation, Cost Intelligence, '+
-    'Data Analysis, Personal Finance, Cash Flow), finance basics, India tax (FY 2024-25), '+
-    'and how to use Fincy. Be concise (2-3 sentences max), helpful, and professional. '+
-    'If asked about a module, explain what it does and how to use it.';
+  var sysPr='You are Fincy AI CFO — a professional AI assistant for the Fincy Intelligence platform. '+
+    'Always prefix replies with "Fincy AI:". Answer in 2-3 sentences max. '+
+    'Topics: FP&A analytics, India tax FY2024-25, reconciliation, cash flow, '+
+    'cost intelligence, personal finance, how to use any Fincy module. '+
+    'Be concise, direct, and professional. Never say you cannot help.';
 
   var apiMsgs=[{role:'system',content:sysPr}];
   _fcHistory.slice(-6).forEach(function(m){apiMsgs.push(m);});
 
   var groqKey=window.GROQ_KEY||'';
   if(!groqKey){
-    _appendFincyReply(q,'To get AI-powered answers, launch the Fincy app and use the '+
-      'built-in AI CFO in any module — it runs on Groq Llama 3.1. '+
-      '<a href="'+APP+'" target="_blank" style="color:var(--gold);">Open Fincy App →</a>');
+    /* Redirect to Streamlit app — always gives real AI answer */
+    _appendFincyReply(q,
+      'Fincy AI: I'm fully live inside the Fincy app. Click below to open your AI CFO and ask anything — runs on Groq Llama 3.1, zero setup. '+
+      '<br><br><a href="'+APP+'" target="_blank" '+
+      'style="display:inline-block;background:var(--gold);color:var(--bg);'+
+      'font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:700;'+
+      'letter-spacing:0.08em;text-transform:uppercase;padding:8px 16px;'+
+      'text-decoration:none;margin-top:4px;">Open Fincy App — Chat with AI CFO →</a>'
+    );
     return;
   }
 
@@ -1342,6 +1354,13 @@ function sendFincyMessage(){
     _appendFincyReply(q,ans);
   })
   .catch(function(e){_appendFincyReply(q,'Error: '+e.message);});
+}
+
+function openFincyChat(){
+  var box=document.getElementById('fincy-chat-box');
+  if(box&&!box.classList.contains('open'))box.classList.add('open');
+  var inp=document.getElementById('fincy-chat-input');
+  if(inp)setTimeout(function(){inp.focus();},200);
 }
 
 function _appendFincyReply(q,ans){

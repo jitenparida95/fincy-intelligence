@@ -440,10 +440,30 @@ Jun-2024,SKU-D,FR,1980,1188,515
 # ══════════════════════════════════════════════════════════════════════════════
 def page_header(subtitle="AI-POWERED CFO DECISION PLATFORM", module=""):
     """Renders sticky nav bar + forced-visible page title on every screen."""
-    # Back button — visible at top of every module page
+    # Back button — gold, full-width, always visible above header
     if st.session_state.get("active_module"):
-        if st.button("⬅ All Modules", key=f"back_btn_{subtitle[:6].replace(' ','_')}",
-                     help="Return to module selection"):
+        st.markdown("""
+<style>
+.back-btn-row button {
+    background: #c9a84c !important;
+    color: #0a0a08 !important;
+    border: none !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    padding: 10px 20px !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    margin-bottom: 8px !important;
+    cursor: pointer !important;
+}
+.back-btn-row button:hover { opacity: 0.85 !important; }
+</style>
+<div class="back-btn-row"></div>""", unsafe_allow_html=True)
+        if st.button("← Back to Modules", key=f"back_btn_{subtitle[:6].replace(' ','_')}",
+                     use_container_width=True, help="Return to module selection"):
             st.session_state.active_module = None
             st.rerun()
     mod_tag = f'<span style="color:#3a3a34;font-weight:400;"> · {module}</span>' if module else ""
@@ -546,62 +566,93 @@ def goto_module(mod_key):
 # HOME — MODULE SELECTOR
 # ══════════════════════════════════════════════════════════════════════════════
 def show_global_chat():
-    """Floating 'Chat with Fincy' available on every screen (req §7)."""
+    """
+    💬 Chat with Fincy — real Groq AI, persists across all modules.
+    Lives in sidebar. Visible on every screen including home.
+    """
     api_key = _get_groq_key()
 
     with st.sidebar:
         st.markdown("---")
-        st.markdown(
-            '''<div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
-letter-spacing:0.12em;text-transform:uppercase;color:#c9a84c;margin-bottom:8px;">
-💬 Chat with Fincy</div>''', unsafe_allow_html=True)
+        # Header with live indicator
+        st.markdown(f'''
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+  <div style="width:7px;height:7px;background:#4ade80;border-radius:50%;
+  flex-shrink:0;animation:pulse 2s infinite;"></div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+  letter-spacing:0.12em;text-transform:uppercase;color:#c9a84c;">
+  💬 Chat with Fincy</div>
+</div>''', unsafe_allow_html=True)
 
-        chat_q = st.text_input("Ask Fincy anything…", key="global_chat_input",
-                               placeholder="e.g. How does reconciliation work?",
-                               label_visibility="collapsed")
-        send = st.button("Send →", use_container_width=True, key="global_chat_send")
+        with st.container():
+            chat_q = st.text_input(
+                "chat_input_label", key="global_chat_input",
+                placeholder="Ask about tax, modules, finance…",
+                label_visibility="collapsed")
+            c1, c2 = st.columns([3,1])
+            with c1:
+                send = st.button("Send →", use_container_width=True,
+                                 key="global_chat_send", type="primary")
+            with c2:
+                if st.button("🗑️", key="clear_global_chat",
+                             use_container_width=True, help="Clear chat"):
+                    st.session_state.chat_history = []
+                    st.rerun()
 
         if send and chat_q.strip():
             if not api_key:
-                reply = ("AI CFO offline — add GROQ_API_KEY to Streamlit Secrets. "
-                         "Get a free key at console.groq.com")
+                reply = (
+                    "**Fincy AI offline** — GROQ_API_KEY not found.\n\n"
+                    "Add it in Streamlit Dashboard → App → ⋮ → Settings → Secrets:\n"
+                    "`GROQ_API_KEY = \"gsk_...\"` — Free key: console.groq.com"
+                )
             else:
                 try:
                     from groq import Groq
                     sys_prompt = (
-                        "You are Fincy, an AI CFO assistant built on Groq Llama 3.1. "
-                        "Answer questions about: platform features, finance basics, "
-                        "tax logic (India FY 2024-25), how to use modules, and general FP&A. "
-                        "Be concise (max 3 sentences), helpful, and professional."
+                        "You are Fincy AI CFO — a concise, professional AI assistant "
+                        "for the Fincy Intelligence platform. "
+                        "Answer in max 3 sentences. Topics: FP&A analytics, "
+                        "India tax FY2024-25, reconciliation, cash flow, cost intelligence, "
+                        "personal finance, and how to use Fincy modules. "
+                        "Always prefix your answer with 'Fincy AI:'"
                     )
-                    history_msgs = [{"role":"system","content":sys_prompt}]
-                    for (q, a) in st.session_state.chat_history[-4:]:
-                        history_msgs.append({"role":"user",      "content": q})
-                        history_msgs.append({"role":"assistant", "content": a})
-                    history_msgs.append({"role":"user","content":chat_q.strip()})
+                    msgs = [{"role": "system", "content": sys_prompt}]
+                    for (hq, ha) in st.session_state.chat_history[-4:]:
+                        msgs.append({"role": "user",      "content": hq})
+                        msgs.append({"role": "assistant", "content": ha})
+                    msgs.append({"role": "user", "content": chat_q.strip()})
                     resp = Groq(api_key=api_key).chat.completions.create(
                         model="llama-3.1-8b-instant",
-                        messages=history_msgs,
-                        max_tokens=300,
+                        messages=msgs,
+                        max_tokens=250,
                         temperature=0.3
                     )
                     reply = resp.choices[0].message.content
                 except Exception as e:
-                    reply = f"Error: {e}"
+                    err = str(e)
+                    if "429" in err or "rate_limit" in err.lower():
+                        reply = "⚠️ Rate limit — please wait 30 seconds and try again."
+                    else:
+                        reply = f"Error: {err}"
+
             st.session_state.chat_history.append((chat_q.strip(), reply))
             st.rerun()
 
+        # Chat history display — most recent first, last 4 turns
         if st.session_state.chat_history:
             st.markdown("---")
-            for (q, a) in reversed(st.session_state.chat_history[-3:]):
-                st.markdown(f'''<div style="font-size:0.72rem;color:#5a5648;
-margin-bottom:2px;">You: {q}</div>
-<div style="font-size:0.72rem;color:#a09880;background:#101010;
-padding:6px 10px;margin-bottom:8px;border-left:2px solid #c9a84c;">
-Fincy: {a}</div>''', unsafe_allow_html=True)
-            if st.button("🗑️ Clear chat", key="clear_global_chat", use_container_width=True):
-                st.session_state.chat_history = []
-                st.rerun()
+            for (q, a) in reversed(st.session_state.chat_history[-4:]):
+                st.markdown(f'''
+<div style="margin-bottom:10px;">
+  <div style="font-size:0.68rem;color:#5a5648;margin-bottom:2px;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:0.06em;">YOU</div>
+  <div style="font-size:0.74rem;color:#e8e2d4;margin-bottom:6px;">{q}</div>
+  <div style="font-size:0.68rem;color:#c9a84c;margin-bottom:2px;
+  font-family:'IBM Plex Mono',monospace;letter-spacing:0.06em;">FINCY AI</div>
+  <div style="font-size:0.73rem;color:#a09880;background:#101010;
+  padding:8px 10px;border-left:2px solid #c9a84c;line-height:1.65;">{a}</div>
+</div>''', unsafe_allow_html=True)
 
 
 def show_home():
@@ -833,33 +884,34 @@ letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
             try:
                 from groq import Groq
                 prompt = (
-                    "You are a CFO with 20+ years experience in FP&A, corporate finance, and strategic decision-making. "
-                    "You are advising a CEO. Be direct, data-driven, and ruthlessly specific.\n\n"
-                    f"FINANCIAL DATA CONTEXT:\n{context_str}\n\n"
-                    f"QUESTION: {question.strip()}\n\n"
-                    "Respond in this EXACT structured format:\n\n"
-                    "**Key Insights** (max 3, numbered)\n"
-                    "- Use specific numbers and % from the data above\n"
-                    "- No basic concept explanations\n\n"
-                    "**Risks Identified**\n"
-                    "- Flag what could go wrong, with magnitude\n\n"
-                    "**Opportunities**\n"
-                    "- Where to improve profit/cashflow, with estimated impact\n\n"
-                    "**Action Items — Next 30 Days** (specific, measurable)\n"
-                    "👉 **Problem:** [exact issue with numbers]\n"
-                    "👉 **Insight:** [root cause]\n"
-                    "👉 **Action:** [what to do, by when, target metric]\n\n"
-                    "**Strategic Recommendation**\n"
-                    "- One clear sentence a CEO should act on immediately\n\n"
-                    "Rules: no fluff, no basic explanations, every point must reference specific numbers."
+                    "Senior CFO advisor. Data-driven. Reference specific numbers only.\n"
+                    f"DATA: {context_str}\n"
+                    f"Q: {question.strip()}\n\n"
+                    "Reply:\n"
+                    "Key Insights (3 max, numbered, with % or Rs)\n"
+                    "Risks: [magnitude]\n"
+                    "Opportunities: [estimated Rs/% impact]\n"
+                    "👉 Problem: | Insight: | Action: [30-day target]\n"
+                    "Recommendation: [one CEO-level sentence]"
                 )
-                resp = Groq(api_key=api_key).chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[{"role":"user","content":prompt}],
-                    max_tokens=800, temperature=0.25)
-                ans = resp.choices[0].message.content
+                import hashlib as _hl
+                @st.cache_data(ttl=300, show_spinner=False)
+                def _groq_ent(k, p):
+                    from groq import Groq as _G
+                    r = _G(api_key=_get_groq_key()).chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[{"role":"user","content":p}],
+                        max_tokens=450, temperature=0.25)
+                    return r.choices[0].message.content
+                _ck = _hl.md5(prompt.encode()).hexdigest()
+                ans = _groq_ent(_ck, prompt)
             except Exception as e:
-                ans = f"⚠️ Groq API error: {e}"
+                _e = str(e)
+                if "429" in _e or "rate_limit" in _e.lower():
+                    ans = ("⚠️ **Rate limit** — please wait 30–60 seconds and ask again. "
+                           "Free Groq tier: 6,000 tokens/minute.")
+                else:
+                    ans = f"⚠️ Groq API error: {_e}"
         st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ans}</div>''',
                     unsafe_allow_html=True)
         st.session_state[hist_key].append({"q":question.strip(),"a":ans})
@@ -2195,159 +2247,87 @@ def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
     gap80    = max(0, 150000 - invest)
 
     profile = (
-        "ANNUAL INCOME: Rs" + "{:,}".format(int(income)) +
-        " (Monthly: Rs" + "{:,.0f}".format(m_inc) + ")\n" +
-        "MONTHLY EXPENSES: Rs" + "{:,}".format(int(expense)) +
-        " (" + "{:.1f}".format(spend_pct) + "% of income)\n" +
-        "MONTHLY SURPLUS: Rs" + "{:,.0f}".format(surplus) +
-        " (" + "{:.1f}".format(sav_rate) + "% savings rate)\n" +
-        "CURRENT SAVINGS: Rs" + "{:,}".format(int(savings)) + "\n" +
-        "80C INVESTMENTS: Rs" + "{:,}".format(int(invest)) +
-        " (gap: Rs" + "{:,}".format(int(gap80)) + ")\n" +
-        "FIXED EXPENSES: Rs" + "{:,}".format(int(fixed)) + "/month\n" +
-        "FINANCIAL GOAL: " + str(goal) + "\n" +
-        "EXTRA CONTEXT: " + str(extra_context)
+        "Inc:Rs" + "{:,.0f}".format(m_inc) + "/mo" +
+        " Exp:Rs" + "{:,}".format(int(expense)) + "(" + "{:.0f}".format(spend_pct) + "%)" +
+        " Sur:Rs" + "{:,.0f}".format(surplus) + "(" + "{:.0f}".format(sav_rate) + "%sr)" +
+        " Sav:Rs" + "{:,}".format(int(savings)) +
+        " 80C:Rs" + "{:,}".format(int(invest)) + "(gap Rs" + "{:,}".format(int(gap80)) + ")" +
+        " Goal:" + str(goal) +
+        (" | " + str(extra_context) if extra_context else "")
     )
 
     if mode == "decision":
-        prompt = "\n".join([
-            "You are an AI Personal CFO — senior financial advisor, tax expert, and wealth coach.",
-            "Connect ALL dimensions: spending to tax to wealth in every answer.",
-            "",
-            "USER FINANCIAL PROFILE:",
-            profile,
-            "",
-            "USER QUESTION: " + question,
-            "",
-            "Respond in this EXACT unified format:",
-            "",
-            "AI CFO Insight:",
-            "[Direct yes/no answer with reasoning in 2 sentences using Rs numbers]",
-            "",
-            "Impact Summary:",
-            "- Decision Impact: [exact Rs savings change]",
-            "- Tax Impact: [80C opportunity or tax implication if any]",
-            "- Wealth Impact: [effect on goal timeline with months or years]",
-            "",
-            "Recommendation:",
-            "[One specific action with a Rs number and timeframe]",
-            "",
-            "Cross-Module Link:",
-            "[How this decision connects spending to tax to long-term wealth in one sentence]",
-            "",
-            "Rules: Rs symbols on all numbers, reference profile data, no generic advice.",
-        ])
+        prompt = (
+            "You are an AI Personal CFO. Give sharp, number-driven advice.\n"
+            "PROFILE: " + profile + "\n"
+            "QUESTION: " + question + "\n\n"
+            "Reply with:\n"
+            "AI CFO Insight: [yes/no + reason with Rs numbers]\n"
+            "Impact: Decision=Rs? | Tax=80C impact? | Wealth=goal timeline?\n"
+            "Recommendation: [one action + Rs target]\n"
+            "Link: [spending→tax→wealth in one sentence]"
+        )
 
     elif mode == "tax":
-        prompt = "\n".join([
-            "You are an AI tax strategist and wealth advisor with 20+ years in Indian finance.",
-            "",
-            "USER FINANCIAL PROFILE:",
-            profile,
-            "",
-            "Analyse this user's tax situation and connect it to spending and wealth:",
-            "",
-            "AI CFO Tax Insight:",
-            "[Which regime is better and the exact tax saving in Rs]",
-            "",
-            "Impact Summary:",
-            "- Tax Saving Opportunity: [Rs amount if they optimise 80C and 80D]",
-            "- Spending Link: [how current expenses affect tax position]",
-            "- Wealth Link: [if they invest tax savings, 5yr compounding impact]",
-            "",
-            "Top 3 Tax Actions (ranked by Rs impact):",
-            "1. [Action + exact Rs tax saved]",
-            "2. [Action + exact Rs tax saved]",
-            "3. [Action + exact Rs tax saved]",
-            "",
-            "Strategic Recommendation:",
-            "[One sentence linking tax optimisation to their financial goal]",
-            "",
-            "Rules: use FY 2024-25 slabs, reference actual numbers from profile, be specific.",
-        ])
+        prompt = (
+            "Indian tax strategist. FY 2024-25. Be specific with Rs numbers.\n"
+            "PROFILE: " + profile + "\n\n"
+            "Reply with:\n"
+            "Tax Insight: [which regime is better + exact Rs saving]\n"
+            "Opportunities: [80C gap=Rs? saves Rs? | 80D Rs? | HRA if applicable]\n"
+            "Top 3 Actions: [ranked by Rs impact]\n"
+            "Wealth Link: [if tax savings invested, 5yr impact]"
+        )
 
     elif mode == "wealth":
-        prompt = "\n".join([
-            "You are an AI wealth coach and CFO advisor.",
-            "Analyse savings rate, investment behaviour, and provide personalised wealth strategy.",
-            "",
-            "USER FINANCIAL PROFILE:",
-            profile,
-            "",
-            "Provide a comprehensive wealth analysis:",
-            "",
-            "AI CFO Wealth Insight:",
-            "[Savings rate assessment vs 20 percent benchmark with gap in Rs/month]",
-            "",
-            "Impact Summary:",
-            "- Savings Rate: [current vs recommended, Rs gap per month]",
-            "- Tax-Wealth Link: [if 80C gap of Rs" + "{:,}".format(int(gap80)) + " is invested, impact on wealth]",
-            "- Goal Progress: [on track or behind, by how many months based on numbers]",
-            "",
-            "Wealth Building Actions:",
-            "1. [SIP or investment recommendation with Rs amount and instrument]",
-            "2. [Expense optimisation with Rs impact on savings rate]",
-            "3. [Tax plus wealth combo action]",
-            "",
-            "30-Day Plan:",
-            "[Specific steps this week and this month to improve financial health]",
-            "",
-            "Rules: compound growth numbers, realistic targets, link tax savings to investments.",
-        ])
+        prompt = (
+            "AI wealth coach and CFO. Be specific with Rs targets and timelines.\n"
+            "PROFILE: " + profile + "\n\n"
+            "Reply with:\n"
+            "Wealth Insight: [savings rate vs 20% benchmark, Rs gap/month]\n"
+            "Actions: 1.[SIP Rs? instrument] 2.[expense cut Rs?] 3.[tax+wealth combo]\n"
+            "Goal: [on track or behind by X months]\n"
+            "30-Day Plan: [2 specific steps with Rs targets]"
+        )
 
     elif mode == "alert":
-        prompt = "\n".join([
-            "You are an AI financial risk monitor for a personal finance platform.",
-            "Analyse this user's financial profile and generate intelligent personalised alerts.",
-            "",
-            "USER FINANCIAL PROFILE:",
-            profile,
-            "",
-            "Generate 2-3 smart financial alerts. For EACH alert:",
-            "[Risk emoji] Alert Title - Risk: HIGH or MEDIUM or LOW",
-            "[Alert message with specific Rs numbers]",
-            "Action: [exact step to take with Rs target]",
-            "",
-            "Then conclude with:",
-            "Overall Financial Health: STRONG or MODERATE or AT RISK - [one sentence why]",
-            "",
-            "Rules: reference actual numbers, link spending to tax to wealth,",
-            "no generic advice, every alert must have a specific Rs action.",
-        ])
+        prompt = (
+            "AI financial risk monitor. Analyse and flag risks.\n\n"
+            "PROFILE:\n" + profile + "\n\n"
+            "Give 2 alerts max. Each: [emoji] Title - Risk:HIGH/MEDIUM/LOW | message | Action: Rs target\n"
+            "End: Overall Health: STRONG/MODERATE/AT RISK - one sentence."
+        )
     else:
         return ("Unknown AI CFO mode.", "UNKNOWN")
 
-    # ── CFO reasoning footer appended to every prompt (req §1,2,3,5,12) ───────
+    # ── Compact CFO footer (token-efficient, ~80 tokens) ─────────────────────
     conf  = _confidence_score(user_data)
     c_lbl = _confidence_label(conf)
     reasoning_footer = (
-        "\n\nCFO Reasoning (MUST include these sections in your response):\n"
-        "- Income Analysis: [comment on income vs expenses ratio]\n"
-        "- Expense Analysis: [spending % of income and risk signal]\n"
-        "- Savings Impact: [exact Rs change to savings and emergency fund]\n"
-        "- Tax Impact: [80C gap, best regime, tax saving opportunity]\n"
-        "- Wealth Impact: [effect on long-term goal with timeline]\n\n"
-        "Assumptions Used:\n"
-        "- Expected return: 8% annual (diversified equity)\n"
-        "- Inflation: 5% (India CPI average)\n"
-        "- Income growth: stable (no increment assumed)\n"
-        "- Tax rules: FY 2024-25 India (Budget 2024)\n\n"
-        "Confidence Score: " + c_lbl + "\n\n"
-        "Why this recommendation?\n"
-        "[1-2 plain-English sentences: why this is right for this specific user]\n\n"
-        "Disclaimer: This AI CFO recommendation is based on your inputs and "
-        "standard assumptions. For major financial decisions, consult a professional advisor."
+        "\n\nInclude in response (brief):\n"
+        "CFO Reasoning: income/expense/savings/tax/wealth impact in one line each.\n"
+        "Assumptions: 8% return, 5% inflation, FY2024-25 India tax.\n"
+        "Confidence: " + c_lbl + "\n"
+        "Why: one plain-English sentence explaining this recommendation.\n"
+        "Disclaimer: For major decisions, consult a professional advisor."
     )
     prompt = prompt + reasoning_footer
-    try:
+    # Cache identical prompts for 5 mins to avoid redundant API calls
+    @st.cache_data(ttl=300, show_spinner=False)
+    def _groq_cached(key: str, _prompt: str):
         from groq import Groq
-        resp = Groq(api_key=api_key).chat.completions.create(
+        r = Groq(api_key=_get_groq_key()).chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=1000,
+            messages=[{"role": "user", "content": _prompt}],
+            max_tokens=420,
             temperature=0.25
         )
-        answer = resp.choices[0].message.content
+        return r.choices[0].message.content
+
+    try:
+        import hashlib
+        cache_key = hashlib.md5(prompt.encode()).hexdigest()
+        answer = _groq_cached(cache_key, prompt)
         risk = "MEDIUM"
         if mode == "alert":
             au = answer.upper()
@@ -2355,7 +2335,14 @@ def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
             elif "RISK: LOW" in au or "STRONG" in au:  risk = "LOW"
         return answer, risk
     except Exception as e:
-        return ("AI CFO Engine error: " + str(e)), "UNKNOWN"
+        err = str(e)
+        if "429" in err or "rate_limit" in err.lower():
+            return (
+                "⚠️ **Rate limit reached** — the free Groq tier allows 6,000 tokens/minute. "
+                "Please wait 30–60 seconds and try again, or upgrade your Groq key at "
+                "[console.groq.com/settings/billing](https://console.groq.com/settings/billing)."
+            ), "UNKNOWN"
+        return ("AI CFO Engine error: " + err), "UNKNOWN"
 
 
 def run_personal():
@@ -2511,8 +2498,29 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
                 st.warning("Please enter a question.")
                 st.stop()
 
-            # ── Fixed robust amount extraction ───────────────────────────
+            # ── Robust amount extraction with fallback prompt ────────────
             amount = _extract_amount(user_q)
+
+            # If no amount found but question implies a purchase/decision,
+            # ask the user for the amount instead of silently going ADVISORY
+            # Keywords that imply a purchase/specific spend — need a Rs amount
+            _purchase_keywords = ["buy","afford","purchase","spend",
+                                  "trip","travel","phone","car","bike","laptop",
+                                  "gadget","vacation","loan","emi","rent",
+                                  "can i get","should i get","invest in"]
+            _needs_amount = any(k in user_q.lower() for k in _purchase_keywords)
+            if amount == 0 and _needs_amount:
+                st.markdown("""
+<div style="background:#150f00;border:1px solid #fbbf24;border-left:3px solid #fbbf24;
+padding:14px 18px;font-size:0.82rem;color:#a09880;line-height:1.7;">
+<strong style="color:#fbbf24;">💡 How much are you thinking?</strong><br>
+I detected a purchase question but no amount. Please include the price so I can
+give you an accurate Safe / Moderate / Risky analysis.<br><br>
+<em style="color:#5a5648;">Examples: "Can I buy a car worth ₹5 lakh?"&nbsp;&nbsp;
+"Can I afford a 60K gadget?"&nbsp;&nbsp;"Should I spend 2L on a car?"</em>
+</div>""", unsafe_allow_html=True)
+                st.session_state.pop("_pf_preset", None)
+                st.stop()
 
             # ── Decision logic ───────────────────────────────────────────
             if savings > 0 and amount > 0:
@@ -2537,6 +2545,12 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
             months_line = (f'<div style="margin-top:10px;font-size:0.74rem;color:#5a5648;">'
                            f'Months of surplus to cover: <strong style="color:#e8e2d4;">{months_needed:.1f}</strong></div>'
                            if amount > 0 and surplus > 0 else "")
+            # Advisory tip — show amount examples when no number detected
+            _tip_html = ('''
+<div style="margin-top:10px;font-size:0.73rem;color:#5a5648;line-height:1.6;">
+💡 <strong style="color:#a09880;">Tip:</strong> For a precise analysis, include the amount —
+e.g. <em>"Can I buy a car worth ₹5 lakh?"</em> or <em>"Can I afford a 60K gadget?"</em>
+</div>''' if amount == 0 else "")
             st.markdown(f"""
 <div style="background:{dbg};border:2px solid {dcol};padding:20px 24px;margin:14px 0;">
   <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.16em;
@@ -2557,6 +2571,7 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
     <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">₹{remaining:,.0f}</div></div>
   </div>
   {months_line}
+  {_tip_html}
 </div>""", unsafe_allow_html=True)
 
             # ── AI CFO Engine — unified decision+tax+wealth response ─────────
