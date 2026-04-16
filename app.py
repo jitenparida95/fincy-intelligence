@@ -545,6 +545,65 @@ def goto_module(mod_key):
 # ══════════════════════════════════════════════════════════════════════════════
 # HOME — MODULE SELECTOR
 # ══════════════════════════════════════════════════════════════════════════════
+def show_global_chat():
+    """Floating 'Chat with Fincy' available on every screen (req §7)."""
+    api_key = _get_groq_key()
+
+    with st.sidebar:
+        st.markdown("---")
+        st.markdown(
+            '''<div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;
+letter-spacing:0.12em;text-transform:uppercase;color:#c9a84c;margin-bottom:8px;">
+💬 Chat with Fincy</div>''', unsafe_allow_html=True)
+
+        chat_q = st.text_input("Ask Fincy anything…", key="global_chat_input",
+                               placeholder="e.g. How does reconciliation work?",
+                               label_visibility="collapsed")
+        send = st.button("Send →", use_container_width=True, key="global_chat_send")
+
+        if send and chat_q.strip():
+            if not api_key:
+                reply = ("AI CFO offline — add GROQ_API_KEY to Streamlit Secrets. "
+                         "Get a free key at console.groq.com")
+            else:
+                try:
+                    from groq import Groq
+                    sys_prompt = (
+                        "You are Fincy, an AI CFO assistant built on Groq Llama 3.1. "
+                        "Answer questions about: platform features, finance basics, "
+                        "tax logic (India FY 2024-25), how to use modules, and general FP&A. "
+                        "Be concise (max 3 sentences), helpful, and professional."
+                    )
+                    history_msgs = [{"role":"system","content":sys_prompt}]
+                    for (q, a) in st.session_state.chat_history[-4:]:
+                        history_msgs.append({"role":"user",      "content": q})
+                        history_msgs.append({"role":"assistant", "content": a})
+                    history_msgs.append({"role":"user","content":chat_q.strip()})
+                    resp = Groq(api_key=api_key).chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=history_msgs,
+                        max_tokens=300,
+                        temperature=0.3
+                    )
+                    reply = resp.choices[0].message.content
+                except Exception as e:
+                    reply = f"Error: {e}"
+            st.session_state.chat_history.append((chat_q.strip(), reply))
+            st.rerun()
+
+        if st.session_state.chat_history:
+            st.markdown("---")
+            for (q, a) in reversed(st.session_state.chat_history[-3:]):
+                st.markdown(f'''<div style="font-size:0.72rem;color:#5a5648;
+margin-bottom:2px;">You: {q}</div>
+<div style="font-size:0.72rem;color:#a09880;background:#101010;
+padding:6px 10px;margin-bottom:8px;border-left:2px solid #c9a84c;">
+Fincy: {a}</div>''', unsafe_allow_html=True)
+            if st.button("🗑️ Clear chat", key="clear_global_chat", use_container_width=True):
+                st.session_state.chat_history = []
+                st.rerun()
+
+
 def show_home():
     page_header("AI-POWERED CFO DECISION PLATFORM")
 
@@ -2082,6 +2141,36 @@ def _wealth_projection(monthly_surplus, current_savings, annual_return=0.08):
 
 
 
+# ── Confidence Engine (req §2) ────────────────────────────────────────────────
+def _confidence_score(ud):
+    """Dynamic confidence 50–95% based on data completeness."""
+    s = 50
+    if ud.get("income"):  s += 10
+    if ud.get("expense"): s += 10
+    if ud.get("savings"): s += 10
+    if ud.get("goal"):    s += 10
+    if ud.get("invest"):  s += 10
+    return min(s, 95)
+
+def _confidence_label(score):
+    if score >= 80: return f"🟢 High ({score}%) — strong data foundation"
+    if score >= 60: return f"🟡 Medium ({score}%) — add more data to improve accuracy"
+    return             f"🔴 Low ({score}%) — limited data, treat as directional only"
+
+# ── Assumptions constants (req §3) ────────────────────────────────────────────
+AI_ASSUMPTIONS = {
+    "Expected return": "8% annual (diversified equity)",
+    "Inflation":       "5% (India CPI average)",
+    "Income growth":   "Stable (no increment assumed)",
+    "Tax rules":       "FY 2024-25 India (Budget 2024)",
+}
+AI_DISCLAIMER = (
+    "This AI CFO recommendation is based on your inputs and standard assumptions. "
+    "For major financial decisions, consult a professional advisor."
+)
+
+
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # AI CFO ENGINE — Unified cross-module intelligence (Personal Finance brain)
@@ -2228,12 +2317,34 @@ def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
     else:
         return ("Unknown AI CFO mode.", "UNKNOWN")
 
+    # ── CFO reasoning footer appended to every prompt (req §1,2,3,5,12) ───────
+    conf  = _confidence_score(user_data)
+    c_lbl = _confidence_label(conf)
+    reasoning_footer = (
+        "\n\nCFO Reasoning (MUST include these sections in your response):\n"
+        "- Income Analysis: [comment on income vs expenses ratio]\n"
+        "- Expense Analysis: [spending % of income and risk signal]\n"
+        "- Savings Impact: [exact Rs change to savings and emergency fund]\n"
+        "- Tax Impact: [80C gap, best regime, tax saving opportunity]\n"
+        "- Wealth Impact: [effect on long-term goal with timeline]\n\n"
+        "Assumptions Used:\n"
+        "- Expected return: 8% annual (diversified equity)\n"
+        "- Inflation: 5% (India CPI average)\n"
+        "- Income growth: stable (no increment assumed)\n"
+        "- Tax rules: FY 2024-25 India (Budget 2024)\n\n"
+        "Confidence Score: " + c_lbl + "\n\n"
+        "Why this recommendation?\n"
+        "[1-2 plain-English sentences: why this is right for this specific user]\n\n"
+        "Disclaimer: This AI CFO recommendation is based on your inputs and "
+        "standard assumptions. For major financial decisions, consult a professional advisor."
+    )
+    prompt = prompt + reasoning_footer
     try:
         from groq import Groq
         resp = Groq(api_key=api_key).chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=900,
+            max_tokens=1000,
             temperature=0.25
         )
         answer = resp.choices[0].message.content
@@ -2470,6 +2581,27 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
                 )
             st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ai_ans}</div>''',
                         unsafe_allow_html=True)
+
+            # ── "Why this?" expandable reasoning (req §5) ───────────────────
+            _conf = _confidence_score(_ud)
+            with st.expander("👉 Why this recommendation? — View full reasoning & assumptions"):
+                st.markdown(f"""
+<div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.12em;
+text-transform:uppercase;color:#c9a84c;margin-bottom:10px;">Confidence Score</div>
+<div style="font-size:0.82rem;color:#a09880;margin-bottom:14px;">{_confidence_label(_conf)}</div>
+<div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.12em;
+text-transform:uppercase;color:#c9a84c;margin-bottom:10px;">Assumptions Used</div>
+<div style="font-size:0.78rem;color:#a09880;line-height:1.9;">
+• Expected return: 8% annual (diversified equity)<br>
+• Inflation: 5% (India CPI average)<br>
+• Income growth: stable (no increment assumed)<br>
+• Tax rules: FY 2024-25 India (Budget 2024)
+</div>
+<div style="margin-top:14px;font-size:0.74rem;color:#5a5648;border-top:1px solid #1e1e18;
+padding-top:10px;">⚠️ This AI CFO recommendation is based on your inputs and standard assumptions.
+For major financial decisions, consult a professional advisor.</div>
+""", unsafe_allow_html=True)
+
             try:
                 _pdf_text = (f"FINCY — PERSONAL FINANCE DECISION REPORT\n{'='*50}\n\n"
                              f"Question: {user_q}\nDecision: {decision}\n"
@@ -2617,6 +2749,30 @@ padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">{r}</div>"
             )
         st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{tax_ai_ans}</div>''',
                     unsafe_allow_html=True)
+
+        # ── ITR Filing Integration (req §6) ─────────────────────────────────────
+        st.markdown('<div class="sec-label">🧾 Ready to File Your ITR?</div>',
+                    unsafe_allow_html=True)
+        st.markdown(f"""
+<div style="background:#0a0d10;border:1px solid #06b6d4;border-left:4px solid #06b6d4;
+padding:16px 20px;margin-bottom:14px;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#06b6d4;margin-bottom:8px;">File on the Official Portal</div>
+  <div style="font-size:0.78rem;color:#a09880;line-height:1.7;font-weight:300;">
+    Based on our analysis, you save <strong style="color:#4ade80;">₹{saving_diff:,.0f}</strong>
+    by choosing the <strong style="color:#e8e2d4;">{better_reg}</strong>.
+    File your ITR now on the Government's official e-filing portal.
+  </div>
+  <div style="margin-top:10px;font-size:0.68rem;color:#5a5648;">
+    ⚠️ Fincy provides analysis only. Filing must be completed on the official Income Tax portal.
+    Consult a CA for complex tax situations.
+  </div>
+</div>""", unsafe_allow_html=True)
+        st.link_button(
+            "🚀 File ITR on Official Portal →",
+            "https://www.incometax.gov.in/iec/foportal/",
+        )
+        st.caption("Fincy provides tax analysis. Filing is done exclusively on the official Income Tax portal.")
 
         # Tax PDF
         try:
@@ -3077,6 +3233,9 @@ Runway forecasting · Operating cash health<br>
 # MAIN ROUTER
 # ══════════════════════════════════════════════════════════════════════════════
 _mod = st.session_state.active_module
+
+# ── Chat with Fincy — always-on sidebar chatbot ─────────────────────────────
+show_global_chat()
 
 if   _mod is None:           show_home()
 elif _mod == "fpa":          run_fpa()

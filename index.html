@@ -205,6 +205,43 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 .m-box{padding:28px 20px;}
 .founder-box{grid-template-columns:1fr;text-align:center;}
 }
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* ── Chat with Fincy — floating chatbot ─────────────────────────────────── */
+#fincy-chat-widget{position:fixed;bottom:24px;right:24px;z-index:9999;font-family:'IBM Plex Mono',monospace;}
+#fincy-chat-btn{background:var(--gold);color:#0a0a08;border:none;border-radius:0;
+  padding:12px 18px;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;
+  box-shadow:0 4px 20px rgba(201,168,76,0.3);transition:all 0.2s;white-space:nowrap;}
+#fincy-chat-btn:hover{background:var(--gold2);transform:translateY(-2px);}
+#fincy-chat-box{display:none;position:fixed;bottom:80px;right:24px;width:340px;max-width:calc(100vw - 48px);
+  background:#101010;border:1px solid var(--b);box-shadow:0 8px 40px rgba(0,0,0,0.6);}
+#fincy-chat-box.open{display:flex;flex-direction:column;}
+#fincy-chat-hdr{background:#0f0f0c;border-bottom:1px solid var(--b);padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;}
+#fincy-chat-hdr-title{font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);}
+#fincy-chat-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;line-height:1;}
+#fincy-chat-msgs{flex:1;max-height:280px;overflow-y:auto;padding:12px 14px;}
+#fincy-chat-input-row{border-top:1px solid var(--b);padding:10px 12px;display:flex;gap:8px;}
+#fincy-chat-input{flex:1;background:var(--bg);border:1px solid var(--b);
+  padding:8px 10px;color:var(--text);font-family:'IBM Plex Mono',monospace;
+  font-size:0.72rem;outline:none;}
+#fincy-chat-input:focus{border-color:var(--gold);}
+#fincy-chat-send{background:var(--gold);border:none;color:#0a0a08;
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;font-weight:700;
+  letter-spacing:0.06em;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+.fc-msg-you{font-size:0.72rem;color:var(--text3);margin-bottom:8px;}
+.fc-msg-you span{color:var(--text);display:block;margin-top:2px;}
+.fc-msg-ai{background:var(--s);border-left:2px solid var(--gold);
+  padding:8px 10px;margin-bottom:10px;font-size:0.72rem;color:var(--text2);line-height:1.7;}
+.fc-msg-ai-lbl{font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:4px;}
+.fc-typing{font-size:0.62rem;color:var(--text3);padding:6px 0;letter-spacing:0.08em;
+  text-transform:uppercase;animation:pulse 1.5s infinite;}
+@media(max-width:480px){
+  #fincy-chat-box{right:12px;left:12px;width:auto;bottom:74px;}
+  #fincy-chat-widget{bottom:16px;right:16px;}
+}
 </style>
 </head>
 <body>
@@ -581,127 +618,322 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 <!-- LEARNING HUB -->
 <section class="sec" id="learning">
   <div class="ey">AI Learning Hub</div>
-  <h2>Learn how AI is transforming<br><em>Finance &amp; Accounting.</em></h2>
-  <p class="sub">Build your own tools, automate financial workflows, and become future-ready.
-  For finance professionals who want to lead — not just follow — the AI revolution.</p>
+  <h2>Become irreplaceable.<br><em>AI + Finance = Future-proof.</em></h2>
+  <p class="sub">Finance and Accounting professionals who master AI won't be replaced by AI.
+  They will replace those who don't. Here's your structured path to get there.</p>
 
-  <!-- Learning Cards -->
+  <!-- Why This Matters Banner -->
+  <div style="background:linear-gradient(135deg,#0d0b18 0%,#101010 100%);
+  border:1px solid #818cf8;border-left:4px solid #818cf8;
+  padding:20px 28px;margin:32px 0;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;">
+    <div style="font-size:2.2rem;line-height:1;">🎯</div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.18em;
+      text-transform:uppercase;color:#818cf8;margin-bottom:6px;">Why This Matters Now</div>
+      <div style="font-size:0.86rem;color:var(--text2);line-height:1.8;font-weight:300;">
+        <strong style="color:var(--white);">McKinsey estimates 50%+ of Finance tasks will be automated by 2030.</strong>
+        The FP&amp;A analyst who can <em>build</em> AI tools, <em>prompt</em> LLMs for insights,
+        and <em>automate</em> month-end close will command 2-3× salary premium — and will never be
+        replaced. This hub gives you the exact skills to get there.
+      </div>
+    </div>
+  </div>
+
+  <!-- Learning Path: 4 Stages -->
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:16px;margin-top:36px;">
+    Your Learning Path — 4 Stages
+  </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--b);
-  border:1px solid var(--b);margin-top:36px;">
-    <div class="feat" style="padding:26px 20px;">
-      <div class="feat-n">01 / FOUNDATIONS</div>
+  border:1px solid var(--b);margin-bottom:32px;">
+
+    <div class="feat" style="padding:24px 20px;cursor:pointer;transition:background 0.2s;"
+    onclick="handleLearningQuery('Explain the basics of AI in Finance and Accounting. What are LLMs, machine learning, and AI agents? Give practical examples of how they are used in FP&A, reconciliation, variance analysis, and CFO decisions today. What should a finance professional know first?')">
+      <div class="feat-n">STAGE 01 / BEGINNER</div>
       <div class="feat-t">AI in Finance Basics</div>
-      <div class="feat-d">Understand how LLMs, machine learning, and AI agents are being used
-      in FP&amp;A, financial reporting, variance analysis, and CFO decision support today.</div>
-      <div style="margin-top:14px;">
-        <button onclick="handleLearningQuery('What are the basics of AI in Finance and Accounting? Give practical examples.')"
-        style="background:transparent;border:1px solid var(--b2);color:var(--text2);
-        font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;
-        text-transform:uppercase;padding:6px 14px;cursor:pointer;transition:all 0.2s;"
-        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
-        onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'">
-        Explore →</button>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.8;margin:8px 0;font-weight:300;">
+        What are LLMs? How do AI agents work? Why is Fincy built on Groq + Llama?
+        Start here if you have zero AI background.
       </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
+        color:var(--gold);padding:2px 8px;">LLMs</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
+        color:var(--gold);padding:2px 8px;">AI Agents</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
+        color:var(--gold);padding:2px 8px;">Groq</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
+        color:var(--gold);padding:2px 8px;">FP&amp;A Use Cases</span>
+      </div>
+      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
+      text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+      onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
+      onclick="event.stopPropagation();handleLearningQuery('Explain the basics of AI in Finance and Accounting. What are LLMs, machine learning, and AI agents? Give practical examples of how they are used in FP&A, reconciliation, variance analysis, and CFO decisions today. What should a finance professional know first?')">
+      Start Stage 01 →</button>
       <div class="feat-line"></div>
     </div>
-    <div class="feat" style="padding:26px 20px;">
-      <div class="feat-n">02 / AUTOMATION</div>
-      <div class="feat-t">Automating Financial Reports</div>
-      <div class="feat-d">Learn how to automate monthly close packs, board reports, variance
-      commentary, and budget vs actuals dashboards using Python and AI — cutting hours to minutes.</div>
-      <div style="margin-top:14px;">
-        <button onclick="handleLearningQuery('How can I automate financial reporting using Python and AI? Give step-by-step guide.')"
-        style="background:transparent;border:1px solid var(--b2);color:var(--text2);
-        font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;
-        text-transform:uppercase;padding:6px 14px;cursor:pointer;transition:all 0.2s;"
-        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
-        onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'">
-        Explore →</button>
+
+    <div class="feat" style="padding:24px 20px;cursor:pointer;transition:background 0.2s;"
+    onclick="handleLearningQuery('How can a Finance professional automate their work using Python and AI? Give me a step-by-step guide to: 1) Automating monthly P&L reports 2) Automating variance commentary using LLMs 3) Building a Budget vs Actuals tracker. Include specific Python libraries to use and code examples. Focus on practical FP&A automation.')">
+      <div class="feat-n">STAGE 02 / INTERMEDIATE</div>
+      <div class="feat-t">Automating Finance Work</div>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.8;margin:8px 0;font-weight:300;">
+        Python for Finance. Automate month-end close, variance reports, reconciliation,
+        and board packs. Cut 10 hours of manual work to 10 minutes.
       </div>
-      <div class="feat-line"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
+        color:#4ade80;padding:2px 8px;">Python</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
+        color:#4ade80;padding:2px 8px;">Pandas</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
+        color:#4ade80;padding:2px 8px;">Automation</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
+        color:#4ade80;padding:2px 8px;">Reporting</span>
+      </div>
+      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
+      text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='#4ade80';this.style.color='#4ade80'"
+      onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
+      onclick="event.stopPropagation();handleLearningQuery('How can a Finance professional automate their work using Python and AI? Give me a step-by-step guide to: 1) Automating monthly P&L reports 2) Automating variance commentary using LLMs 3) Building a Budget vs Actuals tracker. Include specific Python libraries to use and code examples. Focus on practical FP&A automation.')">
+      Start Stage 02 →</button>
+      <div class="feat-line" style="background:#4ade80;"></div>
     </div>
-    <div class="feat" style="padding:26px 20px;">
-      <div class="feat-n">03 / BUILD</div>
-      <div class="feat-t">Building AI Finance Tools</div>
-      <div class="feat-d">Follow the Fincy blueprint — from CSV upload to AI CFO insights.
-      Learn Streamlit, Plotly, Groq/LLM integration, and how to deploy finance tools
-      that users actually trust and pay for.</div>
-      <div style="margin-top:14px;">
-        <button onclick="handleLearningQuery('How do I build an AI-powered finance tool like Fincy? What tech stack should I use?')"
-        style="background:transparent;border:1px solid var(--b2);color:var(--text2);
-        font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;
-        text-transform:uppercase;padding:6px 14px;cursor:pointer;transition:all 0.2s;"
-        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
-        onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'">
-        Explore →</button>
+
+    <div class="feat" style="padding:24px 20px;cursor:pointer;transition:background 0.2s;"
+    onclick="handleLearningQuery('How do I build an AI-powered finance tool like Fincy Intelligence? Walk me through the complete tech stack: Streamlit for UI, Plotly for charts, Pandas for data, and Groq LLM for AI CFO. What are the exact steps to go from CSV upload to AI insights? How do I deploy it? Give a practical blueprint for a Finance professional with basic Python skills.')">
+      <div class="feat-n">STAGE 03 / ADVANCED</div>
+      <div class="feat-t">Build AI Finance Tools</div>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.8;margin:8px 0;font-weight:300;">
+        The Fincy Blueprint. Build your own AI-powered finance dashboards from scratch.
+        Streamlit + Plotly + Groq. Deploy to the world in a weekend.
       </div>
-      <div class="feat-line"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.2);
+        color:#818cf8;padding:2px 8px;">Streamlit</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.2);
+        color:#818cf8;padding:2px 8px;">Plotly</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.2);
+        color:#818cf8;padding:2px 8px;">Groq API</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.2);
+        color:#818cf8;padding:2px 8px;">Deploy</span>
+      </div>
+      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
+      text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='#818cf8';this.style.color='#818cf8'"
+      onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
+      onclick="event.stopPropagation();handleLearningQuery('How do I build an AI-powered finance tool like Fincy Intelligence? Walk me through the complete tech stack: Streamlit for UI, Plotly for charts, Pandas for data, and Groq LLM for AI CFO. What are the exact steps to go from CSV upload to AI insights? How do I deploy it? Give a practical blueprint for a Finance professional with basic Python skills.')">
+      Start Stage 03 →</button>
+      <div class="feat-line" style="background:#818cf8;"></div>
     </div>
-    <div class="feat" style="padding:26px 20px;">
-      <div class="feat-n">04 / ADVANCED</div>
-      <div class="feat-t">Using LLMs for FP&amp;A</div>
-      <div class="feat-d">Prompt engineering for finance — how to get CFO-quality insights
-      from Groq, GPT, and Llama. Learn to build context-aware prompts that reference
-      specific financial numbers and give actionable output.</div>
-      <div style="margin-top:14px;">
-        <button onclick="handleLearningQuery('How do I use LLMs like Llama or GPT for FP&A analysis? Give prompt engineering tips for finance.')"
-        style="background:transparent;border:1px solid var(--b2);color:var(--text2);
-        font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;
-        text-transform:uppercase;padding:6px 14px;cursor:pointer;transition:all 0.2s;"
-        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
-        onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'">
-        Explore →</button>
+
+    <div class="feat" style="padding:24px 20px;cursor:pointer;transition:background 0.2s;"
+    onclick="handleLearningQuery('How do I master prompt engineering for Finance and Accounting? Teach me how to write prompts that get CFO-quality insights from LLMs like Llama and GPT. Give me 5 specific prompt templates for: 1) Variance analysis commentary 2) Cash flow risk assessment 3) Budget performance narrative 4) Cost reduction recommendations 5) Board-ready executive summary. Explain what makes each prompt effective.')">
+      <div class="feat-n">STAGE 04 / EXPERT</div>
+      <div class="feat-t">Prompt Engineering for CFOs</div>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.8;margin:8px 0;font-weight:300;">
+        Master prompt engineering. Write prompts that extract CFO-quality insights.
+        5 ready-to-use templates for variance, cash flow, board packs, and more.
       </div>
-      <div class="feat-line"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);
+        color:#2dd4bf;padding:2px 8px;">Prompting</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);
+        color:#2dd4bf;padding:2px 8px;">Templates</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);
+        color:#2dd4bf;padding:2px 8px;">LLM Strategy</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;
+        background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);
+        color:#2dd4bf;padding:2px 8px;">Expert Level</span>
+      </div>
+      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
+      text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
+      onmouseover="this.style.borderColor='#2dd4bf';this.style.color='#2dd4bf'"
+      onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
+      onclick="event.stopPropagation();handleLearningQuery('How do I master prompt engineering for Finance and Accounting? Teach me how to write prompts that get CFO-quality insights from LLMs like Llama and GPT. Give me 5 specific prompt templates for: 1) Variance analysis commentary 2) Cash flow risk assessment 3) Budget performance narrative 4) Cost reduction recommendations 5) Board-ready executive summary. Explain what makes each prompt effective.')">
+      Start Stage 04 →</button>
+      <div class="feat-line" style="background:#2dd4bf;"></div>
+    </div>
+
+  </div>
+
+  <!-- Quick Questions Row -->
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Quick Questions — Click to Ask AI</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+    <button onclick="handleLearningQuery('Will AI replace finance professionals? What skills do I need to stay relevant and become irreplaceable in the AI era?')"
+    style="background:var(--s);border:1px solid var(--b);color:var(--text2);
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;padding:8px 14px;
+    cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;"
+    onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+    onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--text2)'">
+    Will AI replace me?</button>
+
+    <button onclick="handleLearningQuery('What is the difference between Groq, OpenAI GPT, and Llama? Which one should a Finance professional use for building finance tools and why?')"
+    style="background:var(--s);border:1px solid var(--b);color:var(--text2);
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;padding:8px 14px;
+    cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;"
+    onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+    onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--text2)'">
+    Groq vs GPT vs Llama?</button>
+
+    <button onclick="handleLearningQuery('How do I learn Python as a Finance professional? Give me a 30-day learning plan focused only on finance automation, data analysis, and building dashboards. What should I learn in week 1, 2, 3, and 4?')"
+    style="background:var(--s);border:1px solid var(--b);color:var(--text2);
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;padding:8px 14px;
+    cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;"
+    onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+    onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--text2)'">
+    30-day Python plan for Finance</button>
+
+    <button onclick="handleLearningQuery('How can I use AI to automate my month-end close process? Give me a step-by-step checklist of what can be automated in reconciliation, variance analysis, journal entries, and management reporting.')"
+    style="background:var(--s);border:1px solid var(--b);color:var(--text2);
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;padding:8px 14px;
+    cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;"
+    onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+    onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--text2)'">
+    Automate month-end close</button>
+
+    <button onclick="handleLearningQuery('What are the top 5 AI skills a CFO or Senior FP&A professional should have in 2025? Give specific tools, certifications, and practical projects I can build to demonstrate these skills on my CV.')"
+    style="background:var(--s);border:1px solid var(--b);color:var(--text2);
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;padding:8px 14px;
+    cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;"
+    onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+    onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--text2)'">
+    Top 5 AI skills for CFOs</button>
+
+    <button onclick="handleLearningQuery('How do I build a personal brand as a Finance professional who uses AI? What should I post on LinkedIn, what projects should I build, and how do I position myself as an AI-powered finance expert?')"
+    style="background:var(--s);border:1px solid var(--b);color:var(--text2);
+    font-family:'IBM Plex Mono',monospace;font-size:0.58rem;padding:8px 14px;
+    cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;"
+    onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
+    onmouseout="this.style.borderColor='var(--b)';this.style.color='var(--text2)'">
+    Build AI finance brand</button>
+  </div>
+
+  <!-- AI Tutor Chat Box -->
+  <div style="border:1px solid var(--b);background:var(--s2);position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>
+    <div style="padding:24px 28px 20px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+        <div style="width:8px;height:8px;background:var(--green);border-radius:50%;
+        animation:pulse 2s infinite;"></div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.16em;
+        text-transform:uppercase;color:var(--gold);">AI Finance Tutor — Ask Anything</div>
+      </div>
+      <div style="font-size:0.8rem;color:var(--text2);margin-bottom:20px;font-weight:300;line-height:1.65;">
+        Your personal AI tutor for Finance × AI. Ask about careers, tools, code, prompts,
+        automation, or strategy. Powered by Llama 3.1 via Groq.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input type="text" id="lhInput"
+          placeholder="e.g. How do I automate variance analysis? What Python should I learn first?"
+          style="flex:1;min-width:260px;background:var(--bg);border:1px solid var(--b);
+          padding:12px 16px;color:var(--text);font-family:'IBM Plex Mono',monospace;
+          font-size:0.78rem;outline:none;transition:border-color 0.2s;"
+          onkeydown="if(event.key==='Enter')handleLearningQuery(this.value)"
+          onfocus="this.style.borderColor='var(--gold)'"
+          onblur="this.style.borderColor='var(--b)'"
+        />
+        <button onclick="handleLearningQuery(document.getElementById('lhInput').value)"
+          style="background:var(--gold);color:var(--bg);border:none;
+          font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;
+          letter-spacing:0.1em;text-transform:uppercase;padding:12px 24px;cursor:pointer;
+          transition:background 0.2s;white-space:nowrap;"
+          onmouseover="this.style.background='var(--gold2)'"
+          onmouseout="this.style.background='var(--gold)'">
+          Ask Tutor →
+        </button>
+        <button onclick="clearLearningChat()"
+          style="background:transparent;border:1px solid var(--b2);color:var(--text3);
+          font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;
+          text-transform:uppercase;padding:12px 16px;cursor:pointer;transition:all 0.2s;"
+          onmouseover="this.style.borderColor='var(--text3)'"
+          onmouseout="this.style.borderColor='var(--b2)'">
+          Clear
+        </button>
+      </div>
+    </div>
+
+    <!-- Chat history -->
+    <div id="lhHistory" style="display:none;padding:0 28px;max-height:400px;overflow-y:auto;"></div>
+
+    <!-- Loading -->
+    <div id="lhLoading" style="display:none;padding:14px 28px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--text3);
+    letter-spacing:0.1em;text-transform:uppercase;border-top:1px solid var(--b);">
+      <span style="animation:pulse 1.5s infinite;display:inline-block;">◆</span>
+      &nbsp;AI Tutor thinking…
+    </div>
+
+    <!-- Error -->
+    <div id="lhError" style="display:none;padding:14px 28px;
+    font-size:0.76rem;color:var(--red);border-top:1px solid var(--b);"></div>
+  </div>
+
+  <!-- Irreplaceable Skills Grid -->
+  <div style="margin-top:36px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--text3);margin-bottom:14px;">
+      Skills That Make You Irreplaceable
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);
+    border:1px solid var(--b);">
+      <div style="background:var(--s);padding:18px 20px;">
+        <div style="font-size:1.2rem;margin-bottom:8px;">🧠</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;
+        letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">AI Tool Builder</div>
+        <div style="font-size:0.76rem;color:var(--text2);line-height:1.7;font-weight:300;">
+          Build your own finance dashboards and AI tools. A finance professional
+          who ships working software commands 2-3× salary.
+        </div>
+      </div>
+      <div style="background:var(--s);padding:18px 20px;">
+        <div style="font-size:1.2rem;margin-bottom:8px;">💬</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;
+        letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Prompt Engineer</div>
+        <div style="font-size:0.76rem;color:var(--text2);line-height:1.7;font-weight:300;">
+          Know how to extract CFO-quality insights from AI. Prompt engineering
+          is the highest-leverage skill in finance today.
+        </div>
+      </div>
+      <div style="background:var(--s);padding:18px 20px;">
+        <div style="font-size:1.2rem;margin-bottom:8px;">⚙️</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;
+        letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Automation Architect</div>
+        <div style="font-size:0.76rem;color:var(--text2);line-height:1.7;font-weight:300;">
+          Automate reconciliation, reports, and variance analysis.
+          Turn 10 hours of manual work into 10-minute automated pipelines.
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Groq AI Ask Box -->
-  <div style="margin-top:32px;border:1px solid var(--b);background:var(--s2);padding:32px 36px;
-  position:relative;">
-    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);opacity:0.4;"></div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.16em;
-    text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Ask AI About Finance + AI</div>
-    <div style="font-size:0.84rem;color:var(--text2);margin-bottom:20px;font-weight:300;line-height:1.65;">
-      Ask anything about AI in finance — "How to automate FP&amp;A?",
-      "How to build a finance dashboard with AI?", "What is prompt engineering for CFOs?"
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <input type="text" id="lhInput"
-        placeholder="e.g. How do I automate variance analysis using AI?"
-        style="flex:1;min-width:260px;background:var(--bg);border:1px solid var(--b);
-        padding:11px 14px;color:var(--text);font-family:'IBM Plex Mono',monospace;
-        font-size:0.78rem;outline:none;"
-        onkeydown="if(event.key==='Enter')handleLearningQuery(document.getElementById('lhInput').value)"
-        onfocus="this.style.borderColor='var(--gold)'"
-        onblur="this.style.borderColor='var(--b)'"
-      />
-      <button onclick="handleLearningQuery(document.getElementById('lhInput').value)"
-        style="background:var(--gold);color:var(--bg);border:none;
-        font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;
-        letter-spacing:0.1em;text-transform:uppercase;padding:11px 22px;cursor:pointer;
-        transition:background 0.2s;white-space:nowrap;"
-        onmouseover="this.style.background='var(--gold2)'"
-        onmouseout="this.style.background='var(--gold)'">
-        Ask AI →
-      </button>
-    </div>
-    <!-- Response area -->
-    <div id="lhResponse" style="display:none;margin-top:20px;border-top:1px solid var(--b);
-    padding-top:18px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:10px;">AI Learning Response</div>
-      <div id="lhContent" style="font-size:0.82rem;color:var(--text2);line-height:1.9;
-      font-weight:300;white-space:pre-wrap;"></div>
-    </div>
-    <div id="lhLoading" style="display:none;margin-top:16px;font-family:'IBM Plex Mono',monospace;
-    font-size:0.62rem;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;">
-      ◆ AI thinking…
-    </div>
-    <div id="lhError" style="display:none;margin-top:16px;font-size:0.76rem;color:var(--red);"></div>
-  </div>
 </section>
 <hr class="divider"/>
+
+
+
 
 
 <!-- CTA -->
@@ -914,93 +1146,102 @@ function showPrivacy(){
   document.body.style.overflow='hidden';
 }
 
-/* ── Learning Hub: Groq AI integration ─────────────────────────────────────
-   Uses the Anthropic Claude API in the Streamlit app for backend queries.
-   For the static landing page, calls Groq directly via fetch if key available.
-   Fallback: redirects to the Streamlit app for full AI interaction. */
-function handleLearningQuery(query){
-  if(!query || !query.trim()){
-    document.getElementById('lhInput') && (document.getElementById('lhInput').value = '');
-    return;
-  }
+/* ── Learning Hub: AI Finance Tutor (upgraded) ───────────────────────────────
+   Full chat history per session. System prompt: expert finance AI tutor.
+   Calls Groq API if window.GROQ_KEY is set; else redirects to Streamlit app. */
 
-  // Sync input box with the query (e.g. from Explore buttons)
+var _lhHistory = [];
+
+function clearLearningChat() {
+  _lhHistory = [];
+  var h = document.getElementById('lhHistory');
+  if (h) { h.innerHTML = ''; h.style.display = 'none'; }
   var inp = document.getElementById('lhInput');
-  if(inp) inp.value = query;
+  if (inp) inp.value = '';
+}
 
-  var responseDiv = document.getElementById('lhResponse');
-  var contentDiv  = document.getElementById('lhContent');
-  var loadingDiv  = document.getElementById('lhLoading');
-  var errorDiv    = document.getElementById('lhError');
+function handleLearningQuery(query) {
+  query = (query || '').trim();
+  if (!query) return;
 
-  // Show loading, hide others
-  if(responseDiv) responseDiv.style.display = 'none';
-  if(errorDiv)    errorDiv.style.display    = 'none';
-  if(loadingDiv)  loadingDiv.style.display  = 'block';
+  var inp = document.getElementById('lhInput');
+  if (inp) inp.value = query;
 
-  // Call Groq API (free tier key injected server-side, or redirect to app)
-  // For the static page we use the Anthropic proxy via Claude.ai artifact bridge
-  // Primary path: POST to Groq completions
-  var GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+  var histDiv    = document.getElementById('lhHistory');
+  var loadingDiv = document.getElementById('lhLoading');
+  var errorDiv   = document.getElementById('lhError');
 
-  var prompt = (
-    'You are an expert in AI for Finance and Accounting. ' +
-    'Explain concepts in a simple, practical, and actionable way. ' +
-    'User question: ' + query.trim() + '\n\n' +
-    'Respond with:\n' +
-    '1. Clear explanation (2-3 sentences max)\n' +
-    '2. Real-world finance example\n' +
-    '3. Practical steps to get started\n\n' +
-    'Keep it concise, specific, and jargon-free.'
-  );
+  if (errorDiv)   { errorDiv.style.display='none'; errorDiv.textContent=''; }
+  if (loadingDiv)   loadingDiv.style.display='block';
 
-  // Attempt Groq API call (key must be set as window.GROQ_KEY by user or env)
+  var sysPr = 'You are an expert AI Finance Tutor for Finance and Accounting professionals.\n'+
+    'Your mission: help them become irreplaceable by mastering AI tools and automation.\n\n'+
+    'Always structure your response as:\n'+
+    '1. Clear Explanation (2-3 sentences, practical, no jargon)\n'+
+    '2. Real-World Finance Example (specific scenario with numbers)\n'+
+    '3. Practical Steps to Get Started (numbered, actionable, tools named)\n'+
+    '4. One Immediate Action (what to do TODAY)\n\n'+
+    'Tone: senior mentor, direct, encouraging. Use specific tools, numbers, and career outcomes.';
+
+  var msgs = [{ role:'system', content:sysPr }];
+  _lhHistory.forEach(function(t){
+    msgs.push({role:'user',content:t.q});
+    msgs.push({role:'assistant',content:t.a});
+  });
+  msgs.push({role:'user',content:query});
+
   var groqKey = window.GROQ_KEY || '';
-  if(!groqKey){
-    // Fallback: redirect to Streamlit app with query pre-loaded
-    if(loadingDiv) loadingDiv.style.display = 'none';
-    if(responseDiv) responseDiv.style.display = 'block';
-    if(contentDiv) contentDiv.innerHTML = (
-      '<strong style="color:var(--gold);">💡 ' + query + '</strong><br><br>' +
-      'For AI-powered answers, launch the <strong>Data Analysis Agent</strong> inside Fincy ' +
-      'and ask this question directly — you will get a full CFO-level response with examples.<br><br>' +
-      '<a href="' + APP + '/?m=dataanalyst" target="_blank" ' +
-      'style="color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:0.65rem;' +
-      'letter-spacing:0.08em;text-transform:uppercase;">Open Data Analysis Agent →</a>'
+  if (!groqKey) {
+    if (loadingDiv) loadingDiv.style.display='none';
+    _appendChat(query,
+      'For a full AI-powered answer, open the Data Analysis Agent inside Fincy \u2014 '+
+      'it runs on Groq Llama 3.1 and can answer any finance + AI question.\n\n'+
+      '<a href="'+APP+'/?m=dataanalyst" target="_blank" '+
+      'style="color:var(--gold);font-family:\'IBM Plex Mono\',monospace;font-size:0.65rem;'+
+      'letter-spacing:0.08em;text-transform:uppercase;">'+
+      'Open AI Finance Tutor in App \u2192</a>'
     );
     return;
   }
 
-  fetch(GROQ_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + groqKey
-    },
-    body: JSON.stringify({
-      model: 'llama-3.1-8b-instant',
-      messages: [{role:'user', content: prompt}],
-      max_tokens: 600,
-      temperature: 0.4
-    })
+  fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
+    body:JSON.stringify({model:'llama-3.1-8b-instant',messages:msgs,max_tokens:800,temperature:0.4})
   })
-  .then(function(r){ return r.json(); })
-  .then(function(data){
-    if(loadingDiv) loadingDiv.style.display = 'none';
-    var ans = (data.choices && data.choices[0] && data.choices[0].message)
-              ? data.choices[0].message.content
-              : 'Unable to get response. Please try again.';
-    if(responseDiv) responseDiv.style.display = 'block';
-    if(contentDiv)  contentDiv.textContent = ans;
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(loadingDiv) loadingDiv.style.display='none';
+    var ans=(d.choices&&d.choices[0]&&d.choices[0].message)?d.choices[0].message.content:'No response. Try again.';
+    _appendChat(query,ans);
   })
-  .catch(function(err){
-    if(loadingDiv) loadingDiv.style.display = 'none';
-    if(errorDiv){
-      errorDiv.style.display = 'block';
-      errorDiv.textContent = 'API error: ' + err.message + '. Try the Streamlit app for full AI access.';
-    }
+  .catch(function(e){
+    if(loadingDiv) loadingDiv.style.display='none';
+    if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Error: '+e.message;}
   });
 }
+
+function _appendChat(q,a){
+  _lhHistory.push({q:q,a:a});
+  var h=document.getElementById('lhHistory');
+  if(!h) return;
+  h.style.display='block';
+  var entry=document.createElement('div');
+  entry.style.cssText='border-top:1px solid var(--b);padding:16px 0;';
+  entry.innerHTML=(
+    '<div style="margin-bottom:10px;">'+
+    '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);">You</span><br>'+
+    '<span style="font-size:0.82rem;color:var(--text);">'+String(q).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span></div>'+
+    '<div style="background:var(--s);padding:14px 16px;border-left:3px solid var(--gold);margin-top:6px;">'+
+    '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.52rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);">AI Finance Tutor</span><br>'+
+    '<span style="font-size:0.82rem;color:var(--text2);line-height:1.9;white-space:pre-wrap;">'+a+'</span></div>'
+  );
+  h.appendChild(entry);
+  h.scrollTop=h.scrollHeight;
+  var inp=document.getElementById('lhInput');
+  if(inp) inp.value='';
+}
+
 
 window.addEventListener('resize',function(){
   if(window.innerWidth>768){
@@ -1011,6 +1252,109 @@ window.addEventListener('resize',function(){
     document.body.style.overflow='';
   }
 });
+</script>
+
+<!-- ── Chat with Fincy: Floating Chatbot (req §7) ──────────────────────────── -->
+<div id="fincy-chat-widget">
+  <button id="fincy-chat-btn" onclick="toggleChat()">💬 Chat with Fincy</button>
+  <div id="fincy-chat-box">
+    <div id="fincy-chat-hdr">
+      <span id="fincy-chat-hdr-title">◆ Chat with Fincy AI</span>
+      <button id="fincy-chat-close" onclick="toggleChat()" title="Close">✕</button>
+    </div>
+    <div id="fincy-chat-msgs">
+      <!-- Welcome message -->
+      <div class="fc-msg-ai">
+        <div class="fc-msg-ai-lbl">Fincy AI</div>
+        Hi! I'm Fincy — your AI CFO assistant. Ask me about features, tax, reconciliation,
+        or how to use any module. What can I help you with?
+      </div>
+    </div>
+    <div id="fincy-chat-input-row">
+      <input id="fincy-chat-input" type="text"
+        placeholder="Ask about Fincy or finance…"
+        onkeydown="if(event.key==='Enter')sendFincyMessage()" />
+      <button id="fincy-chat-send" onclick="sendFincyMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Chat with Fincy widget ────────────────────────────────────────────────── */
+var _fcHistory = [];
+
+function toggleChat(){
+  var box=document.getElementById('fincy-chat-box');
+  var isOpen=box.classList.contains('open');
+  if(isOpen){box.classList.remove('open');}
+  else{box.classList.add('open');document.getElementById('fincy-chat-input').focus();}
+}
+
+function sendFincyMessage(){
+  var inp=document.getElementById('fincy-chat-input');
+  var q=(inp.value||'').trim();
+  if(!q) return;
+  inp.value='';
+
+  var msgs=document.getElementById('fincy-chat-msgs');
+
+  /* User message */
+  var uDiv=document.createElement('div');
+  uDiv.className='fc-msg-you';
+  uDiv.innerHTML='You <span>'+String(q).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>';
+  msgs.appendChild(uDiv);
+
+  /* Typing indicator */
+  var typing=document.createElement('div');
+  typing.className='fc-typing';
+  typing.id='fc-typing';
+  typing.textContent='◆ Fincy is thinking…';
+  msgs.appendChild(typing);
+  msgs.scrollTop=msgs.scrollHeight;
+
+  _fcHistory.push({role:'user',content:q});
+
+  var sysPr='You are Fincy, an AI CFO assistant for the Fincy Intelligence platform. '+
+    'Answer questions about: platform modules (FP&A, Reconciliation, Cost Intelligence, '+
+    'Data Analysis, Personal Finance, Cash Flow), finance basics, India tax (FY 2024-25), '+
+    'and how to use Fincy. Be concise (2-3 sentences max), helpful, and professional. '+
+    'If asked about a module, explain what it does and how to use it.';
+
+  var apiMsgs=[{role:'system',content:sysPr}];
+  _fcHistory.slice(-6).forEach(function(m){apiMsgs.push(m);});
+
+  var groqKey=window.GROQ_KEY||'';
+  if(!groqKey){
+    _appendFincyReply(q,'To get AI-powered answers, launch the Fincy app and use the '+
+      'built-in AI CFO in any module — it runs on Groq Llama 3.1. '+
+      '<a href="'+APP+'" target="_blank" style="color:var(--gold);">Open Fincy App →</a>');
+    return;
+  }
+
+  fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
+    body:JSON.stringify({model:'llama-3.1-8b-instant',messages:apiMsgs,max_tokens:300,temperature:0.3})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var ans=(d.choices&&d.choices[0]&&d.choices[0].message)?d.choices[0].message.content:'Sorry, try again.';
+    _appendFincyReply(q,ans);
+  })
+  .catch(function(e){_appendFincyReply(q,'Error: '+e.message);});
+}
+
+function _appendFincyReply(q,ans){
+  var typing=document.getElementById('fc-typing');
+  if(typing) typing.remove();
+  _fcHistory.push({role:'assistant',content:ans});
+  var msgs=document.getElementById('fincy-chat-msgs');
+  var aDiv=document.createElement('div');
+  aDiv.className='fc-msg-ai';
+  aDiv.innerHTML='<div class="fc-msg-ai-lbl">Fincy AI</div>'+ans;
+  msgs.appendChild(aDiv);
+  msgs.scrollTop=msgs.scrollHeight;
+}
 </script>
 </body>
 </html>
