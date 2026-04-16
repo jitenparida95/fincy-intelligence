@@ -294,7 +294,7 @@ def send_to_formspree(name, email, company, role, linkedin):
 
 # ── QUERY PARAM ROUTING — HTML card clicks set ?m=xxx ────────────────────────
 _qp = st.query_params.get("m", None)
-if _qp and _qp in ("fpa","recon","budget","cost","dataanalyst","personal"):
+if _qp and _qp in ("fpa","recon","budget","cost","dataanalyst","personal","cashflow"):
     if st.session_state.active_module != _qp:
         st.session_state.active_module = _qp
     st.query_params.clear()   # clean URL after routing
@@ -555,8 +555,8 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
   text-transform:uppercase;color:#c9a84c;">Free 7-Day Trial</span>
   <span style="width:1px;height:14px;background:#2a2a20;"></span>
   <span style="font-size:0.8rem;color:#a09880;font-weight:300;">
-    6 AI modules · FP&amp;A Decision Intelligence · Reconciliation · Budget Tracker
-    · Cost Intelligence · Data Analysis Agent · Personal Finance
+    6 AI modules · FP&amp;A Decision Intelligence · Reconciliation · Cost Intelligence
+    · Data Analysis Agent · Personal Finance · Cash Flow Intelligence
   </span>
   <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
   color:#3a3a34;">Session isolated · No code · No credit card</span>
@@ -609,15 +609,7 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
     </div>
     <div class="mhbtn">→ Launch Reconciliation Engine</div>
   </a>
-  <a class="mhc" href="{app_url}/?m=budget" target="_self" style="--mc:#fbbf24;">
-    <div class="mhb"><span class="mhi">🎯</span>
-      <div class="mhbdg">Budget Tracker</div>
-      <div class="mht">Budget vs Actuals Tracker</div>
-      <div class="mhd">RAG-status variance tracker with prior year overlays, trend detection, and AI-generated board commentary.</div>
-      <div class="mhk">RAG Status · Prior Year · Board Commentary · AI CFO</div>
-    </div>
-    <div class="mhbtn">→ Launch Budget Tracker</div>
-  </a>
+
   <a class="mhc" href="{app_url}/?m=cost" target="_self" style="--mc:#f472b6;">
     <div class="mhb"><span class="mhi">💡</span>
       <div class="mhbdg">Cost Analysis</div>
@@ -645,6 +637,15 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
       <div class="mhk">Safe/Moderate/Risky · Savings Impact · AI Advisor</div>
     </div>
     <div class="mhbtn">→ Launch Personal Finance</div>
+  </a>
+  <a class="mhc" href="{app_url}/?m=cashflow" target="_self" style="--mc:#06b6d4;">
+    <div class="mhb"><span class="mhi">💧</span>
+      <div class="mhbdg">New</div>
+      <div class="mht">Cash Flow Intelligence</div>
+      <div class="mhd">Upload your monthly cash flow statement. Get instant liquidity health, burn rate, runway analysis, and AI CFO insights on where your cash is going.</div>
+      <div class="mhk">Liquidity · Burn Rate · Runway · AI CFO</div>
+    </div>
+    <div class="mhbtn">→ Launch Cash Flow Intelligence</div>
   </a>
 </div>"""
     st.markdown(cards_html, unsafe_allow_html=True)
@@ -2080,6 +2081,172 @@ def _wealth_projection(monthly_surplus, current_savings, annual_return=0.08):
     return results
 
 
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AI CFO ENGINE — Unified cross-module intelligence (Personal Finance brain)
+# mode: "decision" | "tax" | "wealth" | "alert"
+# Connects spending -> tax -> wealth in every response.
+# ─────────────────────────────────────────────────────────────────────────────
+def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
+    api_key = _get_groq_key()
+    if not api_key:
+        return ("AI CFO offline. Add GROQ_API_KEY to Streamlit Secrets.", "UNKNOWN")
+
+    income   = user_data.get("income", 0)
+    expense  = user_data.get("expense", 0)
+    savings  = user_data.get("savings", 0)
+    invest   = user_data.get("invest", 0)
+    fixed    = user_data.get("fixed", 0)
+    goal     = user_data.get("goal", "")
+    m_inc    = income / 12 if income else 0
+    surplus  = user_data.get("surplus", m_inc - expense)
+    sav_rate = (surplus / m_inc * 100) if m_inc else 0
+    spend_pct= (expense / m_inc * 100) if m_inc else 0
+    gap80    = max(0, 150000 - invest)
+
+    profile = (
+        "ANNUAL INCOME: Rs" + "{:,}".format(int(income)) +
+        " (Monthly: Rs" + "{:,.0f}".format(m_inc) + ")\n" +
+        "MONTHLY EXPENSES: Rs" + "{:,}".format(int(expense)) +
+        " (" + "{:.1f}".format(spend_pct) + "% of income)\n" +
+        "MONTHLY SURPLUS: Rs" + "{:,.0f}".format(surplus) +
+        " (" + "{:.1f}".format(sav_rate) + "% savings rate)\n" +
+        "CURRENT SAVINGS: Rs" + "{:,}".format(int(savings)) + "\n" +
+        "80C INVESTMENTS: Rs" + "{:,}".format(int(invest)) +
+        " (gap: Rs" + "{:,}".format(int(gap80)) + ")\n" +
+        "FIXED EXPENSES: Rs" + "{:,}".format(int(fixed)) + "/month\n" +
+        "FINANCIAL GOAL: " + str(goal) + "\n" +
+        "EXTRA CONTEXT: " + str(extra_context)
+    )
+
+    if mode == "decision":
+        prompt = "\n".join([
+            "You are an AI Personal CFO — senior financial advisor, tax expert, and wealth coach.",
+            "Connect ALL dimensions: spending to tax to wealth in every answer.",
+            "",
+            "USER FINANCIAL PROFILE:",
+            profile,
+            "",
+            "USER QUESTION: " + question,
+            "",
+            "Respond in this EXACT unified format:",
+            "",
+            "AI CFO Insight:",
+            "[Direct yes/no answer with reasoning in 2 sentences using Rs numbers]",
+            "",
+            "Impact Summary:",
+            "- Decision Impact: [exact Rs savings change]",
+            "- Tax Impact: [80C opportunity or tax implication if any]",
+            "- Wealth Impact: [effect on goal timeline with months or years]",
+            "",
+            "Recommendation:",
+            "[One specific action with a Rs number and timeframe]",
+            "",
+            "Cross-Module Link:",
+            "[How this decision connects spending to tax to long-term wealth in one sentence]",
+            "",
+            "Rules: Rs symbols on all numbers, reference profile data, no generic advice.",
+        ])
+
+    elif mode == "tax":
+        prompt = "\n".join([
+            "You are an AI tax strategist and wealth advisor with 20+ years in Indian finance.",
+            "",
+            "USER FINANCIAL PROFILE:",
+            profile,
+            "",
+            "Analyse this user's tax situation and connect it to spending and wealth:",
+            "",
+            "AI CFO Tax Insight:",
+            "[Which regime is better and the exact tax saving in Rs]",
+            "",
+            "Impact Summary:",
+            "- Tax Saving Opportunity: [Rs amount if they optimise 80C and 80D]",
+            "- Spending Link: [how current expenses affect tax position]",
+            "- Wealth Link: [if they invest tax savings, 5yr compounding impact]",
+            "",
+            "Top 3 Tax Actions (ranked by Rs impact):",
+            "1. [Action + exact Rs tax saved]",
+            "2. [Action + exact Rs tax saved]",
+            "3. [Action + exact Rs tax saved]",
+            "",
+            "Strategic Recommendation:",
+            "[One sentence linking tax optimisation to their financial goal]",
+            "",
+            "Rules: use FY 2024-25 slabs, reference actual numbers from profile, be specific.",
+        ])
+
+    elif mode == "wealth":
+        prompt = "\n".join([
+            "You are an AI wealth coach and CFO advisor.",
+            "Analyse savings rate, investment behaviour, and provide personalised wealth strategy.",
+            "",
+            "USER FINANCIAL PROFILE:",
+            profile,
+            "",
+            "Provide a comprehensive wealth analysis:",
+            "",
+            "AI CFO Wealth Insight:",
+            "[Savings rate assessment vs 20 percent benchmark with gap in Rs/month]",
+            "",
+            "Impact Summary:",
+            "- Savings Rate: [current vs recommended, Rs gap per month]",
+            "- Tax-Wealth Link: [if 80C gap of Rs" + "{:,}".format(int(gap80)) + " is invested, impact on wealth]",
+            "- Goal Progress: [on track or behind, by how many months based on numbers]",
+            "",
+            "Wealth Building Actions:",
+            "1. [SIP or investment recommendation with Rs amount and instrument]",
+            "2. [Expense optimisation with Rs impact on savings rate]",
+            "3. [Tax plus wealth combo action]",
+            "",
+            "30-Day Plan:",
+            "[Specific steps this week and this month to improve financial health]",
+            "",
+            "Rules: compound growth numbers, realistic targets, link tax savings to investments.",
+        ])
+
+    elif mode == "alert":
+        prompt = "\n".join([
+            "You are an AI financial risk monitor for a personal finance platform.",
+            "Analyse this user's financial profile and generate intelligent personalised alerts.",
+            "",
+            "USER FINANCIAL PROFILE:",
+            profile,
+            "",
+            "Generate 2-3 smart financial alerts. For EACH alert:",
+            "[Risk emoji] Alert Title - Risk: HIGH or MEDIUM or LOW",
+            "[Alert message with specific Rs numbers]",
+            "Action: [exact step to take with Rs target]",
+            "",
+            "Then conclude with:",
+            "Overall Financial Health: STRONG or MODERATE or AT RISK - [one sentence why]",
+            "",
+            "Rules: reference actual numbers, link spending to tax to wealth,",
+            "no generic advice, every alert must have a specific Rs action.",
+        ])
+    else:
+        return ("Unknown AI CFO mode.", "UNKNOWN")
+
+    try:
+        from groq import Groq
+        resp = Groq(api_key=api_key).chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=900,
+            temperature=0.25
+        )
+        answer = resp.choices[0].message.content
+        risk = "MEDIUM"
+        if mode == "alert":
+            au = answer.upper()
+            if "RISK: HIGH" in au or "AT RISK" in au:  risk = "HIGH"
+            elif "RISK: LOW" in au or "STRONG" in au:  risk = "LOW"
+        return answer, risk
+    except Exception as e:
+        return ("AI CFO Engine error: " + str(e)), "UNKNOWN"
+
+
 def run_personal():
     with st.sidebar:
         st.markdown("### 💰 Personal Finance")
@@ -2281,71 +2448,42 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
   {months_line}
 </div>""", unsafe_allow_html=True)
 
-            # ── AI response ───────────────────────────────────────────────
-            api_key = _get_groq_key()
-            if api_key:
-                # Calculate tax context for richer AI
-                old_t = _calc_old_tax(max(0, income - 150000 - invest))
-                new_t = _calc_new_tax(income)
-                better = "Old" if old_t < new_t else "New"
-                tax_context = (f"Annual tax (Old Regime): ₹{old_t:,.0f} | "
-                               f"Annual tax (New Regime): ₹{new_t:,.0f} | "
-                               f"Better regime: {better}")
-                wealth_proj = _wealth_projection(max(0,surplus), savings)
-
-                with st.spinner("AI CFO analysing…"):
-                    try:
-                        from groq import Groq
-                        pf_prompt = (
-                            "You are a senior personal finance advisor, tax expert, and wealth coach. "
-                            "Be direct, practical, and give specific numbers.\n\n"
-                            f"USER FINANCIAL PROFILE:\n"
-                            f"Annual Income: ₹{income:,} (Monthly: ₹{m_income:,.0f})\n"
-                            f"Monthly Expenses: ₹{expense:,} | Surplus: ₹{surplus:,.0f}\n"
-                            f"Current Savings: ₹{savings:,} | 80C Investments: ₹{invest:,}\n"
-                            f"Fixed Expenses: ₹{fixed:,} | Goal: {goal}\n"
-                            f"Tax Context: {tax_context}\n"
-                            f"Wealth Projection (at 8% returns): "
-                            f"1yr=₹{wealth_proj[1]:,.0f} | 3yr=₹{wealth_proj[3]:,.0f} | "
-                            f"5yr=₹{wealth_proj[5]:,.0f}\n\n"
-                            f"USER QUESTION: {user_q.strip()}\n"
-                            f"SYSTEM DECISION: {decision}\n"
-                            f"Amount: ₹{amount:,.0f} | Savings Impact: {pct_sav:.1f}%\n\n"
-                            "Respond in this EXACT format:\n\n"
-                            "**Decision:** [Yes/No/Maybe — one direct answer]\n\n"
-                            "**Explanation:** [2-3 sentences with ₹ numbers — why this decision]\n\n"
-                            "**Savings Impact:** [Exact calculation + what it means for the goal]\n\n"
-                            "**Tax Angle:** [How this decision relates to tax — e.g. if investing, mention 80C benefit]\n\n"
-                            "**Recommendation:** [1 specific actionable suggestion with ₹ target]\n\n"
-                            "**Smart Alternative:** [Better-timed or cheaper option if risky/moderate]\n\n"
-                            "Rules: use ₹, reference exact numbers, no generic advice."
-                        )
-                        resp = Groq(api_key=api_key).chat.completions.create(
-                            model="llama-3.1-8b-instant",
-                            messages=[{"role":"user","content":pf_prompt}],
-                            max_tokens=700, temperature=0.3)
-                        ai_ans = resp.choices[0].message.content
-                    except Exception as e:
-                        ai_ans = f"⚠️ {e}"
-
-                st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ai_ans}</div>''',
-                            unsafe_allow_html=True)
-                try:
-                    _pdf_text = (f"FINCY — PERSONAL FINANCE DECISION REPORT\n{'='*50}\n\n"
-                                 f"Question: {user_q}\nDecision: {decision}\n"
-                                 f"Amount: ₹{amount:,.0f} | Savings Impact: {pct_sav:.1f}%\n"
-                                 f"Remaining Savings: ₹{remaining:,.0f}\n\n"
-                                 f"AI Analysis:\n{ai_ans}\n\n"
-                                 f"Profile: Income=₹{income:,}/yr | Expenses=₹{expense:,}/mo | "
-                                 f"Savings=₹{savings:,} | Goal={goal}")
-                    st.download_button("📄 Download Finance Report (PDF)",
-                                       data=generate_pdf(_pdf_text),
-                                       file_name="Fincy_Personal_Finance_Report.pdf",
-                                       mime="application/pdf", key="pf_pdf")
-                except Exception:
-                    pass
-            else:
-                st.info("Configure GROQ_API_KEY in Streamlit Secrets for AI analysis.")
+            # ── AI CFO Engine — unified decision+tax+wealth response ─────────
+            _ud = {"income":income,"expense":expense,"savings":savings,
+                   "invest":invest,"fixed":fixed,"goal":goal,"surplus":surplus}
+            old_t = _calc_old_tax(max(0, income - 150000 - invest))
+            new_t = _calc_new_tax(income)
+            wp    = _wealth_projection(max(0,surplus), savings)
+            _xctx = (
+                "Decision=" + decision +
+                " | Amount=Rs" + "{:,.0f}".format(amount) +
+                " | Savings impact=" + "{:.1f}".format(pct_sav) + "%" +
+                " | Old tax=Rs" + "{:,.0f}".format(old_t) +
+                " | New tax=Rs" + "{:,.0f}".format(new_t) +
+                " | 3yr wealth=Rs" + "{:,.0f}".format(wp[3])
+            )
+            with st.spinner("AI CFO Engine analysing…"):
+                ai_ans, _ = _call_ai_cfo_engine(
+                    "decision", _ud,
+                    question=user_q.strip(),
+                    extra_context=_xctx
+                )
+            st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ai_ans}</div>''',
+                        unsafe_allow_html=True)
+            try:
+                _pdf_text = (f"FINCY — PERSONAL FINANCE DECISION REPORT\n{'='*50}\n\n"
+                             f"Question: {user_q}\nDecision: {decision}\n"
+                             f"Amount: Rs{amount:,.0f} | Savings Impact: {pct_sav:.1f}%\n"
+                             f"Remaining Savings: Rs{remaining:,.0f}\n\n"
+                             f"AI CFO Analysis:\n{ai_ans}\n\n"
+                             f"Profile: Income=Rs{income:,}/yr | Expenses=Rs{expense:,}/mo | "
+                             f"Savings=Rs{savings:,} | Goal={goal}")
+                st.download_button("📄 Download Finance Report (PDF)",
+                                   data=generate_pdf(_pdf_text),
+                                   file_name="Fincy_Personal_Finance_Report.pdf",
+                                   mime="application/pdf", key="pf_pdf")
+            except Exception:
+                pass
 
             st.session_state.pop("_pf_preset", None)
 
@@ -2460,6 +2598,26 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
 padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">{r}</div>""",
                         unsafe_allow_html=True)
 
+        # ── AI CFO Engine: Tax + Wealth + Spending cross-module analysis ────────
+        st.markdown('<div class="sec-label">🧠 AI CFO Tax Intelligence</div>',
+                    unsafe_allow_html=True)
+        with st.spinner("AI CFO analysing your tax situation…"):
+            _ud_tax = {"income":tax_income,"expense":expense,"savings":savings,
+                       "invest":sec80c,"fixed":fixed,"goal":goal,"surplus":surplus}
+            _xctx_tax = (
+                "Old regime tax=Rs" + "{:,.0f}".format(int(old_tax)) +
+                " | New regime tax=Rs" + "{:,.0f}".format(int(new_tax)) +
+                " | Better=" + better_reg +
+                " | Saving=Rs" + "{:,.0f}".format(int(saving_diff)) +
+                " | 80C invested=Rs" + "{:,}".format(int(sec80c)) +
+                " | 80D=Rs" + "{:,}".format(int(sec80d))
+            )
+            tax_ai_ans, _ = _call_ai_cfo_engine(
+                "tax", _ud_tax, extra_context=_xctx_tax
+            )
+        st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{tax_ai_ans}</div>''',
+                    unsafe_allow_html=True)
+
         # Tax PDF
         try:
             tax_report = (f"FINCY — TAX COMPARISON REPORT FY 2024-25\n{'='*50}\n\n"
@@ -2550,6 +2708,24 @@ padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">{r}</div>"
 padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">{ins}</div>""",
                         unsafe_allow_html=True)
 
+        # ── AI CFO Engine: Wealth + Tax + Spending unified strategy ─────────
+        st.markdown('<div class="sec-label">🧠 AI CFO Wealth Strategy</div>',
+                    unsafe_allow_html=True)
+        with st.spinner("AI CFO building your wealth strategy…"):
+            _ud_w = {"income":income,"expense":expense,"savings":savings,
+                     "invest":invest,"fixed":fixed,"goal":goal,"surplus":surplus}
+            _xctx_w = (
+                "Savings rate=" + "{:.1f}".format(sav_rate) + "%" +
+                " | 1yr projection=Rs" + "{:,.0f}".format(proj[1]) +
+                " | 5yr projection=Rs" + "{:,.0f}".format(proj[5]) +
+                " | 10yr projection=Rs" + "{:,.0f}".format(proj[10])
+            )
+            wealth_ai_ans, _ = _call_ai_cfo_engine(
+                "wealth", _ud_w, extra_context=_xctx_w
+            )
+        st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{wealth_ai_ans}</div>''',
+                    unsafe_allow_html=True)
+
     # ════════════════════════════════════════════════════════════════
     # TAB 4 — ALERTS
     # ════════════════════════════════════════════════════════════════
@@ -2593,6 +2769,25 @@ padding:18px 22px;margin-bottom:16px;">
 padding:10px 14px;margin-bottom:8px;font-size:0.78rem;color:#a09880;">
 {icon} {msg}</div>""", unsafe_allow_html=True)
 
+        # ── AI CFO Engine: Groq-powered smart alerts ─────────────────────────
+        st.markdown('<div class="sec-label">🧠 AI CFO Smart Alerts</div>',
+                    unsafe_allow_html=True)
+        with st.spinner("AI CFO monitoring your finances…"):
+            _ud_al = {"income":income,"expense":expense,"savings":savings,
+                      "invest":invest,"fixed":fixed,"goal":goal,"surplus":surplus}
+            _xctx_al = (
+                "Spending pct=" + "{:.1f}".format(spend_pct) + "%" +
+                " | Static alerts=" + str(len(alerts)) +
+                " | High risk count=" + str(sum(1 for a in alerts if a[1]=="HIGH")) +
+                " | Emergency fund ratio=" + "{:.1f}".format(savings/max(m_income,1))
+            )
+            alert_ai_ans, ai_risk = _call_ai_cfo_engine(
+                "alert", _ud_al, extra_context=_xctx_al
+            )
+        _alert_border = {"HIGH":"#f87171","MEDIUM":"#fbbf24","LOW":"#4ade80"}.get(ai_risk,"#5a5648")
+        st.markdown(f'''<div class="ai-box" style="line-height:1.85;border-left:3px solid {_alert_border};">{alert_ai_ans}</div>''',
+                    unsafe_allow_html=True)
+
         # Summary health score
         risk_count = sum(1 for a in alerts if a[1]=="HIGH")
         warn_count = sum(1 for a in alerts if a[1]=="WARN")
@@ -2610,6 +2805,275 @@ text-align:center;">
 </div>""", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
+# MODULE 7 — CASH FLOW INTELLIGENCE
+# ══════════════════════════════════════════════════════════════════════════════
+SAMPLE_CASHFLOW = """Month,Opening_Balance,Operating_Inflows,Operating_Outflows,Investing_Inflows,Investing_Outflows,Financing_Inflows,Financing_Outflows
+Jan-2024,500000,850000,620000,0,45000,0,80000
+Feb-2024,605000,920000,680000,0,0,0,80000
+Mar-2024,765000,1050000,710000,15000,0,200000,80000
+Apr-2024,1160000,880000,650000,0,120000,0,80000
+May-2024,1190000,960000,700000,0,0,0,80000
+Jun-2024,1370000,1100000,760000,0,55000,0,80000
+Jul-2024,1575000,820000,640000,0,0,0,80000
+Aug-2024,1675000,900000,680000,25000,0,0,80000
+Sep-2024,1840000,1080000,730000,0,90000,0,80000
+Oct-2024,2020000,950000,700000,0,0,0,80000
+Nov-2024,2190000,1020000,750000,0,0,100000,80000
+Dec-2024,2480000,1200000,820000,0,200000,0,80000"""
+
+
+def run_cashflow():
+    with st.sidebar:
+        st.markdown("### 💧 Cash Flow Intelligence")
+        st.markdown("---")
+        if st.button("🏠 Module Home", use_container_width=True, key="cf_home"):
+            for k in ["_cf_df","_cf_ready"]:
+                st.session_state.pop(k, None)
+            st.session_state.active_module = None
+            st.rerun()
+        if st.session_state.get("_cf_ready"):
+            if st.button("🔄 Load New Data", use_container_width=True, key="cf_new"):
+                for k in ["_cf_df","_cf_ready"]:
+                    st.session_state.pop(k, None)
+                st.rerun()
+        st.markdown("---")
+        st.caption("Cash Flow · Liquidity · Burn Rate")
+
+    page_header("CASH FLOW INTELLIGENCE", "Liquidity & Forecasting")
+
+    st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #06b6d4;
+padding:12px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#06b6d4;">How it works: </span>
+Upload a monthly cash flow CSV with Opening Balance, Operating, Investing, and Financing
+inflows/outflows. Get instant liquidity health, burn rate, runway analysis, and AI CFO
+insights on where your cash is going and how to protect it.
+<strong style="color:#e8e2d4;"> Columns needed:</strong>
+Month · Opening_Balance · Operating_Inflows · Operating_Outflows ·
+Investing/Financing columns (optional).
+</div>""", unsafe_allow_html=True)
+
+    # ── Upload ─────────────────────────────────────────────────────────────────
+    if not st.session_state.get("_cf_ready"):
+        _, cc, _ = st.columns([1, 2, 1])
+        with cc:
+            cf_file = st.file_uploader("Upload Cash Flow CSV", type=["csv"], key="cf_upload")
+            st.markdown('''<div style="text-align:center;margin:8px 0 4px;
+font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#3a3a34;">— or use sample —</div>''',
+                        unsafe_allow_html=True)
+            if st.button("💧 Use Sample Cash Flow Data",
+                         use_container_width=True, key="cf_sample"):
+                st.session_state["_cf_df"]    = pd.read_csv(io.StringIO(SAMPLE_CASHFLOW))
+                st.session_state["_cf_ready"] = True
+                st.rerun()
+        if cf_file:
+            try:
+                st.session_state["_cf_df"]    = pd.read_csv(cf_file)
+                st.session_state["_cf_ready"] = True
+                st.rerun()
+            except Exception as e:
+                st.error(f"⚠️ Could not read CSV: {e}")
+        else:
+            st.markdown("""<div class="box" style="opacity:0.6;font-size:0.74rem;">
+↑ Upload your cash flow CSV or use the sample data.<br><br>
+<strong>Use cases:</strong> Monthly cash flow statement · Liquidity planning · Burn rate ·
+Runway forecasting · Operating cash health<br>
+<strong>Output:</strong> Net cash flow · Burn rate · Runway months · Closing balance trend · AI CFO
+</div>""", unsafe_allow_html=True)
+        return
+
+    df = st.session_state["_cf_df"].copy()
+    cols = list(df.columns)
+
+    # ── Auto-detect columns ────────────────────────────────────────────────────
+    def _find(keywords, fallback=None):
+        return next((c for c in cols if any(k in c.lower() for k in keywords)), fallback)
+
+    period_col = _find(["month","period","date","quarter"], cols[0])
+    open_col   = _find(["opening","open_bal","begin"], None)
+    op_in      = _find(["operating_in","op_in","oper_in","operating_inflow"], None)
+    op_out     = _find(["operating_out","op_out","oper_out","operating_out"], None)
+    inv_in     = _find(["investing_in","inv_in"], None)
+    inv_out    = _find(["investing_out","inv_out"], None)
+    fin_in     = _find(["financing_in","fin_in"], None)
+    fin_out    = _find(["financing_out","fin_out"], None)
+
+    # Convert to numeric
+    for c in [open_col, op_in, op_out, inv_in, inv_out, fin_in, fin_out]:
+        if c and c in df.columns:
+            df[c] = pd.to_numeric(df[c], errors="coerce").fillna(0)
+
+    # ── Compute cash flow components ──────────────────────────────────────────
+    df["_op_net"]  = (df[op_in].fillna(0)  if op_in  else 0) - (df[op_out].fillna(0)  if op_out  else 0)
+    df["_inv_net"] = (df[inv_in].fillna(0) if inv_in else 0) - (df[inv_out].fillna(0) if inv_out else 0)
+    df["_fin_net"] = (df[fin_in].fillna(0) if fin_in else 0) - (df[fin_out].fillna(0) if fin_out else 0)
+    df["_net_cf"]  = df["_op_net"] + df["_inv_net"] + df["_fin_net"]
+
+    # Closing balance
+    if open_col:
+        df["_close"] = df[open_col] + df["_net_cf"]
+    else:
+        df["_close"] = df["_net_cf"].cumsum()
+
+    # ── KPI computation ────────────────────────────────────────────────────────
+    total_op_in   = df["_op_net"].clip(lower=0).sum()
+    total_op_out  = (-df["_op_net"]).clip(lower=0).sum()
+    avg_monthly_net = df["_net_cf"].mean()
+    total_net_cf  = df["_net_cf"].sum()
+    closing_bal   = df["_close"].iloc[-1]
+    opening_bal   = df[open_col].iloc[0] if open_col else 0
+    avg_monthly_burn = (-df["_net_cf"]).clip(lower=0).mean()
+
+    # Positive cash months
+    pos_months = int((df["_net_cf"] > 0).sum())
+    neg_months = int((df["_net_cf"] <= 0).sum())
+
+    # Runway (months of current balance at burn rate)
+    runway = (closing_bal / avg_monthly_burn) if avg_monthly_burn > 0 else float("inf")
+
+    # Operating cash conversion %
+    op_inflow_total = df[op_in].sum() if op_in else 1
+    op_cf_pct = (df["_op_net"].sum() / op_inflow_total * 100) if op_inflow_total else 0
+
+    # ── Summary KPIs ─────────────────────────────────────────────────────────
+    st.markdown('<div class="sec-label">Cash Flow Summary</div>', unsafe_allow_html=True)
+    _net_col = "#4ade80" if total_net_cf >= 0 else "#f87171"
+    _avg_col = "#4ade80" if avg_monthly_net >= 0 else "#f87171"
+    _rwy_col = "#4ade80" if runway > 12 else ("#fbbf24" if runway > 6 else "#f87171")
+
+    st.markdown(f"""
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px;">
+  <div class="kpi-card" style="--ac:#06b6d4">
+    <div class="kpi-label">Closing Balance</div>
+    <div class="kpi-value">{fmt_m(closing_bal)}</div>
+    <div class="kpi-delta">vs open {fmt_m(opening_bal)}</div>
+  </div>
+  <div class="kpi-card" style="--ac:{_net_col}">
+    <div class="kpi-label">Total Net CF</div>
+    <div class="kpi-value" style="color:{_net_col};">{fmt_m(total_net_cf)}</div>
+    <div class="kpi-delta">{"Inflow" if total_net_cf>=0 else "Outflow"}</div>
+  </div>
+  <div class="kpi-card" style="--ac:{_avg_col}">
+    <div class="kpi-label">Avg Monthly</div>
+    <div class="kpi-value" style="color:{_avg_col};">{fmt_m(avg_monthly_net)}</div>
+    <div class="kpi-delta">net cash flow</div>
+  </div>
+  <div class="kpi-card" style="--ac:{_rwy_col}">
+    <div class="kpi-label">Runway</div>
+    <div class="kpi-value" style="color:{_rwy_col};">
+      {"∞" if runway == float("inf") else f"{runway:.0f}mo"}</div>
+    <div class="kpi-delta">at current burn</div>
+  </div>
+  <div class="kpi-card" style="--ac:#4ade80">
+    <div class="kpi-label">Positive Months</div>
+    <div class="kpi-value">{pos_months}</div>
+    <div class="kpi-delta">of {len(df)} total</div>
+  </div>
+  <div class="kpi-card" style="--ac:#c9a84c">
+    <div class="kpi-label">Op CF Conversion</div>
+    <div class="kpi-value">{op_cf_pct:.1f}%</div>
+    <div class="kpi-delta">of operating inflows</div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+    # ── Charts ────────────────────────────────────────────────────────────────
+    c1, c2 = st.columns(2)
+    with c1:
+        # Net cash flow waterfall by month
+        clrs = ["#4ade80" if v >= 0 else "#f87171" for v in df["_net_cf"]]
+        fig = go.Figure(go.Bar(
+            x=df[period_col].tolist(), y=df["_net_cf"].tolist(),
+            marker_color=clrs,
+            text=[f"{fmt_m(v)}" for v in df["_net_cf"]],
+            textposition="auto"))
+        fig.update_layout(**PLOTLY_BASE, title="Monthly Net Cash Flow",
+                          height=280, xaxis=AXIS, yaxis=AXIS)
+        st.plotly_chart(fig, use_container_width=True)
+
+    with c2:
+        # Closing balance trend
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=df[period_col].tolist(), y=df["_close"].tolist(),
+            fill="tozeroy", fillcolor="rgba(6,182,212,0.08)",
+            line=dict(color="#06b6d4", width=2),
+            name="Closing Balance"))
+        fig.update_layout(**PLOTLY_BASE, title="Closing Balance Trend",
+                          height=280, xaxis=AXIS, yaxis=AXIS, showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+
+    # ── Cash flow waterfall (operating/investing/financing) ───────────────────
+    if op_in and op_out:
+        st.markdown('<div class="sec-label">Cash Flow Breakdown</div>',
+                    unsafe_allow_html=True)
+        c3, c4 = st.columns(2)
+        with c3:
+            op_total  = df["_op_net"].sum()
+            inv_total = df["_inv_net"].sum()
+            fin_total = df["_fin_net"].sum()
+            cats  = ["Operating","Investing","Financing"]
+            vals  = [op_total, inv_total, fin_total]
+            bclrs = ["#4ade80" if v >= 0 else "#f87171" for v in vals]
+            fig = go.Figure(go.Bar(
+                x=cats, y=vals,
+                marker_color=bclrs,
+                text=[fmt_m(v) for v in vals], textposition="auto"))
+            fig.update_layout(**PLOTLY_BASE, title="CF by Category (Total)",
+                              height=240, xaxis=AXIS, yaxis=AXIS)
+            st.plotly_chart(fig, use_container_width=True)
+        with c4:
+            # Cash conversion donut: op cf / total inflows
+            op_in_total  = df[op_in].sum() if op_in else 0
+            op_out_total = df[op_out].sum() if op_out else 0
+            op_retained  = max(0, op_in_total - op_out_total)
+            op_spent     = max(0, op_out_total)
+            if op_in_total > 0:
+                fig = go.Figure(go.Pie(
+                    labels=["Retained (Net CF)","Operating Costs"],
+                    values=[op_retained, op_spent], hole=0.55,
+                    marker=dict(colors=["#4ade80","#f87171"],
+                                line=dict(color="#0a0a08",width=2)),
+                    textinfo="label+percent", textfont=dict(size=9)))
+                fig.add_annotation(
+                    text=f"{op_cf_pct:.0f}%<br>retained",
+                    x=0.5, y=0.5, showarrow=False,
+                    font=dict(size=12, color="#fafaf8",
+                              family="Playfair Display"))
+                fig.update_layout(**PLOTLY_BASE,
+                                  title="Operating Cash Conversion",
+                                  height=240, showlegend=False)
+                st.plotly_chart(fig, use_container_width=True)
+
+    # ── Data table ────────────────────────────────────────────────────────────
+    st.markdown('<div class="sec-label">Detailed Cash Flow Statement</div>',
+                unsafe_allow_html=True)
+    display_df = df[[period_col]].copy()
+    if open_col:  display_df["Opening Balance"] = df[open_col]
+    display_df["Operating Net"] = df["_op_net"]
+    display_df["Investing Net"] = df["_inv_net"]
+    display_df["Financing Net"] = df["_fin_net"]
+    display_df["Net Cash Flow"] = df["_net_cf"]
+    display_df["Closing Balance"] = df["_close"]
+    st.dataframe(display_df, use_container_width=True, hide_index=True)
+    st.download_button("📥 Download Cash Flow Report (CSV)",
+                       display_df.to_csv(index=False).encode(),
+                       "Fincy_CashFlow_Report.csv", "text/csv")
+
+    # ── AI CFO ────────────────────────────────────────────────────────────────
+    cf_ctx = (f"Cash Flow Analysis: {len(df)} months | "
+              f"Closing Balance={fmt_m(closing_bal)} | "
+              f"Total Net CF={fmt_m(total_net_cf)} | "
+              f"Avg Monthly Net={fmt_m(avg_monthly_net)} | "
+              f"Runway={runway:.0f} months | "
+              f"Positive months={pos_months}/{len(df)} | "
+              f"Operating CF Conversion={op_cf_pct:.1f}% | "
+              f"Burn rate={fmt_m(avg_monthly_burn)}/month")
+    ai_cfo_section(cf_ctx, "cashflow",
+        "e.g. Is my cash position healthy? Where is cash leaking? How do I improve runway?")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # MAIN ROUTER
 # ══════════════════════════════════════════════════════════════════════════════
 _mod = st.session_state.active_module
@@ -2621,6 +3085,7 @@ elif _mod == "budget":       run_budget()
 elif _mod == "cost":         run_cost()
 elif _mod == "dataanalyst":  run_dataanalyst()
 elif _mod == "personal":     run_personal()
+elif _mod == "cashflow":     run_cashflow()
 
 st.markdown("""
 <div style="margin-top:40px;border-top:1px solid #1a1a14;padding-top:16px;
