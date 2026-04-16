@@ -294,7 +294,7 @@ def send_to_formspree(name, email, company, role, linkedin):
 
 # ── QUERY PARAM ROUTING — HTML card clicks set ?m=xxx ────────────────────────
 _qp = st.query_params.get("m", None)
-if _qp and _qp in ("fpa","recon","budget","cost","invoice","dataanalyst"):
+if _qp and _qp in ("fpa","recon","budget","cost","invoice","dataanalyst","personal"):
     if st.session_state.active_module != _qp:
         st.session_state.active_module = _qp
     st.query_params.clear()   # clean URL after routing
@@ -645,6 +645,15 @@ padding:14px 20px;margin-bottom:28px;display:flex;align-items:center;gap:20px;fl
     </div>
     <div class="mhbtn">→ Launch Data Agent</div>
   </a>
+  <a class="mhc" href="{app_url}/?m=personal" target="_self" style="--mc:#a78bfa;">
+    <div class="mhb"><span class="mhi">💰</span>
+      <div class="mhbdg">Personal · New</div>
+      <div class="mht">Personal Finance Engine</div>
+      <div class="mhd">Ask "Can I afford a ₹20,000 phone?" Enter your income and savings profile. Get Safe / Moderate / Risky decision with exact savings impact and AI recommendation.</div>
+      <div class="mhk">Safe/Moderate/Risky · Savings Impact · AI Advisor</div>
+    </div>
+    <div class="mhbtn">→ Launch Personal Finance</div>
+  </a>
 </div>"""
     st.markdown(cards_html, unsafe_allow_html=True)
 
@@ -677,7 +686,7 @@ background:#1e1e18;border:1px solid #1e1e18;margin-bottom:2px;">
 <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:#1e1e18;
 border:1px solid #1e1e18;margin-bottom:2px;">
   <div style="background:#101010;padding:13px;text-align:center;">
-    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">6</div>
+    <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:#c9a84c;">7</div>
     <div style="font-family:'IBM Plex Mono',monospace;font-size:0.43rem;letter-spacing:0.12em;
     text-transform:uppercase;color:#5a5648;margin-top:3px;">AI Modules</div>
   </div>
@@ -772,14 +781,25 @@ letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
             try:
                 from groq import Groq
                 prompt = (
-                    "You are a world-class CFO analyst. Analyse the data and give sharp actionable insights.\n\n"
-                    f"DATA CONTEXT:\n{context_str}\n\n"
+                    "You are a CFO with 20+ years experience in FP&A, corporate finance, and strategic decision-making. "
+                    "You are advising a CEO. Be direct, data-driven, and ruthlessly specific.\n\n"
+                    f"FINANCIAL DATA CONTEXT:\n{context_str}\n\n"
                     f"QUESTION: {question.strip()}\n\n"
-                    "Give EXACTLY 2-3 insights. Use this EXACT format for each:\n\n"
-                    "👉 **Problem:** [specific issue with numbers from the data]\n"
-                    "👉 **Insight:** [root cause — why this is happening]\n"
-                    "👉 **Action:** [concrete measurable next step with target and timeline]\n\n"
-                    "Rules: quote specific numbers from context, no filler, be direct."
+                    "Respond in this EXACT structured format:\n\n"
+                    "**Key Insights** (max 3, numbered)\n"
+                    "- Use specific numbers and % from the data above\n"
+                    "- No basic concept explanations\n\n"
+                    "**Risks Identified**\n"
+                    "- Flag what could go wrong, with magnitude\n\n"
+                    "**Opportunities**\n"
+                    "- Where to improve profit/cashflow, with estimated impact\n\n"
+                    "**Action Items — Next 30 Days** (specific, measurable)\n"
+                    "👉 **Problem:** [exact issue with numbers]\n"
+                    "👉 **Insight:** [root cause]\n"
+                    "👉 **Action:** [what to do, by when, target metric]\n\n"
+                    "**Strategic Recommendation**\n"
+                    "- One clear sentence a CEO should act on immediately\n\n"
+                    "Rules: no fluff, no basic explanations, every point must reference specific numbers."
                 )
                 resp = Groq(api_key=api_key).chat.completions.create(
                     model="llama-3.1-8b-instant",
@@ -791,6 +811,23 @@ letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
         st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ans}</div>''',
                     unsafe_allow_html=True)
         st.session_state[hist_key].append({"q":question.strip(),"a":ans})
+        # PDF download of this AI CFO response
+        try:
+            _pdf_content = f"FINCY INTELLIGENCE — AI CFO REPORT\n{'='*50}\n\n"
+            _pdf_content += f"Module: {module_key.upper()}\n"
+            _pdf_content += f"Question: {question.strip()}\n\n"
+            _pdf_content += f"AI CFO Analysis:\n{ans}\n\n"
+            _pdf_content += f"Data Context:\n{context_str[:500]}..."
+            _pdf_bytes = generate_pdf(_pdf_content)
+            st.download_button(
+                "📄 Download AI CFO Report (PDF)",
+                data=_pdf_bytes,
+                file_name=f"Fincy_AI_CFO_{module_key}_Report.pdf",
+                mime="application/pdf",
+                key=f"pdf_dl_{module_key}_{len(st.session_state[hist_key])}"
+            )
+        except Exception:
+            pass
     elif not ask:
         st.markdown('''<div class="box" style="opacity:0.45;font-size:0.74rem;">
 💡 Ask anything. Each answer gives:<br>
@@ -2119,6 +2156,296 @@ font-family:'IBM Plex Mono',monospace;font-size:0.56rem;color:#3a3a34;">— or u
         "e.g. What are the key trends? Which categories drive performance? Any anomalies?")
 
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# MODULE 7 — PERSONAL FINANCE DECISION INTELLIGENCE
+# ══════════════════════════════════════════════════════════════════════════════
+def run_personal():
+    with st.sidebar:
+        st.markdown("### 💰 Personal Finance")
+        st.markdown("---")
+        if st.button("🏠 Module Home", use_container_width=True, key="pf_home"):
+            for k in ["_pf_income","_pf_expense","_pf_savings","_pf_fixed",
+                      "_pf_goal","_pf_setup"]:
+                st.session_state.pop(k, None)
+            st.session_state.active_module = None
+            st.rerun()
+        st.markdown("---")
+        st.caption("AI Personal Finance Advisor")
+
+    page_header("PERSONAL FINANCE DECISION ENGINE", "Can I Afford It?")
+
+    st.markdown("""
+<div style="background:#101010;border:1px solid #1e1e18;border-left:3px solid #a78bfa;
+padding:12px 18px;margin-bottom:18px;font-size:0.76rem;color:#a09880;font-weight:300;">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;letter-spacing:0.14em;
+text-transform:uppercase;color:#a78bfa;">How it works: </span>
+Enter your monthly financial data. Then ask any personal finance question —
+<em>"Can I afford a ₹20,000 phone?"</em> or <em>"Should I invest ₹10,000 this month?"</em>
+The AI gives you a <strong>Safe / Moderate / Risky</strong> decision with exact savings impact.
+</div>""", unsafe_allow_html=True)
+
+    # ── Step 1: Financial Profile Setup ──────────────────────────────────────
+    if not st.session_state.get("_pf_setup"):
+        st.markdown('<div class="sec-label">Step 1 — Your Financial Profile</div>',
+                    unsafe_allow_html=True)
+        st.markdown("""
+<div class="box" style="font-size:0.74rem;color:#a09880;margin-bottom:16px;">
+Enter your monthly figures below. This data stays in your session only — never stored.
+</div>""", unsafe_allow_html=True)
+
+        c1, c2 = st.columns(2)
+        with c1:
+            income  = st.number_input("💵 Monthly Income (₹)", min_value=0, value=80000,
+                                      step=1000, key="pf_inc")
+            expense = st.number_input("💸 Monthly Expenses (₹)", min_value=0, value=50000,
+                                      step=1000, key="pf_exp")
+            savings = st.number_input("🏦 Current Savings (₹)", min_value=0, value=30000,
+                                      step=1000, key="pf_sav")
+        with c2:
+            fixed   = st.number_input("🔒 Fixed Expenses/month (₹)", min_value=0, value=30000,
+                                      step=1000, key="pf_fix",
+                                      help="Rent, EMI, insurance — expenses you cannot reduce")
+            goal    = st.text_input("🎯 Financial Goal", value="Save ₹5L in 12 months",
+                                    key="pf_goal_inp")
+
+        if st.button("✅ Set My Financial Profile", use_container_width=True, key="pf_confirm"):
+            if income <= 0:
+                st.error("Please enter your monthly income.")
+            elif expense > income:
+                st.warning("⚠️ Your expenses exceed income — review your numbers.")
+            else:
+                st.session_state["_pf_income"]  = income
+                st.session_state["_pf_expense"] = expense
+                st.session_state["_pf_savings"] = savings
+                st.session_state["_pf_fixed"]   = fixed
+                st.session_state["_pf_goal"]    = goal
+                st.session_state["_pf_setup"]   = True
+                st.rerun()
+        return
+
+    # ── Profile loaded ────────────────────────────────────────────────────────
+    income  = st.session_state["_pf_income"]
+    expense = st.session_state["_pf_expense"]
+    savings = st.session_state["_pf_savings"]
+    fixed   = st.session_state["_pf_fixed"]
+    goal    = st.session_state["_pf_goal"]
+    surplus = income - expense
+
+    # ── Profile summary ───────────────────────────────────────────────────────
+    st.markdown('<div class="sec-label">Your Financial Profile</div>', unsafe_allow_html=True)
+    _sur_col = "#4ade80" if surplus > 0 else "#f87171"
+    _sr_pct  = savings/income*100 if income else 0
+    st.markdown(f"""
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;">
+  <div class="kpi-card" style="--ac:#a78bfa">
+    <div class="kpi-label">Monthly Income</div>
+    <div class="kpi-value">₹{income:,}</div>
+  </div>
+  <div class="kpi-card" style="--ac:#f87171">
+    <div class="kpi-label">Monthly Expenses</div>
+    <div class="kpi-value">₹{expense:,}</div>
+  </div>
+  <div class="kpi-card" style="--ac:{_sur_col}">
+    <div class="kpi-label">Monthly Surplus</div>
+    <div class="kpi-value" style="color:{_sur_col};">₹{surplus:,}</div>
+    <div class="kpi-delta">{surplus/income*100:.1f}% of income</div>
+  </div>
+  <div class="kpi-card" style="--ac:#c9a84c">
+    <div class="kpi-label">Current Savings</div>
+    <div class="kpi-value">₹{savings:,}</div>
+  </div>
+  <div class="kpi-card" style="--ac:#4ade80">
+    <div class="kpi-label">Savings Ratio</div>
+    <div class="kpi-value">{_sr_pct:.1f}%</div>
+    <div class="kpi-delta">of monthly income</div>
+  </div>
+</div>""", unsafe_allow_html=True)
+
+    if st.button("✏️ Edit Profile", key="pf_edit"):
+        st.session_state["_pf_setup"] = False
+        st.rerun()
+
+    st.divider()
+
+    # ── Step 2: Ask a financial question ─────────────────────────────────────
+    st.markdown('<div class="sec-label">Step 2 — Ask Your Financial Question</div>',
+                unsafe_allow_html=True)
+
+    # Quick preset buttons
+    st.markdown("**Quick questions:**", unsafe_allow_html=False)
+    qc1, qc2, qc3, qc4 = st.columns(4)
+    preset_q = None
+    with qc1:
+        if st.button("📱 Buy Gadget", use_container_width=True, key="pf_q1"):
+            preset_q = "Can I afford a ₹20,000 phone this month?"
+    with qc2:
+        if st.button("✈️ Travel", use_container_width=True, key="pf_q2"):
+            preset_q = "Should I go on a ₹15,000 weekend trip?"
+    with qc3:
+        if st.button("📈 Invest", use_container_width=True, key="pf_q3"):
+            preset_q = "Can I invest ₹10,000 in mutual funds this month?"
+    with qc4:
+        if st.button("🛒 Big Purchase", use_container_width=True, key="pf_q4"):
+            preset_q = "Can I buy a ₹50,000 laptop right now?"
+
+    if preset_q:
+        st.session_state["_pf_preset"] = preset_q
+
+    # Text input — pre-fill with preset if selected
+    default_q = st.session_state.get("_pf_preset", "")
+    user_q = st.text_input(
+        "Ask your personal finance question:",
+        value=default_q,
+        placeholder="e.g. Can I afford a ₹20,000 phone? Should I invest ₹10,000?",
+        key="pf_question",
+        label_visibility="collapsed"
+    )
+
+    analyze_btn = st.button("🔍 Analyze", use_container_width=True, key="pf_analyze",
+                             type="primary")
+
+    if analyze_btn and user_q.strip():
+        # ── Extract amount from question ──────────────────────────────────
+        import re as _re
+        amounts = _re.findall(r'₹?([0-9,]+)(?:,000)?', user_q.replace(",",""))
+        # Also catch written forms like "20000" or "20,000"
+        raw_amounts = _re.findall(r'[₹]?\s*([0-9]+(?:,[0-9]+)*)\s*(?:k|K|thousand|lakh|L)?',
+                                  user_q)
+        amount = 0
+        for a_str in amounts:
+            try:
+                v = float(a_str.replace(",",""))
+                if v > amount: amount = v
+            except: pass
+
+        # Decide: Safe / Moderate / Risky
+        if savings > 0:
+            pct_of_savings = (amount / savings * 100) if amount > 0 else 0
+            if amount <= savings * 0.30:
+                decision = "SAFE ✅"
+                decision_color = "#4ade80"
+                decision_bg    = "rgba(74,222,128,0.08)"
+            elif amount <= savings * 0.60:
+                decision = "MODERATE ⚠️"
+                decision_color = "#fbbf24"
+                decision_bg    = "rgba(251,191,36,0.08)"
+            else:
+                decision = "RISKY ❌"
+                decision_color = "#f87171"
+                decision_bg    = "rgba(248,113,113,0.08)"
+        else:
+            decision = "RISKY ❌"
+            decision_color = "#f87171"
+            decision_bg    = "rgba(248,113,113,0.08)"
+            pct_of_savings = 100
+
+        remaining_savings = max(0, savings - amount)
+        surplus_months    = (amount / surplus) if surplus > 0 else float('inf')
+
+        # ── Show immediate decision card ──────────────────────────────────
+        st.markdown(f"""
+<div style="background:{decision_bg};border:2px solid {decision_color};
+padding:20px 24px;margin:16px 0;border-radius:0;">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:#5a5648;margin-bottom:8px;">Financial Decision</div>
+  <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
+  color:{decision_color};margin-bottom:12px;">{decision}</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
+      text-transform:uppercase;color:#5a5648;margin-bottom:4px;">Amount</div>
+      <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">₹{amount:,.0f}</div>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
+      text-transform:uppercase;color:#5a5648;margin-bottom:4px;">Savings Impact</div>
+      <div style="font-size:1rem;font-weight:600;color:{decision_color};">
+        {pct_of_savings:.1f}% of savings
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.52rem;
+      text-transform:uppercase;color:#5a5648;margin-bottom:4px;">Remaining Savings</div>
+      <div style="font-size:1rem;font-weight:600;color:#e8e2d4;">₹{remaining_savings:,.0f}</div>
+    </div>
+  </div>
+  {f'<div style="margin-top:12px;font-size:0.74rem;color:#5a5648;">Months of surplus needed: <strong style="color:#e8e2d4;">{surplus_months:.1f} months</strong></div>' if surplus > 0 and amount > 0 else ""}
+</div>""", unsafe_allow_html=True)
+
+        # ── AI Analysis ───────────────────────────────────────────────────
+        api_key = _get_groq_key()
+        if api_key:
+            with st.spinner("Personal Finance AI analysing…"):
+                try:
+                    from groq import Groq
+                    pf_prompt = (
+                        "You are a senior personal finance advisor. Be direct, practical, "
+                        "and speak like a trusted CFO advising an individual.\n\n"
+                        f"USER FINANCIAL PROFILE:\n"
+                        f"Monthly Income: ₹{income:,}\n"
+                        f"Monthly Expenses: ₹{expense:,}\n"
+                        f"Monthly Surplus: ₹{surplus:,}\n"
+                        f"Current Savings: ₹{savings:,}\n"
+                        f"Fixed Expenses: ₹{fixed:,}\n"
+                        f"Financial Goal: {goal}\n\n"
+                        f"USER QUESTION: {user_q.strip()}\n\n"
+                        f"SYSTEM DECISION: {decision}\n"
+                        f"Amount: ₹{amount:,.0f} | Impact: {pct_of_savings:.1f}% of savings "
+                        f"| Savings after: ₹{remaining_savings:,}\n\n"
+                        "Respond in this EXACT format:\n\n"
+                        "**Decision:** [Yes/No/Maybe — one clear answer]\n\n"
+                        "**Explanation:**\n"
+                        "[2-3 sentences with specific numbers — why this decision]\n\n"
+                        "**Savings Impact:**\n"
+                        f"Savings drop from ₹{savings:,} → ₹{remaining_savings:,} ({pct_of_savings:.1f}% reduction)\n"
+                        "[What this means for the financial goal]\n\n"
+                        "**Recommendation:**\n"
+                        "[1 specific actionable suggestion with a number]\n\n"
+                        "**Smart Alternative (if risky/moderate):**\n"
+                        "[A cheaper or better-timed option]\n\n"
+                        "Rules: use ₹ symbols, mention specific numbers, no generic advice."
+                    )
+                    resp = Groq(api_key=api_key).chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[{"role":"user","content":pf_prompt}],
+                        max_tokens=600, temperature=0.3)
+                    ai_ans = resp.choices[0].message.content
+                except Exception as e:
+                    ai_ans = f"⚠️ AI error: {e}"
+
+            st.markdown(f'''<div class="ai-box" style="line-height:1.85;">{ai_ans}</div>''',
+                        unsafe_allow_html=True)
+
+            # PDF download
+            try:
+                _pdf_text = (f"FINCY INTELLIGENCE — PERSONAL FINANCE REPORT\n{'='*50}\n\n"
+                             f"Question: {user_q}\n"
+                             f"Decision: {decision}\n"
+                             f"Amount: ₹{amount:,.0f} | Impact: {pct_of_savings:.1f}%\n\n"
+                             f"AI Analysis:\n{ai_ans}\n\n"
+                             f"Profile: Income=₹{income:,} Expenses=₹{expense:,} "
+                             f"Savings=₹{savings:,} Goal={goal}")
+                _pdf_bytes = generate_pdf(_pdf_text)
+                st.download_button("📄 Download Finance Report (PDF)",
+                                   data=_pdf_bytes,
+                                   file_name="Fincy_Personal_Finance_Report.pdf",
+                                   mime="application/pdf",
+                                   key="pf_pdf_dl")
+            except Exception:
+                pass
+        else:
+            st.markdown('''<div class="box" style="opacity:0.6;font-size:0.74rem;">
+Configure GROQ_API_KEY in Streamlit Secrets to get AI-powered analysis.
+</div>''', unsafe_allow_html=True)
+
+        # Clear preset
+        st.session_state.pop("_pf_preset", None)
+
+    elif analyze_btn and not user_q.strip():
+        st.warning("Please enter a question or click one of the quick buttons above.")
+
+
 # MAIN ROUTER
 # ══════════════════════════════════════════════════════════════════════════════
 _mod = st.session_state.active_module
@@ -2130,6 +2457,7 @@ elif _mod == "budget":       run_budget()
 elif _mod == "cost":         run_cost()
 elif _mod == "invoice":      run_invoice()
 elif _mod == "dataanalyst":  run_dataanalyst()
+elif _mod == "personal":     run_personal()
 
 st.markdown("""
 <div style="margin-top:40px;border-top:1px solid #1a1a14;padding-top:16px;
