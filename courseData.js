@@ -218,6 +218,609 @@ var FINCY_COURSE = {
   ]
 };
 
+/* ══════════════════════════════════════════════════════════════
+   FINCY LEARNING HUB — Enhancement Pack v3.0
+   NEW: Streak System · Badges · Templates · Resume Output · Share
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── BADGE DEFINITIONS ─────────────────────────────────────── */
+var BADGES = [
+  {
+    id:        'first_lesson',
+    emoji:     '🌱',
+    title:     'First Step',
+    desc:      'Complete your first lesson',
+    color:     '#c9a84c',
+    condition: function(p){ return p.completedLessons.length >= 1; }
+  },
+  {
+    id:        'stage1_done',
+    emoji:     '🥉',
+    title:     'Beginner',
+    desc:      'Complete Stage 01 — AI in Finance Basics',
+    color:     '#c9a84c',
+    condition: function(p){ return p.completedStages.indexOf('stage_01') >= 0; }
+  },
+  {
+    id:        'stage2_done',
+    emoji:     '🥈',
+    title:     'Intermediate',
+    desc:      'Complete Stage 02 — Automating Finance Work',
+    color:     '#4ade80',
+    condition: function(p){ return p.completedStages.indexOf('stage_02') >= 0; }
+  },
+  {
+    id:        'stage3_done',
+    emoji:     '🥇',
+    title:     'Advanced',
+    desc:      'Complete Stage 03 — Build AI Finance Tools',
+    color:     '#818cf8',
+    condition: function(p){ return p.completedStages.indexOf('stage_03') >= 0; }
+  },
+  {
+    id:        'expert',
+    emoji:     '🏆',
+    title:     'AI CFO Expert',
+    desc:      'Complete all 4 stages — full certification',
+    color:     '#2dd4bf',
+    condition: function(p){
+      return ['stage_01','stage_02','stage_03','stage_04'].every(function(s){
+        return p.completedStages.indexOf(s) >= 0;
+      });
+    }
+  },
+  {
+    id:        'streak3',
+    emoji:     '🔥',
+    title:     '3-Day Streak',
+    desc:      'Learn 3 days in a row',
+    color:     '#f97316',
+    condition: function(p){ return (p.streakDays || 0) >= 3; }
+  },
+  {
+    id:        'streak7',
+    emoji:     '⚡',
+    title:     'Weekly Warrior',
+    desc:      'Learn 7 days in a row',
+    color:     '#fbbf24',
+    condition: function(p){ return (p.streakDays || 0) >= 7; }
+  },
+  {
+    id:        'half_done',
+    emoji:     '⭐',
+    title:     'Halfway There',
+    desc:      'Complete 50% of all lessons',
+    color:     '#a78bfa',
+    condition: function(p){
+      var t = 0;
+      FINCY_COURSE.stages.forEach(function(s){ s.modules.forEach(function(m){ t += m.lessons.length; }); });
+      return t > 0 && p.completedLessons.length >= Math.ceil(t/2);
+    }
+  },
+  {
+    id:        'project_done',
+    emoji:     '🔬',
+    title:     'Builder',
+    desc:      'Complete your first mini project',
+    color:     '#06b6d4',
+    condition: function(p){ return (p.completedProjects || []).length >= 1; }
+  }
+];
+
+/* ── DOWNLOADABLE TEMPLATES PER STAGE ─────────────────────── */
+var STAGE_TEMPLATES = {
+  stage_01: [
+    {
+      name: 'AI Finance Prompt Template',
+      filename: 'ai_finance_prompt_template.txt',
+      description: 'Starter template for writing effective AI finance prompts',
+      content: [
+        'FINCY INTELLIGENCE — AI FINANCE PROMPT TEMPLATE',
+        '================================================',
+        '',
+        'ROLE: You are a [Senior FP&A Analyst / CFO / Finance Controller]',
+        'with [X] years experience in [industry/sector].',
+        '',
+        'CONTEXT:',
+        '- Period: [Month/Quarter/Year]',
+        '- Revenue: [Actual vs Budget vs PY]',
+        '- EBITDA: [Actual vs Budget vs PY]',
+        '- Key variance: [+/-X% vs budget due to Y]',
+        '',
+        'TASK: [Specific question or output needed]',
+        '',
+        'FORMAT:',
+        '- Output: [Commentary / Table / Code / Summary]',
+        '- Length: [X sentences / X bullet points]',
+        '- Tone: [Executive / Technical / Operational]',
+        '',
+        'RULES:',
+        '- Use specific numbers and percentages',
+        '- No generic advice',
+        '- Reference the data provided above',
+        '- [Any other constraints]',
+        '',
+        '================================================',
+        'Built with Fincy Intelligence | fincyintelligence.com',
+      ].join('\n')
+    },
+    {
+      name: 'Groq API Starter Code',
+      filename: 'groq_api_starter.py',
+      description: 'Python code to call Groq API for finance queries',
+      content: [
+        '# FINCY INTELLIGENCE — Groq API Starter',
+        '# Install: pip install groq',
+        '# Get free key: https://console.groq.com',
+        '',
+        'from groq import Groq',
+        '',
+        'client = Groq(api_key="your_groq_key_here")',
+        '',
+        'def ask_ai_cfo(question, financial_context=""):',
+        '    """Ask a finance question and get CFO-quality answer."""',
+        '    prompt = f"""You are a CFO with 20 years of FP&A experience.',
+        '    Financial context: {financial_context}',
+        '    Question: {question}',
+        '    Answer directly with specific numbers. No fluff."""',
+        '',
+        '    response = client.chat.completions.create(',
+        '        model="llama-3.1-8b-instant",',
+        '        messages=[{"role": "user", "content": prompt}],',
+        '        max_tokens=400,',
+        '        temperature=0.25',
+        '    )',
+        '    return response.choices[0].message.content',
+        '',
+        '# Example usage',
+        'context = "Revenue: Rs42.8M (+8% YoY). EBITDA: Rs12.1M (margin 28.3%)."',
+        'answer  = ask_ai_cfo("What is driving the margin improvement?", context)',
+        'print(answer)',
+      ].join('\n')
+    }
+  ],
+  stage_02: [
+    {
+      name: 'Variance Analysis Script',
+      filename: 'variance_analysis.py',
+      description: 'Ready-to-run Pandas script for budget variance analysis',
+      content: [
+        '# FINCY INTELLIGENCE — Variance Analysis Script',
+        '# Columns needed: Market, Brand, Actual_Revenue, Budget_Revenue',
+        '# Install: pip install pandas tabulate',
+        '',
+        'import pandas as pd',
+        '',
+        'def run_variance_analysis(filepath):',
+        '    df = pd.read_csv(filepath)',
+        '',
+        '    # Calculate variance',
+        '    df["Variance"]   = df["Actual_Revenue"] - df["Budget_Revenue"]',
+        '    df["Variance_Pct"] = (df["Variance"] / df["Budget_Revenue"] * 100).round(1)',
+        '    df["RAG"] = df["Variance_Pct"].apply(',
+        '        lambda x: "GREEN" if x >= -2 else ("AMBER" if x >= -10 else "RED")',
+        '    )',
+        '',
+        '    # Summary by market',
+        '    summary = df.groupby("Market").agg(',
+        '        Actual=("Actual_Revenue","sum"),',
+        '        Budget=("Budget_Revenue","sum"),',
+        '        Variance=("Variance","sum")',
+        '    ).reset_index()',
+        '    summary["Var_Pct"] = (summary["Variance"]/summary["Budget"]*100).round(1)',
+        '    summary = summary.sort_values("Var_Pct")',
+        '',
+        '    print("\\n=== VARIANCE ANALYSIS BY MARKET ===")',
+        '    print(summary.to_string(index=False))',
+        '    print(f"\\nTotal Variance: {df.Variance.sum():,.0f}")',
+        '    return summary',
+        '',
+        '# Usage',
+        'run_variance_analysis("your_data.csv")',
+      ].join('\n')
+    },
+    {
+      name: 'Month-End Commentary Prompt',
+      filename: 'month_end_commentary_prompt.txt',
+      description: 'Reusable AI prompt for automated variance commentary',
+      content: [
+        'FINCY INTELLIGENCE — Month-End Commentary Prompt',
+        '================================================',
+        '',
+        'SYSTEM: You are a Senior FP&A Manager writing a board pack.',
+        '',
+        'DATA (fill in each month):',
+        'Period: [Month Year]',
+        'Revenue Actual: [Rs X.XM] vs Budget: [Rs X.XM] = [+/-X%]',
+        'Gross Margin Actual: [X%] vs Budget: [X%] = [+/-X pp]',
+        'EBITDA Actual: [Rs X.XM] vs Budget: [Rs X.XM] = [+/-X%]',
+        'OPEX Actual: [Rs X.XM] vs Budget: [Rs X.XM] = [+/-X%]',
+        'Key drivers: [list 2-3 main causes]',
+        '',
+        'OUTPUT FORMAT (3 sentences only):',
+        '1. HEADLINE: [metric] [vs/missed/beat] budget by [X%] in [Period].',
+        '2. DRIVERS: Performance was driven by [cause 1] (+/-X%) and [cause 2] (+/-X%).',
+        '3. OUTLOOK: [Corrective action / sustained trend / risk to watch] in [next period].',
+        '',
+        'RULES: No bullet points. Executive tone. Use Rs/% symbols.',
+        '================================================',
+      ].join('\n')
+    }
+  ],
+  stage_03: [
+    {
+      name: 'Streamlit Finance App Template',
+      filename: 'fincy_module_template.py',
+      description: 'Complete Streamlit template to build your own AI finance module',
+      content: [
+        '# FINCY INTELLIGENCE — Module Template',
+        '# Built following the Fincy architecture',
+        '# Install: pip install streamlit pandas plotly groq reportlab',
+        '',
+        'import streamlit as st',
+        'import pandas as pd',
+        'import plotly.express as px',
+        'from groq import Groq',
+        '',
+        'st.set_page_config(page_title="My Finance Module", layout="wide")',
+        '',
+        '# ── AI CFO Function ──',
+        'def ask_ai_cfo(question, data_summary):",',
+        '    api_key = st.secrets.get("GROQ_API_KEY", "")',
+        '    if not api_key: return "Add GROQ_API_KEY to Streamlit Secrets."',
+        '    try:',
+        '        resp = Groq(api_key=api_key).chat.completions.create(',
+        '            model="llama-3.1-8b-instant",',
+        '            messages=[',
+        '                {"role":"system","content":"You are an AI CFO. Be direct and data-driven."},',
+        '                {"role":"user","content":f"Data: {data_summary}\\nQuestion: {question}"}',
+        '            ],',
+        '            max_tokens=400, temperature=0.25',
+        '        )',
+        '        return resp.choices[0].message.content',
+        '    except Exception as e: return f"Error: {e}"',
+        '',
+        '# ── Main App ──',
+        'st.title("My AI Finance Module")',
+        'file = st.file_uploader("Upload CSV", type="csv")',
+        '',
+        'if file:',
+        '    df = pd.read_csv(file)',
+        '    st.dataframe(df.head())',
+        '',
+        '    # KPIs (customise these)',
+        '    col1, col2, col3 = st.columns(3)',
+        '    with col1: st.metric("Total", f"{df.iloc[:,1].sum():,.0f}")',
+        '    with col2: st.metric("Average", f"{df.iloc[:,1].mean():,.1f}")',
+        '    with col3: st.metric("Max", f"{df.iloc[:,1].max():,.0f}")',
+        '',
+        '    # Chart',
+        '    fig = px.bar(df.head(10), x=df.columns[0], y=df.columns[1])',
+        '    st.plotly_chart(fig, use_container_width=True)',
+        '',
+        '    # AI CFO',
+        '    st.subheader("Ask AI CFO")',
+        '    q = st.text_input("Your question:")',
+        '    if st.button("Ask") and q:',
+        '        with st.spinner("AI CFO thinking..."):',
+        '            answer = ask_ai_cfo(q, df.describe().to_string())',
+        '        st.info(answer)',
+      ].join('\n')
+    }
+  ],
+  stage_04: [
+    {
+      name: 'CFO Prompt Library',
+      filename: 'cfo_prompt_library.txt',
+      description: '5 production-ready CFO prompts for FP&A professionals',
+      content: [
+        'FINCY INTELLIGENCE — CFO Prompt Library',
+        'Built for Senior FP&A Analysts | Version 1.0',
+        '=============================================',
+        '',
+        'PROMPT 1: VARIANCE COMMENTARY',
+        '------------------------------',
+        'You are a Senior FP&A Manager. Write board pack variance commentary.',
+        'Actuals: Revenue Rs{X}M, EBITDA Rs{Y}M, Margin {Z}%',
+        'Budget: Revenue Rs{A}M, EBITDA Rs{B}M, Margin {C}%',
+        'Key drivers: {list drivers}',
+        'Format: HEADLINE | DRIVERS | OUTLOOK. 3 sentences. No bullet points.',
+        '',
+        'PROMPT 2: CASH FLOW RISK ALERT',
+        '------------------------------',
+        'You are a treasury analyst. Current cash: Rs{X}M. DSO: {Y} days.',
+        'Upcoming: {list obligations with amounts and dates}.',
+        'Format: RISK | AMOUNT | PROBABILITY | ACTION. Top 3 risks only.',
+        '',
+        'PROMPT 3: COST REDUCTION ANALYSIS',
+        '-----------------------------------',
+        'You are a CFO. OPEX is Rs{X}M vs budget Rs{Y}M (+{Z}%).',
+        'Breakdown: {cost categories with amounts}.',
+        'Identify top 3 cost reduction opportunities. Format: ITEM | SAVING | ACTION.',
+        '',
+        'PROMPT 4: BUDGET REFORECAST NARRATIVE',
+        '---------------------------------------',
+        'You are a Finance Director. Q{X} actuals: {summary}.',
+        'Reforecast for Q{Y}: revenue Rs{A}M, EBITDA Rs{B}M.',
+        'Write a 2-paragraph CFO narrative: 1) Why we are reforecasting, 2) Assumptions.',
+        '',
+        'PROMPT 5: BOARD PACK EXECUTIVE SUMMARY',
+        '---------------------------------------',
+        'You are a CFO presenting to the board.',
+        'Period: {month}. Key metrics: {list 5-6 KPIs with actuals vs budget}.',
+        'Write a 150-word executive summary covering: performance, risks, priorities.',
+        '=============================================',
+        'Fincy Intelligence | fincyintelligence.com',
+      ].join('\n')
+    }
+  ]
+};
+
+/* ── RESUME PROJECT OUTPUTS PER STAGE ─────────────────────── */
+var RESUME_OUTPUTS = {
+  stage_01: {
+    title: 'Resume Line: AI in Finance',
+    bullet: 'Completed "AI in Finance Basics" certification — proficient in LLMs, AI agents, Groq API, and FP&A AI use cases (Fincy Intelligence, 2026)',
+    linkedin: 'Completed Fincy Intelligence Stage 01: AI in Finance Basics. Now proficient in applying LLMs and AI agents to FP&A workflows including variance analysis, reconciliation, and CFO decision support. #FPandA #AI #Finance',
+    skills: ['AI/LLM Fundamentals', 'Groq API', 'FP&A Automation', 'AI Prompt Writing'],
+    project_desc: 'Wrote first AI finance prompt and validated LLM output quality for FP&A use cases'
+  },
+  stage_02: {
+    title: 'Resume Line: Finance Automation',
+    bullet: 'Automated FP&A workflows using Python/Pandas — reduced variance commentary time from 2 hours to <60 seconds using AI (Fincy Intelligence, 2026)',
+    linkedin: 'Just completed Fincy Intelligence Stage 02: Automating Finance Work. Built Python/Pandas scripts for variance analysis and automated month-end commentary using Groq AI. #Python #FPandA #Automation',
+    skills: ['Python', 'Pandas', 'Finance Automation', 'AI Commentary Generation', 'Reconciliation Scripting'],
+    project_desc: 'Built automated variance commentary generator; reconciliation script handling ERP vs Bank matching'
+  },
+  stage_03: {
+    title: 'Resume Line: AI Finance Tool Builder',
+    bullet: 'Built and deployed AI-powered finance dashboard using Streamlit + Groq (production app at share.streamlit.io) — demonstrates end-to-end AI product development (2026)',
+    linkedin: 'Completed Fincy Intelligence Stage 03: Build AI Finance Tools. Deployed a Streamlit-based AI CFO module to production. Finance + Python + AI = future-proof career. #Streamlit #FinTech #AI',
+    skills: ['Streamlit', 'Plotly', 'Groq API Integration', 'AI Product Development', 'Python Deployment'],
+    project_desc: 'Designed and deployed Streamlit finance app with AI CFO integration, live on Streamlit Cloud'
+  },
+  stage_04: {
+    title: 'Resume Line: AI Prompt Engineering',
+    bullet: 'Certified in CFO-level prompt engineering — built personal AI prompt library of 5 reusable FP&A templates, adopted in monthly reporting workflow (Fincy Intelligence, 2026)',
+    linkedin: 'AI CFO Expert certification complete (Fincy Intelligence). Built a personal prompt library of 5 production-ready FP&A prompts. AI is not replacing finance professionals — it is multiplying our output 10x. #PromptEngineering #CFO #FPandA',
+    skills: ['Prompt Engineering', 'CFO Communication', 'AI Strategy', 'Finance AI Integration'],
+    project_desc: 'Created 5-prompt AI CFO library validated against real P&L scenarios; peer-reviewed output'
+  }
+};
+
+
+/* ── STREAK SYSTEM ─────────────────────────────────────────── */
+
+function updateStreak() {
+  var p   = loadProgress();
+  var now = new Date();
+  var today = now.toISOString().slice(0,10);          // "2026-04-17"
+
+  p.lastActiveDate = p.lastActiveDate || null;
+  p.streakDays     = p.streakDays     || 0;
+  p.streakStart    = p.streakStart    || today;
+
+  if (p.lastActiveDate === today) {
+    // Already logged today — no change
+  } else if (p.lastActiveDate) {
+    var yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    var yStr = yesterday.toISOString().slice(0,10);
+    if (p.lastActiveDate === yStr) {
+      p.streakDays++;                   // consecutive day
+    } else {
+      p.streakDays  = 1;               // streak broken
+      p.streakStart = today;
+    }
+  } else {
+    p.streakDays = 1;
+    p.streakStart = today;
+  }
+  p.lastActiveDate = today;
+  saveProgress(p);
+  return p.streakDays;
+}
+
+function getStreakDisplay() {
+  var p = loadProgress();
+  var days = p.streakDays || 0;
+  var emoji = days >= 7 ? '⚡' : (days >= 3 ? '🔥' : '💧');
+  return { days: days, emoji: emoji };
+}
+
+/* ── BADGE ENGINE ──────────────────────────────────────────── */
+
+function checkAndAwardBadges() {
+  var p    = loadProgress();
+  p.badges = p.badges || [];
+  var newBadges = [];
+
+  BADGES.forEach(function(badge) {
+    if (p.badges.indexOf(badge.id) < 0 && badge.condition(p)) {
+      p.badges.push(badge.id);
+      newBadges.push(badge);
+    }
+  });
+
+  if (newBadges.length > 0) {
+    saveProgress(p);
+    newBadges.forEach(function(badge) {
+      showBadgeToast(badge);
+    });
+  }
+  return newBadges;
+}
+
+function showBadgeToast(badge) {
+  var toast = document.createElement('div');
+  toast.style.cssText = (
+    'position:fixed;bottom:90px;right:24px;z-index:10000;' +
+    'background:#101010;border:1px solid ' + badge.color + ';' +
+    'padding:14px 18px;max-width:260px;' +
+    'animation:lhFadeIn 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.6);'
+  );
+  toast.innerHTML = (
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.14em;' +
+    'text-transform:uppercase;color:' + badge.color + ';margin-bottom:6px;">🏅 Badge Unlocked!</div>' +
+    '<div style="font-size:1.2rem;margin-bottom:4px;">' + badge.emoji + '</div>' +
+    '<div style="font-size:0.82rem;font-weight:700;color:#fafaf8;margin-bottom:3px;">' + badge.title + '</div>' +
+    '<div style="font-size:0.72rem;color:#a09880;">' + badge.desc + '</div>'
+  );
+  document.body.appendChild(toast);
+  setTimeout(function(){ toast.remove(); }, 4000);
+}
+
+function getBadgePanel() {
+  var p = loadProgress();
+  p.badges = p.badges || [];
+  var html = '<div style="display:flex;flex-wrap:wrap;gap:10px;">';
+  BADGES.forEach(function(badge) {
+    var earned  = p.badges.indexOf(badge.id) >= 0;
+    html += (
+      '<div style="background:' + (earned ? 'rgba(0,0,0,0.4)' : 'var(--s)') + ';' +
+      'border:1px solid ' + (earned ? badge.color : 'var(--b)') + ';' +
+      'padding:12px 14px;text-align:center;width:100px;opacity:' + (earned ? '1' : '0.35') + ';">' +
+      '<div style="font-size:1.4rem;">' + badge.emoji + '</div>' +
+      '<div style="font-family:IBM Plex Mono,monospace;font-size:0.48rem;letter-spacing:0.08em;' +
+      'text-transform:uppercase;color:' + (earned ? badge.color : 'var(--text3)') + ';margin-top:5px;">' +
+      badge.title + '</div>' +
+      (earned ? '<div style="font-size:0.58rem;color:var(--green);margin-top:3px;">✓ Earned</div>' : '') +
+      '</div>'
+    );
+  });
+  html += '</div>';
+  return html;
+}
+
+/* ── TEMPLATE DOWNLOADER ───────────────────────────────────── */
+
+function downloadTemplate(stageId, tplIdx) {
+  var templates = STAGE_TEMPLATES[stageId];
+  if (!templates || !templates[tplIdx]) return;
+  var tpl  = templates[tplIdx];
+  var blob = new Blob([tpl.content], { type: 'text/plain;charset=utf-8' });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  a.href   = url;
+  a.download = tpl.filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function getTemplatePanel(stageId) {
+  var templates = STAGE_TEMPLATES[stageId] || [];
+  if (templates.length === 0) return '';
+  var html = (
+    '<div style="margin-top:20px;background:#0a0a08;border:1px solid var(--b);padding:16px 18px;">' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.52rem;letter-spacing:0.14em;' +
+    'text-transform:uppercase;color:var(--gold);margin-bottom:12px;">📥 Stage Templates</div>' +
+    '<div style="display:flex;flex-direction:column;gap:8px;">'
+  );
+  templates.forEach(function(tpl, i) {
+    html += (
+      '<div style="display:flex;align-items:center;justify-content:space-between;' +
+      'background:var(--s);padding:10px 14px;gap:12px;">' +
+      '<div>' +
+      '<div style="font-size:0.78rem;color:var(--white);margin-bottom:2px;">' + tpl.name + '</div>' +
+      '<div style="font-size:0.66rem;color:var(--text3);">' + tpl.description + '</div>' +
+      '</div>' +
+      '<button class="lh-btn lh-btn-ghost" style="white-space:nowrap;padding:6px 12px;font-size:0.56rem;" ' +
+      'onclick="window.FincyLH.downloadTemplate(\'' + stageId + '\',' + i + ')">↓ Download</button>' +
+      '</div>'
+    );
+  });
+  html += '</div></div>';
+  return html;
+}
+
+/* ── RESUME OUTPUT PANEL ───────────────────────────────────── */
+
+function getResumePanel(stageId) {
+  var r = RESUME_OUTPUTS[stageId];
+  if (!r) return '';
+  return (
+    '<div style="margin-top:20px;background:#0a0a08;border:1px solid #4ade80;' +
+    'border-left:4px solid #4ade80;padding:18px 20px;">' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.52rem;letter-spacing:0.14em;' +
+    'text-transform:uppercase;color:#4ade80;margin-bottom:12px;">📄 Resume-Ready Output</div>' +
+
+    '<div style="margin-bottom:14px;">' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.48rem;color:var(--text3);' +
+    'letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">CV / Resume Bullet</div>' +
+    '<div id="resumeBullet_' + stageId + '" style="background:var(--s);padding:10px 12px;' +
+    'font-size:0.78rem;color:#e8e2d4;line-height:1.7;border-left:2px solid #4ade80;">' +
+    r.bullet + '</div>' +
+    '<button class="lh-btn lh-btn-ghost" style="margin-top:6px;padding:5px 12px;font-size:0.54rem;" ' +
+    'onclick="window.FincyLH.copyText(\'resumeBullet_' + stageId + '\')">📋 Copy</button>' +
+    '</div>' +
+
+    '<div style="margin-bottom:14px;">' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.48rem;color:var(--text3);' +
+    'letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;">LinkedIn Post</div>' +
+    '<div id="linkedinPost_' + stageId + '" style="background:var(--s);padding:10px 12px;' +
+    'font-size:0.76rem;color:#a09880;line-height:1.75;">' +
+    r.linkedin + '</div>' +
+    '<button class="lh-btn lh-btn-ghost" style="margin-top:6px;padding:5px 12px;font-size:0.54rem;" ' +
+    'onclick="window.FincyLH.copyText(\'linkedinPost_' + stageId + '\')">📋 Copy</button>' +
+    '</div>' +
+
+    '<div>' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.48rem;color:var(--text3);' +
+    'letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Skills to Add</div>' +
+    '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
+    r.skills.map(function(s){
+      return '<span style="background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);' +
+             'color:#4ade80;font-family:IBM Plex Mono,monospace;font-size:0.52rem;' +
+             'letter-spacing:0.06em;padding:3px 9px;">' + s + '</span>';
+    }).join('') +
+    '</div></div>' +
+
+    '</div>'
+  );
+}
+
+/* ── SHARE PROJECT FEATURE ─────────────────────────────────── */
+
+function getSharePanel(stageId, projectTitle) {
+  var r    = RESUME_OUTPUTS[stageId] || {};
+  var text = encodeURIComponent(
+    'I just completed "' + projectTitle + '" on Fincy Intelligence — ' +
+    'an AI CFO learning platform for Finance professionals. ' + (r.linkedin || '') +
+    ' Try it free: https://jitenparida95.github.io/fincy-intelligence/#learning'
+  );
+  var url    = encodeURIComponent('https://jitenparida95.github.io/fincy-intelligence/#learning');
+  var liText = encodeURIComponent(r.linkedin || 'Completed a project on Fincy Intelligence!');
+
+  return (
+    '<div style="margin-top:16px;background:#0a0a08;border:1px solid var(--b);padding:16px 18px;">' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.52rem;letter-spacing:0.14em;' +
+    'text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🚀 Share Your Achievement</div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+
+    '<a href="https://www.linkedin.com/shareArticle?mini=true&url=' + url + '&title=' + liText + '" ' +
+    'target="_blank" style="display:inline-block;background:#0077B5;color:#fff;' +
+    'font-family:IBM Plex Mono,monospace;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;' +
+    'text-transform:uppercase;padding:8px 16px;text-decoration:none;">in Share on LinkedIn</a>' +
+
+    '<a href="https://twitter.com/intent/tweet?text=' + text + '" ' +
+    'target="_blank" style="display:inline-block;background:#1DA1F2;color:#fff;' +
+    'font-family:IBM Plex Mono,monospace;font-size:0.6rem;font-weight:700;letter-spacing:0.08em;' +
+    'text-transform:uppercase;padding:8px 16px;text-decoration:none;">𝕏 Share on X</a>' +
+
+    '<button onclick="window.FincyLH.copyShareLink()" ' +
+    'class="lh-btn lh-btn-ghost" style="padding:8px 14px;font-size:0.58rem;">🔗 Copy Link</button>' +
+
+    '</div>' +
+    '<div style="font-size:0.68rem;color:var(--text3);margin-top:8px;">' +
+    'Sharing helps other finance professionals discover AI tools.</div>' +
+    '</div>'
+  );
+}
+
+
+
 /* ── PROGRESS STORAGE ──────────────────────────────────────── */
 var PROGRESS_KEY = 'fincy_learn_v2';
 
@@ -225,11 +828,15 @@ function loadProgress() {
   try {
     var raw = localStorage.getItem(PROGRESS_KEY);
     return raw ? JSON.parse(raw) : {
-      completedLessons: [],   // ['l01_01_01', ...]
-      completedStages:  [],   // ['stage_01', ...]
-      currentStage: 'stage_01',
-      currentLesson: null,
-      totalPoints: 0
+      completedLessons:  [],   // ['l01_01_01', ...]
+      completedStages:   [],   // ['stage_01', ...]
+      completedProjects: [],   // for Builder badge
+      currentStage:      'stage_01',
+      currentLesson:     null,
+      totalPoints:       0,
+      streakDays:        0,
+      lastActiveDate:    null,
+      badges:            []
     };
   } catch(e) { return { completedLessons:[], completedStages:[], currentStage:'stage_01', currentLesson:null, totalPoints:0 }; }
 }
@@ -328,6 +935,16 @@ function injectEngineStyles() {
     '.lh-locked{opacity:0.4;cursor:not-allowed;pointer-events:none;}',
     '.lh-stage-progress{font-family:IBM Plex Mono,monospace;font-size:0.5rem;',
     '  letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-top:6px;}',
+    /* Badge toast animation */
+    '@keyframes lhSlideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}',
+    '.lh-badge-toast{animation:lhSlideIn 0.3s ease;}',
+    /* Resume panel */
+    '.lh-resume-panel{background:#0a0a08;border:1px solid #4ade80;border-left:4px solid #4ade80;padding:18px 20px;margin-top:20px;}',
+    /* Share buttons */
+    '.lh-share-btn{display:inline-block;padding:8px 16px;font-family:IBM Plex Mono,monospace;',
+    '  font-size:0.6rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;',
+    '  text-decoration:none;cursor:pointer;border:none;transition:opacity 0.2s;}',
+    '.lh-share-btn:hover{opacity:0.85;}',
   ].join('\n');
   document.head.appendChild(s);
 }
@@ -427,6 +1044,10 @@ function loadStage(stageIdx) {
   });
 
   html += '</div>';
+  // Templates panel always visible
+  html += getTemplatePanel(stage.id);
+
+  // Resume + Share only when stage complete
   if (stagePct === 100) {
     html += '<div style="margin-top:20px;background:rgba(74,222,128,0.08);border:1px solid var(--green);' +
       'padding:14px 18px;text-align:center;">' +
@@ -435,6 +1056,8 @@ function loadStage(stageIdx) {
       (stageIdx < FINCY_COURSE.stages.length-1 ?
         '<div style="margin-top:8px;"><button class="lh-btn lh-btn-green" onclick="window.FincyLH.loadStage(' + (stageIdx+1) + ')">Unlock Stage ' + (stageIdx+2) + ' →</button></div>' : '') +
       '</div>';
+    html += getResumePanel(stage.id);
+    html += getSharePanel(stage.id, stage.title);
   }
 
   openModal(html, '◆ ' + stage.badge + ' — ' + stage.title);
@@ -599,6 +1222,17 @@ function handleAIRequest() {
       ? d.choices[0].message.content
       : 'No response. Try again.';
     output.textContent = ans;
+    // Mark project as complete for Builder badge
+    if (_activeLesson && _activeLesson.isProject) {
+      var p = loadProgress();
+      p.completedProjects = p.completedProjects || [];
+      var pid = _activeLesson.id;
+      if (p.completedProjects.indexOf(pid) < 0) {
+        p.completedProjects.push(pid);
+        saveProgress(p);
+        checkAndAwardBadges();
+      }
+    }
   })
   .catch(function(e){
     output.innerHTML = '<span style="color:var(--red);">Error: ' + e.message + '</span>';
@@ -620,7 +1254,10 @@ function markComplete(lessonId, stageIdx, moduleIdx, lessonIdx) {
     if (p.completedStages.indexOf(stage.id) < 0) p.completedStages.push(stage.id);
   }
   saveProgress(p);
+  updateStreak();
+  checkAndAwardBadges();
   updateProgressBars();
+  updateStreakDisplay();
   // Reload lesson view with complete badge
   loadLesson(stageIdx, moduleIdx, lessonIdx);
 }
@@ -653,8 +1290,18 @@ function loadProject(stageIdx, moduleIdx) {
     '<span style="color:var(--text3);font-family:IBM Plex Mono,monospace;font-size:0.62rem;">Submit your work above to get expert AI feedback</span>' +
     '</div></div>';
 
-  // Temporarily override activeLesson ai_prompt for project
-  _activeLesson = { ai_prompt: project.ai_prompt, id: 'project_' + stageIdx + '_' + moduleIdx };
+  // Add share panel at bottom of project
+  var stage = FINCY_COURSE.stages[stageIdx];
+  html += getSharePanel(stage.id, project.title);
+  html += getResumePanel(stage.id);
+
+  // Track project completion on "Get AI Feedback" click
+  _activeLesson = {
+    ai_prompt: project.ai_prompt,
+    id: 'project_' + stageIdx + '_' + moduleIdx,
+    isProject: true,
+    stageId: stage.id
+  };
   refreshModal(html);
 }
 
@@ -707,6 +1354,56 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+/* ── STREAK DISPLAY HELPERS ───────────────────────────────── */
+function _buildStreakBadgeRowHtml() {
+  var p   = loadProgress();
+  var s   = getStreakDisplay();
+  p.badges = p.badges || [];
+  var earnedCount = p.badges.length;
+  var totalBadges = BADGES.length;
+
+  return (
+    // Streak pill
+    '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
+    'border:1px solid var(--b);padding:7px 14px;cursor:pointer;" ' +
+    'title="Your learning streak" onclick="">' +
+    '<span style="font-size:1rem;" id="streakEmoji">' + s.emoji + '</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
+    'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);" id="streakLabel">' +
+    s.days + ' day streak</span>' +
+    '</div>' +
+    // Points pill
+    '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
+    'border:1px solid var(--b);padding:7px 14px;">' +
+    '<span style="font-size:0.9rem;">⭐</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
+    'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);" id="pointsLabel">' +
+    (p.totalPoints || 0) + ' pts</span>' +
+    '</div>' +
+    // Badges pill (clickable → opens badge panel)
+    '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
+    'border:1px solid var(--b);padding:7px 14px;cursor:pointer;" ' +
+    'onclick="window.FincyLH.showBadges()" title="View all badges">' +
+    '<span style="font-size:0.9rem;">🏅</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
+    'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">' +
+    earnedCount + '/' + totalBadges + ' badges</span>' +
+    '</div>'
+  );
+}
+
+function updateStreakDisplay() {
+  var s  = getStreakDisplay();
+  var p  = loadProgress();
+  p.badges = p.badges || [];
+  var se = document.getElementById('streakEmoji');
+  var sl = document.getElementById('streakLabel');
+  var pl = document.getElementById('pointsLabel');
+  if (se) se.textContent = s.emoji;
+  if (sl) sl.textContent = s.days + ' day streak';
+  if (pl) pl.textContent = (p.totalPoints || 0) + ' pts';
+}
+
 /* ── INJECT INTERACTIVE ELEMENTS into existing LH cards ───── */
 function initLearningHub() {
   injectEngineStyles();
@@ -741,6 +1438,20 @@ function initLearningHub() {
     }
   }
 
+  // ── Inject streak + badges row below the overall progress bar ──
+  updateStreak();
+  var streakBadgeRow = document.getElementById('lhStreakBadgeRow');
+  if (!streakBadgeRow) {
+    var sRow = document.createElement('div');
+    sRow.id = 'lhStreakBadgeRow';
+    sRow.style.cssText = 'display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;';
+    sRow.innerHTML = _buildStreakBadgeRowHtml();
+    var overallBar = document.getElementById('lhOverallBar');
+    if (overallBar && overallBar.parentNode) {
+      overallBar.parentNode.insertBefore(sRow, overallBar.nextSibling);
+    }
+  }
+
   // Wire stage card buttons to loadStage()
   FINCY_COURSE.stages.forEach(function(stage, si) {
     var btn = document.getElementById('lh-stage-btn-' + si);
@@ -766,17 +1477,40 @@ function initLearningHub() {
 
 /* ── PUBLIC API ────────────────────────────────────────────── */
 window.FincyLH = {
-  loadStage:       loadStage,
-  loadModule:      loadModule,
-  loadLesson:      loadLesson,
-  handleAIRequest: handleAIRequest,
-  markComplete:    markComplete,
-  loadProject:     loadProject,
-  useExample:      useExample,
-  closeModal:      closeModal,
-  resetProgress:   function(){
+  loadStage:        loadStage,
+  loadModule:       loadModule,
+  loadLesson:       loadLesson,
+  handleAIRequest:  handleAIRequest,
+  markComplete:     markComplete,
+  loadProject:      loadProject,
+  useExample:       useExample,
+  closeModal:       closeModal,
+  downloadTemplate: downloadTemplate,
+  showBadges:       function(){ openModal(getBadgePanel(), '◆ Your Badges'); },
+  copyText: function(elemId) {
+    var el = document.getElementById(elemId);
+    if (!el) return;
+    var text = el.innerText || el.textContent || '';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function(){
+        var btn = el.nextElementSibling;
+        if (btn) { var orig=btn.textContent; btn.textContent='✓ Copied!'; setTimeout(function(){ btn.textContent=orig; }, 1500); }
+      });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    }
+  },
+  copyShareLink: function() {
+    var url = 'https://jitenparida95.github.io/fincy-intelligence/#learning';
+    if (navigator.clipboard) navigator.clipboard.writeText(url);
+    alert('Link copied: ' + url);
+  },
+  resetProgress: function(){
     localStorage.removeItem(PROGRESS_KEY);
     updateProgressBars();
+    updateStreakDisplay();
     closeModal();
     alert('Progress reset.');
   }
