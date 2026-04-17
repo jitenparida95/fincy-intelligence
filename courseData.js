@@ -222,6 +222,56 @@ Do NOT use AI for: decisions involving confidential competitive intelligence, co
             }
           ],
           project: null
+        },
+
+        /* MODULE 5 — Career Acceleration */
+        {
+          id: 'm01_05', title: 'AI-Powered Career Acceleration',
+          lessons: [
+            {
+              id: 'l01_05_01', title: 'Build Your AI Finance Brand on LinkedIn',
+              level: 'beginner', type: 'task',
+              track: ['CFO Strategy'], difficulty_score: 2,
+              explanation: 'Finance professionals who share AI insights on LinkedIn get 3-5x more interview requests. The algorithm rewards niche expertise. "AI + Finance" is the rarest combination — and you now have it. A 30-minute weekly LinkedIn habit compounds into career-changing visibility.',
+              example: 'High-performing LinkedIn post structure: Hook (1 sentence problem), Context (what you tried), Insight (what AI revealed), Lesson (what it means for finance teams), CTA (question). Posts about finance automation get 2-10x more engagement than generic finance posts.',
+              task: 'Write a LinkedIn post about one AI insight from Stage 01. Use the Hook/Context/Insight/Lesson/CTA structure. Ask AI to review and suggest improvements.',
+              ai_prompt: 'You are a LinkedIn content strategist for finance professionals. The user has written a LinkedIn post about AI in finance. Review it: (1) Hook strength — will it stop the scroll? (2) Insight depth — is there a genuine "aha moment"? (3) Engagement potential — what is the estimated reaction rate? Rewrite the hook to be 3x more compelling. Add a CTA question that will get finance professionals to comment.',
+              expected_output: 'Post review with scores + rewritten hook + high-engagement CTA question.'
+            },
+            {
+              id: 'l01_05_02', title: 'AI Skills for Your CV — What to Write',
+              level: 'beginner', type: 'task',
+              track: ['CFO Strategy'], difficulty_score: 2,
+              explanation: 'Most finance professionals write vague CV bullets like "Used AI tools to improve efficiency." The best CV bullets are specific, quantified, and business-outcome focused. After completing this course, you have real achievements to write about — not theoretical skills.',
+              example: 'Weak: "Experienced in AI and automation tools."
+Strong: "Automated monthly variance commentary using Groq LLM, reducing analyst time from 3 hours to 8 minutes while improving narrative consistency (Fincy Intelligence, 2026)."
+Strongest: "Built and deployed AI-powered FP&A dashboard in Streamlit; automated variance analysis for ₹42M P&L — saving 40 hours/month across finance team."',
+              task: 'Write 3 CV bullet points based on skills from Stage 01. Ask AI to upgrade them to "strongest" format.',
+              ai_prompt: 'You are a senior finance recruiter and CV coach. The user has written 3 CV bullet points about AI finance skills. For each: (1) Rate it: Weak/Strong/Strongest, (2) Identify the missing element (usually: specific tool, quantified impact, or business outcome), (3) Rewrite it at "Strongest" level. Give one piece of advice on where to position AI skills on a finance CV.',
+              expected_output: '3 rated bullets with "Strongest" rewrites + positioning advice.'
+            },
+            {
+              id: 'l01_05_03', title: 'Salary Negotiation Using AI Data',
+              level: 'beginner', type: 'task',
+              track: ['CFO Strategy'], difficulty_score: 3,
+              explanation: 'AI skills command a 20-40% salary premium in finance roles. But you need to prove the value, not just claim the skill. The negotiation framework: quantify your AI impact in Rs, benchmark against market data, and frame the ask as an ROI conversation rather than a personal request.',
+              example: 'Negotiation script: "I have reduced our month-end close time by 35 hours using AI automation — that is equivalent to 0.2 FTE at ₹15L, or ₹3L annual saving. I am seeking a 15% increase which represents a 5× ROI on the incremental salary cost."',
+              task: 'Calculate your personal AI ROI: hours saved × your hourly rate. Ask AI to help you build a salary negotiation script.',
+              ai_prompt: 'You are an executive compensation advisor and negotiation coach. The user shares their AI impact at work (hours saved, processes improved). Help them: (1) Calculate the exact Rs value of their AI contribution, (2) Write a 3-sentence negotiation opening, (3) Prepare 2 responses to "we do not have budget for increases", (4) Identify the strongest leverage point in their case. Make it professional, confident, and evidence-based.',
+              expected_output: 'Rs ROI calculation + 3-sentence opening + 2 objection responses + leverage point.'
+            },
+            {
+              id: 'l01_05_04', title: 'Simulation — Your First AI Finance Interview',
+              level: 'beginner', type: 'simulation',
+              track: ['CFO Strategy'], difficulty_score: 3,
+              explanation: 'More and more finance interviews now include AI-specific questions. Common questions: "How have you used AI in your work?", "What AI tools do you know?", "How do you see AI changing FP&A?", "Can you walk us through an AI project you built?" Having strong, specific answers to these separates candidates dramatically.',
+              example: 'Strong answer framework: Situation (what problem existed), AI Application (what you built or used), Quantified Result (hours saved, accuracy improved, cost reduced), Lesson Learned (what you would do differently). Always end with a forward-looking statement about AI's impact on the role.',
+              task: 'Answer these 3 interview questions in writing, then ask AI to evaluate your answers and suggest improvements: (1) "Tell me about a time you used AI at work." (2) "How would you introduce AI to a finance team resistant to change?" (3) "Where do you see AI in finance in 3 years?"',
+              ai_prompt: 'You are a CFO interviewing a Senior FP&A candidate for a role at a leading consumer goods company. Evaluate the user's 3 answers on: (1) Specificity (do they give real examples or vague claims?), (2) Business impact (do they quantify outcomes?), (3) Strategic thinking (do they show vision beyond the tool itself?). Score each answer 1-5. Give the one improvement that would most increase their chance of getting an offer.',
+              expected_output: '3 scored answers with specific improvement for each + the one critical upgrade.'
+            }
+          ],
+          project: null
         }
       ]
     },
@@ -492,6 +542,70 @@ weekend_posts = df[pd.to_datetime(df.date).dt.dayofweek >= 5]  # flag weekend po
             }
           ],
           project: null
+        },
+
+        /* MODULE 5 — Financial Strategy Execution */
+        {
+          id: 'm02_05', title: 'Financial Strategy Execution',
+          lessons: [
+            {
+              id: 'l02_05_01', title: 'OKRs and Financial Planning — Linking Strategy to Numbers',
+              level: 'intermediate', type: 'concept',
+              track: ['FP&A','CFO Strategy'], difficulty_score: 3,
+              explanation: 'OKRs (Objectives and Key Results) connect strategic ambition to measurable financial outcomes. The best FP&A teams align their budgets to OKRs — each key result has a financial owner, a budget line, and a metric. AI can audit whether a company's financial plan actually funds its stated strategy.',
+              example: 'Company OKR: "Become market leader in Germany."
+FP&A translation: Germany marketing budget +₹12M, 3 new sales hires (₹8M cost), Germany revenue target +40%.
+AI audit: "Your Germany plan assumes 40% revenue growth on +₹20M investment. Historical data shows 25% growth per ₹20M. Your OKR is overly optimistic — reforecast to 28% or increase investment to ₹32M."',
+              task: 'List your company's top 3 strategic priorities. Ask AI to translate each into financial implications and identify gaps between strategy and budget.',
+              ai_prompt: 'You are a CFO and strategy execution expert. The user lists 3 strategic priorities. For each: (1) Identify the key financial implication (investment required, revenue impact, margin effect), (2) Name the specific budget line that funds it, (3) Identify whether the current budget adequately funds the strategy or if there is a gap. Produce a "Strategy-Budget Alignment Scorecard" with a gap analysis.',
+              expected_output: 'Strategy-Budget Alignment Scorecard with gap analysis for each priority.'
+            },
+            {
+              id: 'l02_05_02', title: 'Headcount Planning — The Biggest Budget Driver',
+              level: 'intermediate', type: 'concept',
+              track: ['FP&A'], difficulty_score: 3,
+              explanation: 'In most companies, headcount is 60-70% of OPEX. Yet headcount planning is often done as "last year + X%" rather than driver-based. Driver-based headcount planning links hiring to specific business outcomes: each hire must be justified by revenue per FTE, span of control ratios, or productivity targets.',
+              example: 'Driver-based headcount model:
+Sales team: 1 sales rep per ₹8M revenue target = 22 sales reps for ₹180M target
+Finance team: 1 finance person per 60 business users = 18 finance FTEs for 1,100 employees
+Operations: 1 ops person per 350 transactions/day = 14 ops FTEs at current volume
+Every hire is traceable to a specific business driver.',
+              task: 'Pick one department. Define the business driver for headcount (revenue per rep, users per support person, etc.). Model the headcount for 3 revenue scenarios. Ask AI to validate your model.',
+              ai_prompt: 'You are a workforce planning expert and CFO advisor. The user shares a headcount model for one department. Validate: (1) Is the driver ratio realistic (benchmark against industry)?, (2) Does the model account for ramp time (new hires take 3-6 months to reach full productivity)?, (3) What is the total cost including employer contributions and equipment? Suggest one driver the user has not considered that would improve accuracy.',
+              expected_output: 'Driver ratio benchmark + ramp adjustment + total cost + missing driver.'
+            },
+            {
+              id: 'l02_05_03', title: 'Tax Planning for Finance Professionals',
+              level: 'intermediate', type: 'concept',
+              track: ['Accounting','CFO Strategy'], difficulty_score: 4,
+              explanation: 'Corporate tax planning is a legitimate CFO tool — not avoidance. Key levers: timing of deductions, transfer pricing for intercompany transactions, R&D credits, capital allowances on assets, and loss utilisation. AI can model the after-tax impact of major decisions.',
+              example: 'Tax timing example: ₹50M equipment purchase in December vs January. If December: full-year depreciation claim in current tax year = ₹5M deduction × 25% tax rate = ₹1.25M tax saving this year. If January: deduction delayed by 12 months. NPV of early claiming at 10% discount: ₹1.25M / 1.10 = ₹1.14M. Difference: ₹110K — simply from timing.',
+              task: 'Identify one business decision in your company where timing significantly affects tax. Ask AI to model the after-tax impact of 2 timing scenarios.',
+              ai_prompt: 'You are a corporate tax strategist. The user describes a business decision with timing implications. Model 2 scenarios (early vs late timing). For each: calculate the depreciation or deduction timing, tax saving, and NPV difference. Explain in plain English why timing matters and what the CFO should decide. Flag any tax risks in the preferred scenario.',
+              expected_output: 'Two-scenario tax model with NPV comparison + CFO recommendation + risk flag.'
+            },
+            {
+              id: 'l02_05_04', title: 'Challenge — Redesign the Budget Process',
+              level: 'intermediate', type: 'challenge',
+              track: ['FP&A'], difficulty_score: 4,
+              explanation: 'Most budget processes are broken: they take 4 months, produce a number that is wrong within 6 weeks, and consume enormous management time. The challenge: redesign your budget process using AI to cut the cycle from 4 months to 6 weeks without sacrificing quality.',
+              example: 'Redesigned budget process: Week 1-2 — AI generates baseline from ERP data + prior year actuals + driver assumptions. Week 3 — Finance reviews AI baseline, adjusts for known changes. Week 4-5 — Business units validate using AI-generated template with pre-filled assumptions. Week 6 — CFO review and board submission. Total: 6 weeks, 70% less spreadsheet work.',
+              task: 'Map your current budget process step by step. Identify where AI would have the biggest impact on speed. Ask AI to design the AI-enhanced version.',
+              ai_prompt: 'You are a finance transformation consultant. The user has mapped their budget process. Redesign it: (1) Identify the 3 biggest time sinks, (2) Show where AI replaces or accelerates each, (3) Estimate time saving per step, (4) Calculate total cycle time reduction, (5) Identify the one step that still requires heavy human judgment. Produce a "Before vs After" process comparison table.',
+              expected_output: 'Before/After process table + time saving per step + total cycle reduction.'
+            },
+            {
+              id: 'l02_05_05', title: 'Simulation — Present to the Board',
+              level: 'intermediate', type: 'simulation',
+              track: ['CFO Strategy'], difficulty_score: 5,
+              explanation: 'Simulation: You are presenting the annual budget to the board. Budget assumptions: Revenue +12% (₹200M), EBITDA 24% (₹48M), headcount +8%, capex ₹25M. The board has 4 concerns: (1) Revenue assumption seems aggressive given market conditions, (2) Headcount growth outpaces revenue growth, (3) Capex not clearly linked to revenue outcomes, (4) No downside scenario provided.',
+              example: 'Strong CFO opening: "Before I walk you through the detail, let me acknowledge the 4 concerns pre-read noted and show you exactly how we have addressed each in this budget." Then systematically: (1) Revenue — market data supporting +12%, (2) Headcount — revenue per FTE maintained, (3) Capex — linked to specific projects with IRR, (4) Bear case — EBITDA 18% if revenue grows only 5%.',
+              task: 'Write your board response to all 4 concerns. Then ask AI to play the board's toughest member and push back on your responses.',
+              ai_prompt: 'You are the most analytically rigorous board member — a former PE partner with 30 years of experience. The CFO has responded to your 4 concerns. For each response: (1) Was the answer complete or did it dodge the question? (2) What number did they fail to provide that you need? (3) Ask one follow-up question that exposes a weakness. End with your overall verdict: "Do you approve the budget or send it back for revision?"',
+              expected_output: 'Response quality assessment for each of 4 points + follow-up questions + budget verdict.'
+            }
+          ],
+          project: null
         }
       ]
     },
@@ -704,6 +818,120 @@ if st.button("Auto-refresh ON"):
             }
           ],
           project: null
+        },
+
+        /* MODULE 4 — Advanced Valuation & Strategic Finance */
+        {
+          id: 'm03_04', title: 'Advanced Valuation & Strategic Finance',
+          lessons: [
+            {
+              id: 'l03_04_01', title: 'DCF Valuation — The Gold Standard',
+              level: 'advanced', type: 'concept',
+              track: ['CFO Strategy'], difficulty_score: 4,
+              explanation: 'A Discounted Cash Flow (DCF) valuation calculates a company's intrinsic value by discounting future free cash flows to present value. It is the most rigorous valuation method and the foundation of investment banking, PE analysis, and strategic M&A. Three inputs drive everything: free cash flow projections, terminal growth rate, and WACC.',
+              example: 'DCF steps: (1) Project FCF for 5 years. (2) Calculate terminal value: FCF Year 5 × (1+g) / (WACC − g). (3) Discount all cash flows at WACC. (4) Sum = Enterprise Value. Sensitivity: a 1% change in WACC typically changes Enterprise Value by 15-25%. A 0.5% change in terminal growth rate changes EV by 10-20%.',
+              task: 'Build a simple DCF: FCF Year 1-5: ₹10M, ₹12M, ₹15M, ₹17M, ₹19M. WACC 11%. Terminal growth rate 3%. Ask AI to calculate the enterprise value and run sensitivity analysis.',
+              ai_prompt: 'You are a DCF valuation expert and investment banker. Calculate the enterprise value for this DCF model with exact year-by-year workings. Then run a 3x3 sensitivity table varying WACC (9%, 11%, 13%) and terminal growth (2%, 3%, 4%). For each cell, show the enterprise value. Identify which assumption has the largest impact on value and explain why this matters for business decisions.',
+              expected_output: 'Year-by-year DCF + 3x3 sensitivity table + most sensitive assumption identified.'
+            },
+            {
+              id: 'l03_04_02', title: 'Comparable Company Analysis',
+              level: 'advanced', type: 'concept',
+              track: ['CFO Strategy'], difficulty_score: 4,
+              explanation: 'Comparable company analysis (comps) values a business using market multiples of similar public companies. The most common: EV/EBITDA, EV/Revenue, P/E. The insight: if your company has the same growth and margins as peers trading at 10× EBITDA, you should also be worth 10× EBITDA — unless there are reasons for a discount or premium.',
+              example: 'FMCG sector comps: Company A (12× EBITDA, 8% growth), Company B (14× EBITDA, 12% growth), Company C (10× EBITDA, 5% growth). Median: 12× EBITDA. Your company: ₹50M EBITDA, 10% growth. Implied value: ₹600M at median. But 10% growth is above median — justified premium to 13×. Implied value: ₹650M.',
+              task: 'Research 3 publicly listed companies in your industry. Find their EV/EBITDA multiples. Ask AI to apply them to your company and explain what premium or discount is warranted.',
+              ai_prompt: 'You are a sell-side equity analyst building a comps analysis. The user provides 3 comparable companies with their multiples and their own company metrics. Build a comps table: show EV/EBITDA for each comp, calculate mean and median, apply to user's EBITDA to get implied value. Then argue: should the user's company trade at premium or discount to the median, and why (growth differential, margin quality, geographic mix). Calculate the final valuation range.',
+              expected_output: 'Comps table + implied value range + premium/discount argument with specific reasons.'
+            },
+            {
+              id: 'l03_04_03', title: 'Working Capital Optimisation — Free Cash Without P&L Impact',
+              level: 'advanced', type: 'task',
+              track: ['CFO Strategy','FP&A'], difficulty_score: 4,
+              explanation: 'Working capital optimisation generates cash without touching the P&L. Three levers: DSO reduction (collect receivables faster), DIO reduction (hold less inventory), DPO extension (pay suppliers later). A company with ₹200M revenue and 90-day CCC has ₹49M locked in working capital. Reducing CCC to 60 days releases ₹16M in cash — immediately, without any P&L impact.',
+              example: 'Working capital optimisation programme: (1) DSO 80→55 days (cash released: revenue/365 × 25 = ₹13.7M), (2) DIO 65→45 days (cash released: COGS/365 × 20 = ₹8.2M), (3) DPO 30→50 days (cash saved: COGS/365 × 20 = ₹8.2M). Total: ₹30.1M cash released — equivalent to 3 years of retained earnings for many companies.',
+              task: 'Calculate your current CCC (DSO + DIO − DPO). Model the cash impact of a 20% improvement in each metric. Ask AI to design a 90-day implementation plan.',
+              ai_prompt: 'You are a working capital specialist and transformation consultant. The user shares their current DSO, DIO, and DPO. Calculate: current CCC, cash locked in working capital (as % of revenue), cash release from 20% improvement in each metric individually and combined. Design a 90-day implementation plan with: Week 1-4 quick wins, Week 5-8 process changes, Week 9-12 systems and governance. Include KPIs to track progress.',
+              expected_output: 'CCC calculation + cash release model + 90-day implementation plan with KPIs.'
+            },
+            {
+              id: 'l03_04_04', title: 'ESG Finance — The New CFO Agenda',
+              level: 'advanced', type: 'concept',
+              track: ['CFO Strategy'], difficulty_score: 4,
+              explanation: 'Environmental, Social, and Governance (ESG) metrics are now financially material. Companies with strong ESG scores access cheaper capital (green bonds at 30-50bps below standard), attract better talent, avoid regulatory penalties, and command customer price premiums. CFOs who understand ESG finance have a competitive advantage.',
+              example: 'ESG financial impact: Carbon tax at ₹2,000/tonne CO2 → company emitting 50,000 tonnes = ₹100M annual exposure. Renewable energy switch: capital cost ₹80M → save ₹100M regulatory cost → 0.8-year payback. Green bond financing for renewable project: coupon 7.2% vs standard bond 7.7% → 50bps saving on ₹80M = ₹400K/year interest saving.',
+              task: 'Identify one ESG risk in your company (carbon exposure, supply chain, governance). Ask AI to quantify its financial impact and recommend a mitigation strategy.',
+              ai_prompt: 'You are a CFO and ESG finance expert. The user identifies an ESG risk. Quantify it financially: (1) Regulatory cost (carbon taxes, penalties, compliance), (2) Reputation risk (customer loss if ESG credentials are poor), (3) Capital cost premium (lenders charge higher rates for ESG laggards), (4) Operational efficiency opportunity (ESG improvements often reduce costs). Produce an ESG Risk-Opportunity Matrix with Rs values. Recommend one high-ROI mitigation action.',
+              expected_output: 'ESG Risk-Opportunity Matrix with Rs values + one high-ROI recommendation.'
+            },
+            {
+              id: 'l03_04_05', title: 'Case Study — Restructuring a Loss-Making Division',
+              level: 'advanced', type: 'case_study',
+              track: ['CFO Strategy'], difficulty_score: 5,
+              explanation: 'Real case: A diversified group has a manufacturing division losing ₹15M EBITDA annually. The division has ₹300M revenue, 2,400 employees, and is strategically important for vertical integration. Options: (1) Restructure — ₹50M cost to achieve breakeven in 24 months, (2) Divest — sell for ₹80M (below book value of ₹120M), (3) Close — ₹60M closure costs, ₹18M/year saving post-close.',
+              example: 'CFO analysis framework: NPV of restructuring (₹18M saving from Year 3 × 10 years @ 12% WACC − ₹50M cost = ₹42M NPV). NPV of divestiture (₹80M proceeds − ₹40M tax = ₹40M net). NPV of closure (₹18M/yr × 10yr @ 12% − ₹60M cost − ₹15M employment costs = ₹23M NPV). Recommendation: Restructure, but with 18-month milestone gate — if breakeven not achieved, accelerate divestiture.',
+              task: 'You are the CFO advising on this decision. Calculate the NPV of all 3 options and make a recommendation with conditions. Ask AI to pressure-test your analysis.',
+              ai_prompt: 'You are a senior M&A advisor and restructuring specialist. The CFO has analysed 3 options for a loss-making division. Challenge their analysis: (1) Are all costs fully reflected (redundancy, pension, property exit)? (2) Is the 24-month restructuring timeline realistic given the scale? (3) Are there options they have not considered (partial sale, JV, government support)? (4) What is the board's strategic ownership decision that determines which option is right? Give your final recommendation.',
+              expected_output: 'Complete cost challenge + missing options + strategic ownership question + final recommendation.'
+            },
+            {
+              id: 'l03_04_06', title: 'Simulation — Run a Fundraising Process',
+              level: 'advanced', type: 'simulation',
+              track: ['CFO Strategy'], difficulty_score: 5,
+              explanation: 'Simulation: Your growth company needs ₹200M in new capital to fund expansion. You are choosing between: (A) PE investment at 7× EBITDA valuation (₹420M pre-money), (B) Bank debt at 9% interest (requires 3× EBITDA coverage), (C) IPO at 10× EBITDA (₹600M valuation). Your current EBITDA is ₹60M and growth is 20%/year.',
+              example: 'Fundraising analysis: PE option — dilution of 32% but no debt burden, strategic partner, faster growth possible. Debt — no dilution but ₹18M/year interest at current EBITDA is tight (3× coverage threshold is ₹18M interest vs ₹60M EBITDA = 3.3× — just above minimum). IPO — highest valuation but 12-18 month process, significant management time, ongoing disclosure burden.',
+              task: 'Model all 3 options for Year 3 (assuming 20%/yr EBITDA growth). Calculate: implied ownership %, EPS impact, cost of capital. Recommend the optimal structure. Ask AI to challenge your recommendation.',
+              ai_prompt: 'You are a CFO advisor and capital markets expert. The user models 3 fundraising options. For each option calculate: (1) Implied ownership dilution (if equity), interest cover (if debt), or float % (if IPO), (2) Total cost of capital, (3) Impact on Year 3 EPS, (4) Strategic control implications. Build a decision matrix comparing all 3 on: cost, dilution, control, strategic value, execution risk. Give your recommendation with the one condition that must be met to make it the right choice.',
+              expected_output: 'Decision matrix for 3 options + recommendation with one critical condition.'
+            },
+            {
+              id: 'l03_04_07', title: 'Challenge — Build a Company Valuation from Scratch',
+              level: 'advanced', type: 'challenge',
+              track: ['CFO Strategy'], difficulty_score: 5,
+              explanation: 'Challenge: Value your own company (or a company you know) from scratch using at least 2 methods. Show why the methods give different answers. Identify the key value driver. Recommend whether the company is undervalued or overvalued.',
+              example: 'Company valued at ₹500M asking price: DCF gives ₹420M (conservative), comps give ₹580M (sector trading at premium). Difference driven by terminal growth assumption in DCF (3% vs implied 4.5% in comps). Key value driver: customer retention rate — 5% improvement in retention adds ₹45M to DCF value.',
+              task: 'Use DCF and comps to value a company you know. Explain the difference. Ask AI to identify the single biggest risk to your valuation.',
+              ai_prompt: 'You are a valuation expert peer-reviewing a company valuation. The user has valued a company using DCF and comps. For each method: (1) Identify the most sensitive assumption, (2) Run a downside scenario (what if that assumption is 20% wrong?), (3) Calculate the downside valuation. Then: identify the single biggest valuation risk the user has not modelled. Write a one-paragraph "Valuation Risk Section" they could include in a board memo.',
+              expected_output: 'Downside scenarios for both methods + biggest unmodelled risk + Valuation Risk Section.'
+            },
+            {
+              id: 'l03_04_08', title: 'Real Data Mode — Analyse Your Balance Sheet',
+              level: 'advanced', type: 'task',
+              track: ['FP&A','Accounting'], difficulty_score: 4,
+              explanation: 'The balance sheet tells you what a company owns, owes, and is worth. Most FP&A analysts focus on the P&L but neglect the balance sheet. Key balance sheet diagnostics: asset intensity (revenue per asset), leverage (debt/equity), liquidity (current ratio), and working capital efficiency. AI can profile any balance sheet CSV in seconds.',
+              example: 'Balance sheet red flags AI detects: (1) Receivables growing faster than revenue (potential bad debt risk), (2) Inventory days rising (demand slowing or operational issue), (3) Goodwill >30% of total assets (acquisition risk if impairment needed), (4) Net debt/EBITDA >3× (refinancing risk), (5) Negative retained earnings (accumulated losses).',
+              task: 'Export your balance sheet or use a public company's. Describe its key lines to AI. Ask for a balance sheet health check and risk assessment.',
+              ai_prompt: 'You are a credit analyst and balance sheet expert. The user describes their balance sheet. Perform a health check: (1) Calculate 5 key ratios (current ratio, quick ratio, debt/equity, asset turnover, ROE), (2) Benchmark each against industry averages, (3) Identify 3 balance sheet risks, (4) Identify 1 strength. Give a Balance Sheet Health Score 1-10 and the one metric the CFO should prioritise improving.',
+              expected_output: '5 ratios with benchmarks + 3 risks + 1 strength + Health Score + priority metric.'
+            },
+            {
+              id: 'l03_04_09', title: 'Advanced Automation — Finance in Python End-to-End',
+              level: 'advanced', type: 'task',
+              track: ['Automation'], difficulty_score: 5,
+              explanation: 'End-to-end finance automation: data from ERP → Python processing → AI analysis → automated report → email distribution. This is the complete pipeline that replaces 40+ hours of manual work per month. The skills from this course give you everything you need to build it.',
+              example: 'Full pipeline code outline:
+1. Pull data: requests.get(ERP_API_URL, headers=auth)
+2. Process: pandas groupby, variance calc
+3. AI analysis: groq.chat.completions.create(model, messages)
+4. Build report: reportlab PDF or xlsxwriter
+5. Email: smtplib.SMTP with PDF attachment
+6. Schedule: schedule.every().day.at("08:00").do(run_pipeline)',
+              task: 'Design your personal automation pipeline for your most time-consuming monthly report. Define each step and the technology. Ask AI to write the Python skeleton.',
+              ai_prompt: 'You are a senior Python developer and finance automation architect. The user describes their monthly reporting pipeline. Write a complete Python skeleton that: (1) Defines functions for each pipeline step (pull_data, process_data, generate_ai_commentary, build_report, send_email), (2) Adds a main() orchestrator, (3) Includes basic error handling and logging, (4) Adds a schedule trigger. Comment every function with expected inputs and outputs. Make it immediately usable as a starting template.',
+              expected_output: 'Complete Python pipeline skeleton with all steps, error handling, and scheduling.'
+            },
+            {
+              id: 'l03_04_10', title: 'Simulation — You Are the CFO on Acquisition Day',
+              level: 'advanced', type: 'simulation',
+              track: ['CFO Strategy'], difficulty_score: 5,
+              explanation: 'Final Stage 03 simulation: You have just completed a ₹500M acquisition. Day 1 post-close. You discover 3 problems the due diligence missed: (1) A ₹30M pension deficit not disclosed, (2) Key customer contract (15% of target revenue) has 90-day termination clause, (3) Integration costs were underestimated by ₹20M. Your board presentation is in 4 hours.',
+              example: 'Strong CFO response: Immediate actions in 30 minutes — (1) Legal team confirms pension liability recourse against seller, (2) Key account manager assigned to protect customer relationship, (3) Reforecast integration costs with revised synergy timeline. Board presentation: be transparent, show revised numbers, present mitigation plan, demonstrate control.',
+              task: 'Write your board presentation opening for this situation. Include revised financials and your mitigation plan. Ask AI to play the most difficult board member.',
+              ai_prompt: 'You are a non-executive board member who was sceptical of this acquisition from the start. The CFO has just disclosed 3 post-close issues. Ask 5 very hard questions, numbered. For each: explain what a weak CFO answer looks like vs a strong one. Then: should you call for the CFO's resignation? State your reasoning explicitly.',
+              expected_output: '5 hard board questions with weak/strong contrast + explicit resignation assessment.'
+            }
+          ],
+          project: null
         }
       ]
     },
@@ -892,6 +1120,88 @@ No other text. No explanation. Valid JSON only.',
             }
           ],
           project: null
+        },
+
+        /* MODULE 4 — AI Finance Leadership */
+        {
+          id: 'm04_04', title: 'AI Finance Leadership',
+          lessons: [
+            {
+              id: 'l04_04_01', title: 'Managing a Finance Team in the AI Era',
+              level: 'advanced', type: 'concept',
+              track: ['CFO Strategy'], difficulty_score: 4,
+              explanation: 'The finance team of 2030 will be half the size with double the output. The CFO and Finance Manager's job is now: identify which roles AI replaces, redesign remaining roles around AI augmentation, upskill the team, and manage the human transition. Leaders who do this proactively build high-performing teams. Those who resist fall behind.',
+              example: 'Finance team transformation: 12-person team → 8-person team (4 roles redefined, not eliminated). Month-end reporting analyst → AI orchestrator (runs and reviews AI-generated reports). Data entry clerk → exception manager (reviews AI-flagged anomalies). Junior FP&A → scenario analyst (tests AI model assumptions). The team does less processing, more thinking.',
+              task: 'Map your current finance team. Identify which roles will be most affected by AI in 3 years. Ask AI to redesign each affected role for the AI era.',
+              ai_prompt: 'You are a CFO and talent transformation expert. The user maps their finance team roles. For each role: (1) AI automation risk (High/Medium/Low), (2) What AI will handle in this role, (3) What becomes the new human responsibility, (4) Skills the person needs to develop. Produce a "Finance Team AI Transformation Roadmap" showing the team today vs 3 years from now. Include a change management approach.',
+              expected_output: 'Team transformation roadmap (today vs 3 years) + skills needed + change management approach.'
+            },
+            {
+              id: 'l04_04_02', title: 'Building a Finance AI Centre of Excellence',
+              level: 'advanced', type: 'task',
+              track: ['CFO Strategy','Automation'], difficulty_score: 4,
+              explanation: 'Leading finance functions are building AI Centres of Excellence (CoE) — small teams (2-4 people) responsible for evaluating, implementing, and governing AI tools. The CoE owns: tool evaluation, prompt library, training, governance, and measuring ROI. This is increasingly a high-paying, high-visibility role.',
+              example: 'Finance AI CoE structure: Lead (AI strategy + stakeholder management), Data Engineer (pipelines and integrations), FP&A AI specialist (use-case development), Governance lead (controls, audit, risk). Annual budget: ₹40-80L. Annual value delivered: ₹5-15 Cr savings. ROI: 10-20×.',
+              task: 'Design a Finance AI CoE for your organisation. Define: team size, roles, budget, 3-year roadmap, and governance framework. Ask AI to validate and improve your design.',
+              ai_prompt: 'You are a Chief Data Officer and Finance AI expert. Review the user's Finance AI CoE design. Evaluate: (1) Is the team size appropriate for the organisation scale? (2) Are all critical capabilities covered? (3) Is the budget realistic for the ambition? (4) What is missing from the governance framework? (5) What should the CoE deliver in Year 1 to justify its existence? Give a revised CoE charter with success metrics.',
+              expected_output: 'CoE evaluation + revised charter + Year 1 success metrics.'
+            },
+            {
+              id: 'l04_04_03', title: 'AI Governance in Finance — Controls and Risk',
+              level: 'advanced', type: 'concept',
+              track: ['CFO Strategy','Accounting'], difficulty_score: 5,
+              explanation: 'AI in finance creates new risks: model hallucination (AI confidently wrong), data bias (AI trained on unrepresentative data), auditability (can you explain an AI decision to an auditor?), and liability (who is responsible when AI makes a financial error?). CFOs must build governance frameworks before regulators force them to.',
+              example: 'Finance AI risk matrix: High risk = AI posting journal entries without human review (do NOT do this). Medium risk = AI generating management commentary reviewed by analyst before distribution. Low risk = AI summarising data for internal decision-making. Controls: all AI outputs reviewed before external publication, AI decisions logged and auditable, model accuracy tracked monthly.',
+              task: 'Map the 5 AI use cases in your finance team by risk level. Ask AI to design the control framework for your highest-risk use case.',
+              ai_prompt: 'You are a finance controls and AI governance expert. The user identifies 5 AI use cases by risk level. Design the control framework for the highest-risk case: (1) Pre-implementation controls (what tests before go-live), (2) Operational controls (what reviews every time it runs), (3) Exception handling (what happens when AI fails or is uncertain), (4) Audit trail (what is logged and for how long), (5) Escalation path (who reviews exceptions). Write a one-page control framework document.',
+              expected_output: 'One-page control framework with 5 control layers + escalation path.'
+            },
+            {
+              id: 'l04_04_04', title: 'The Future of Finance — 2030 Vision',
+              level: 'advanced', type: 'concept',
+              track: ['CFO Strategy'], difficulty_score: 3,
+              explanation: 'By 2030: 70% of transaction processing will be automated, real-time financial reporting will be standard, AI will generate first-draft board packs, and CFOs will spend 80% of their time on strategy rather than reporting. The finance professionals who thrive will be those who guided their organisations through this transition — not those who resisted it.',
+              example: '2030 finance function: Real-time P&L updated every 15 minutes from ERP data. AI board pack generated by Tuesday afternoon for Friday board. CFO reviews AI pack in 45 minutes, adjusts narrative for context. Board meeting focuses on strategy, not numbers. Finance team of 8 supports a ₹500M business that previously required 20.',
+              task: 'Write your personal "2030 Finance Vision" — what you want to have built or achieved in your finance career by 2030. Ask AI to critique it and identify gaps.',
+              ai_prompt: 'You are a finance futurist and executive coach. The user shares their 2030 career vision in finance and AI. Evaluate: (1) Is this vision ambitious enough given the pace of AI change? (2) What skills are missing from their development plan? (3) What role do they seem to be aiming for — and is it a role that will exist in 2030? (4) What is the one thing they must start doing in the next 90 days to stay on track? Give honest, direct feedback — not validation.',
+              expected_output: 'Vision critique + skills gap + 2030 role assessment + 90-day starting action.'
+            },
+            {
+              id: 'l04_04_05', title: 'Challenge — Become the AI Finance Expert in Your Company',
+              level: 'advanced', type: 'challenge',
+              track: ['CFO Strategy'], difficulty_score: 4,
+              explanation: 'Challenge: Within 90 days, position yourself as the go-to AI Finance expert in your organisation. Plan: Week 1-4 — demonstrate one quick win (automate one report). Week 5-8 — share the time saving with your manager and team. Week 9-12 — propose and lead one team AI workshop. Outcome: visible, credible, and seen as ahead of the curve.',
+              example: 'Quick win examples: (1) Automate weekly cash report using Python — saves 3 hours. (2) Use Fincy to generate variance commentary for board pack — saves 2 hours per analyst. (3) Build a simple Streamlit tool for ad-hoc P&L analysis — used by 5 colleagues. Each quick win builds credibility for the next, larger initiative.',
+              task: 'Define your 90-day plan to become the AI finance expert in your company. Include: one quick win, one team initiative, one visible output. Ask AI to critique and strengthen it.',
+              ai_prompt: 'You are a career coach and organisational influence expert. The user has a 90-day plan to establish themselves as the AI finance expert. Challenge the plan: (1) Is the quick win impactful enough to get noticed? (2) Is the team initiative realistic given their organisational position? (3) What stakeholders need to know about their work and how will they find out? (4) What could go wrong and how do they mitigate it? Rewrite their plan with your improvements.',
+              expected_output: 'Plan critique + stakeholder strategy + risk mitigation + rewritten 90-day plan.'
+            },
+            {
+              id: 'l04_04_06', title: 'Simulation — Final CFO Simulation',
+              level: 'advanced', type: 'simulation',
+              track: ['CFO Strategy'], difficulty_score: 5,
+              explanation: 'The ultimate simulation. You are the Group CFO of a ₹1B FMCG company. It is 2027. AI has automated 60% of your finance team's workload. The CEO asks you 5 questions in your weekly 1:1. Each requires immediate, confident, CFO-quality answers based on everything in this course.',
+              example: 'CEO questions: (1) "Our AI-generated board pack shows margin compression — should I be worried?" (2) "Can we acquire a competitor for ₹300M using only debt?" (3) "The board wants us to hit Net Zero by 2030 — what does that cost?" (4) "Our finance team wants to hire 2 more AI specialists — approve or deny?" (5) "India's finance regulator is considering new AI audit requirements — what is our exposure?"',
+              task: 'Answer all 5 CEO questions as a Group CFO. Demonstrate everything you have learned. Ask AI to evaluate your responses.',
+              ai_prompt: 'You are the CEO evaluating your Group CFO's answers to 5 strategic questions. For each answer: (1) Did they demonstrate financial mastery?, (2) Did they show AI literacy?, (3) Was their recommendation clear and actionable?, (4) Did they identify the key risk?, (5) Would you trust them to handle this without further guidance? Rate each answer 1-5. Give an overall CFO Performance Rating: Exceptional / Strong / Adequate / Needs Development. Write the specific feedback you would give in their annual review.',
+              expected_output: '5 answer ratings + Overall CFO Performance Rating + annual review feedback.'
+            },
+            {
+              id: 'l04_04_07', title: 'Real Data Mode — Full Financial Health Check',
+              level: 'advanced', type: 'task',
+              track: ['FP&A','CFO Strategy'], difficulty_score: 5,
+              explanation: 'Capstone real data exercise: Upload or describe a complete set of financials (P&L, balance sheet, cash flow statement). AI performs a comprehensive financial health check covering all dimensions learned in this course: profitability, liquidity, efficiency, leverage, growth quality, and strategic positioning.',
+              example: 'Financial health check dimensions: (1) Profitability — EBITDA margin, ROCE, GP trend. (2) Liquidity — current ratio, cash runway. (3) Efficiency — CCC, asset turnover. (4) Leverage — net debt/EBITDA, interest cover. (5) Growth quality — organic vs acquired, recurring vs one-off. (6) Strategy — market position, competitive moat.',
+              task: 'Describe your company's key financials across all 6 dimensions. Ask AI for a comprehensive financial health report with a final rating.',
+              ai_prompt: 'You are a credit rating analyst and strategic CFO advisor. The user provides financials across 6 dimensions. For each dimension: (1) Calculate the key ratio, (2) Benchmark against industry, (3) Rate: Strong / Adequate / Weak, (4) Give one specific improvement recommendation. Calculate a composite Financial Health Score /60. Write an executive summary suitable for a board presentation. Identify the one metric the CFO should prioritise improving above all others.',
+              expected_output: 'Six-dimension health check with ratings + composite score /60 + board-ready executive summary.'
+            }
+          ],
+          project: {
+            title: 'Capstone Project: Your AI Finance Leadership Plan',
+            instructions: 'Create a comprehensive "AI Finance Leadership Plan" for the next 12 months. Include: (1) Your personal AI skill development roadmap, (2) One AI tool you will build, (3) One AI initiative you will lead in your organisation, (4) Your target role in 24 months and how AI skills get you there. This is your career document — treat it as such.',
+            ai_prompt: 'You are a senior executive coach and CFO advisor. The user has created a 12-month AI Finance Leadership Plan. Evaluate it on: ambition (is it stretching enough?), realism (is it achievable?), strategic alignment (does it lead to the right place?), completeness (are all key elements covered?). Score /40. Then write the "North Star" statement they should put at the top of their plan — one sentence describing who they want to be in 24 months.'
+          }
         }
       ]
     },
@@ -1405,7 +1715,7 @@ function _buildCertificateHTML(p) {
     'Fincy Intelligence · AI Finance Academy · fincyintelligence.com · Founder: Jitendra Parida' +
     '</div>' +
     '</div>' +
-    '<script>window.onload=function(){window.print();};</script>' +
+    '' + /* A5: removed auto-print */
     '</body></html>';
 }
 
@@ -2172,7 +2482,29 @@ function handleAIRequest() {
   output.innerHTML = '<span class="lh-spinner"></span> AI CFO thinking…';
 
   var groqKey = window.GROQ_KEY || '';
-  var sysPrompt = _activeLesson.ai_prompt;
+  // A1+A4 FIX: Context-aware structured AI CFO system prompt
+  var _lesson = _activeLesson || {};
+  var _stage  = typeof _activeStage === 'number' ? FINCY_COURSE.stages[_activeStage] : null;
+  var _stageTitle  = _stage ? _stage.title : 'Finance';
+  var _trackList   = (_lesson.track || ['FP&A']).join(', ');
+  var _levelStr    = _lesson.level || 'intermediate';
+  var _lessonTitle = _lesson.title || 'Finance';
+
+  var sysPrompt = (
+    'You are Fincy AI CFO — a world-class financial advisor, senior FP&A expert, and AI tutor. ' +
+    'You combine McKinsey analytical precision with FTSE CFO strategic thinking. ' +
+    'CONTEXT: Stage=' + _stageTitle + ' | Lesson=' + _lessonTitle + ' | ' +
+    'Level=' + _levelStr + ' | Track=' + _trackList + '. ' +
+    'Adjust complexity for a ' + _levelStr + ' finance professional. ' +
+    'ALWAYS respond in this EXACT format:\n\n' +
+    'ANSWER: [Direct specific answer with real numbers]\n' +
+    'FINANCE INSIGHT: [Underlying principle this reveals for their career]\n' +
+    'ACTION: [One measurable step to take TODAY with specific target]\n' +
+    'NEXT LESSON: [One topic from ' + _trackList + ' track to study next]\n' +
+    'ASK NEXT: [One harder follow-up question to push their thinking]\n\n' +
+    'RULES: No generic advice. Reference exact numbers from user input. ' +
+    'Lesson context: ' + (_lesson.ai_prompt || '')
+  );
 
   // v4: Build messages with AI memory (last 3 conversations)
   var msgs = handleAIMemory(sysPrompt, userText);
@@ -2256,9 +2588,11 @@ function markComplete(lessonId, stageIdx, moduleIdx, lessonIdx) {
     p.completedStages.push(stage.id);
   }
 
+  // A8 FIX: increment daily count HERE (single authoritative place)
+  p.lessonsCompletedToday = (p.lessonsCompletedToday || 0) + (isNew ? 1 : 0);
   saveProgress(p);
   updateStreak();
-  handleDailySystem();       // v4: daily goal tracking
+  handleDailySystem();       // v4: daily goal check (no longer increments)
   updateXP(10, stageJustDone ? 100 : 0);  // v4: XP + level
   checkAndAwardBadges();
   updateProgressBars();
@@ -2496,18 +2830,22 @@ function handleDailySystem() {
     p.lastDayDate = today;
   }
 
-  // Increment today's count
-  p.lessonsCompletedToday = (p.lessonsCompletedToday || 0) + 1;
-
-  // Daily goal reached?
-  if (p.lessonsCompletedToday >= (p.dailyGoal || 2)) {
-    p.xp = (p.xp || 0) + 20;  // bonus XP for hitting daily goal
-    setTimeout(function() {
-      _showFloatingMsg("🎯 Daily goal complete! +20 Bonus XP!");
-    }, 2000);
+  // A8 FIX: increment owned by markComplete, not handleDailySystem
+  // handleDailySystem only checks the goal (no double-count)
+  var todayCount = p.lessonsCompletedToday || 0;
+  if (todayCount > 0 && todayCount >= (p.dailyGoal || 2)) {
+    var celebKey = 'goal_' + today;
+    if (p.goalCelebrated !== celebKey) {
+      p.goalCelebrated = celebKey;
+      saveProgress(p);
+      setTimeout(function(){
+        _showFloatingMsg("Daily goal complete! +20 Bonus XP!");
+        var pp = loadProgress(); pp.xp = (pp.xp||0)+20; saveProgress(pp);
+      }, 1800);
+    }
+  } else {
+    saveProgress(p);
   }
-
-  saveProgress(p);
 }
 
 /* ── FEATURE 2: XP + LEVEL SYSTEM ─────────────────────────── */
