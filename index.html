@@ -3,6 +3,45 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<!-- ── SEO ───────────────────────────────────────────────────────────────── -->
+<meta name="description" content="Fincy Intelligence — AI CFO platform for Finance professionals. FP&A Decision Intelligence, Reconciliation, Cost Analysis, Cash Flow, Personal Finance. CSV to board-ready insights in 60 seconds."/>
+<meta name="keywords" content="AI CFO, FP&A analytics, financial intelligence, reconciliation automation, EBITDA analysis, finance AI tool, CFO dashboard, India tax advisor"/>
+<meta name="author" content="Jitendra Parida — Senior FP&A Analyst, IBM/Reckitt"/>
+<meta name="robots" content="index, follow"/>
+<link rel="canonical" href="https://jitenparida95.github.io/fincy-intelligence/"/>
+
+<!-- ── Open Graph ────────────────────────────────────────────────────────── -->
+<meta property="og:type"         content="website"/>
+<meta property="og:url"          content="https://jitenparida95.github.io/fincy-intelligence/"/>
+<meta property="og:title"        content="Fincy Intelligence — Your AI CFO, Always On"/>
+<meta property="og:description"  content="Upload any financial CSV. Get instant P&L intelligence, reconciliation, cost analysis, and AI CFO insights — 6 modules. Built by a Senior FP&A Analyst at IBM/Reckitt."/>
+<meta property="og:image"        content="https://jitenparida95.github.io/fincy-intelligence/og-image.png"/>
+<meta property="og:site_name"    content="Fincy Intelligence"/>
+
+<!-- ── Twitter/X Card ───────────────────────────────────────────────────── -->
+<meta name="twitter:card"        content="summary_large_image"/>
+<meta name="twitter:title"       content="Fincy Intelligence — Your AI CFO, Always On"/>
+<meta name="twitter:description" content="AI FP&A platform. 6 modules. P&L, Reconciliation, Cost, Cash Flow, Personal Finance. Built by IBM/Reckitt FP&A Analyst."/>
+<meta name="twitter:image"       content="https://jitenparida95.github.io/fincy-intelligence/og-image.png"/>
+<meta name="twitter:creator"     content="@jitendraparida"/>
+
+<!-- ── Favicon (emoji SVG — works everywhere) ───────────────────────────── -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>"/>
+
+<!-- ── JSON-LD Structured Data ──────────────────────────────────────────── -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication",
+ "name":"Fincy Intelligence","applicationCategory":"BusinessApplication",
+ "operatingSystem":"Web Browser",
+ "description":"AI CFO platform for Finance and Accounting professionals. P&L intelligence, reconciliation, cost analysis, cash flow, and personal finance — all AI-powered.",
+ "url":"https://jitenparida95.github.io/fincy-intelligence/",
+ "offers":[{"@type":"Offer","price":"0","priceCurrency":"USD","name":"Free Trial"},
+           {"@type":"Offer","price":"12","priceCurrency":"USD","name":"Pro Report"}],
+ "author":{"@type":"Person","name":"Jitendra Parida",
+           "jobTitle":"Senior FP&A Analyst",
+           "url":"https://www.linkedin.com/in/jitendraparida95/"}}
+</script>
 <title>Fincy Intelligence · AI-Powered FP&A Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -245,6 +284,18 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   #fincy-chat-widget{bottom:16px;right:16px;}
 }
 </style>
+  <!-- ── Google Analytics 4 (replace G-XXXXXXXXXX with your GA4 ID) ──── -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer=window.dataLayer||[];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js',new Date());gtag('config','G-XXXXXXXXXX');
+  </script> -->
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Razorpay checkout -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
 </head>
 <body>
 
@@ -260,6 +311,26 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   <div class="nav-right">
     <button class="btn-ghost" id="nav-signup-btn" onclick="openModal()">Sign Up Free</button>
     <button class="btn-gold" id="nav-launch-btn" onclick="openModal()">Launch App →</button>
+  <div id="g_id_onload"
+     data-client_id="YOUR_GOOGLE_CLIENT_ID"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-callback="handleGoogleSignIn"
+     data-auto_prompt="false">
+  </div>
+  <button id="nav-google-btn" class="btn-ghost"
+     style="padding:8px 14px;font-size:0.62rem;border-color:#4ade80;color:#4ade80;display:none;"
+     onclick="triggerGoogleSignIn()">
+    <svg width="14" height="14" viewBox="0 0 24 24" style="margin-right:5px;vertical-align:middle;">
+      <path fill="#4ade80" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+      <path fill="#4ade80" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+      <path fill="#4ade80" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+      <path fill="#4ade80" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+    </svg>
+    Sign In
+  </button>
+  <span id="nav-user-badge" style="display:none;font-family:'IBM Plex Mono',monospace;
+  font-size:0.54rem;color:#4ade80;letter-spacing:0.08em;text-transform:uppercase;"></span>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
 </nav>
@@ -286,7 +357,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   </p>
   <div class="hero-btns">
     <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
-    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">Get AI CFO Report – $12</button>
+    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">💳 Get AI CFO Report – $12</button>
     <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;border-color:var(--gold);color:var(--gold);" onclick="openFincyChat()">💬 Chat with Fincy</button>
   </div>
   <div class="stats-row" style="grid-template-columns:repeat(6,1fr);">
@@ -449,8 +520,8 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="p-tier">Starter</div>
       <div class="p-name">Free Trial</div>
       <div class="p-amt">$0 <span>/ 7 days</span></div>
-      <div class="p-per">All 6 modules included</div>
-      <div class="p-note">✓ No credit card · Start instantly</div>
+      <div class="p-per">10 AI queries/month · All 6 modules</div>
+      <div class="p-note">✓ No credit card · No setup · Start in 60 seconds</div>
       <ul class="p-feats"><li>All 4 AI modules</li><li>FP&amp;A Intelligence</li><li>Reconciliation Engine</li><li>Budget &amp; Cost modules</li><li>AI CFO in every module</li><li>PDF &amp; CSV exports</li></ul>
       <button class="p-btn p-btn-gold" onclick="openModal()">Start Free Trial →</button>
     </div>
@@ -461,7 +532,26 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="p-per">Billed monthly · Cancel anytime</div>
       <div class="p-note">✓ Most popular · Instant access</div>
       <ul class="p-feats"><li>Everything in Free + AI Agents</li><li>Unlimited CSV rows &amp; uploads</li><li>Unlimited AI CFO queries</li><li>Priority AI (faster responses)</li><li>PDF &amp; CSV report exports</li><li>Early access to new modules</li></ul>
-      <button class="p-btn p-btn-gold" onclick="openModalPro()">Get AI CFO Report – $12 →</button>
+      <!-- Primary: PayPal $12 report -->
+      <button class="p-btn p-btn-gold" onclick="openModalPro()">
+        💳 Get AI CFO Report — $12 →
+      </button>
+      <!-- Secondary: Razorpay ₹99/month for India users -->
+      <div style="margin-top:10px;">
+        <button onclick="openRazorpay()"
+          style="width:100%;background:transparent;border:1px solid #818cf8;
+          color:#818cf8;font-family:'IBM Plex Mono',monospace;font-size:0.62rem;
+          font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+          padding:10px;cursor:pointer;transition:all 0.2s;"
+          onmouseover="this.style.background='#818cf8';this.style.color='#0a0a08'"
+          onmouseout="this.style.background='transparent';this.style.color='#818cf8'">
+          🇮🇳 ₹99/month via Razorpay
+        </button>
+        <div style="font-size:0.56rem;color:var(--text3);text-align:center;
+        margin-top:5px;letter-spacing:0.04em;">
+          India users · UPI · Cards · NetBanking · Wallets
+        </div>
+      </div>
     </div>
     <div class="p-card">
       <div class="p-tier">Enterprise</div>
@@ -675,13 +765,19 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
         color:var(--gold);padding:2px 8px;">FP&amp;A Use Cases</span>
       </div>
-      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-0" onclick="event.stopPropagation();window.FincyLH.loadStage(0)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
       onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
-      onclick="event.stopPropagation();handleLearningQuery('Explain the basics of AI in Finance and Accounting. What are LLMs, machine learning, and AI agents? Give practical examples of how they are used in FP&A, reconciliation, variance analysis, and CFO decisions today. What should a finance professional know first?')">
+      >
       Start Stage 01 →</button>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);" id="lh-stage-prog-0">0/0 lessons</span>
+        </div>
+        <div style="background:var(--b);height:3px;"><div id="lh-stage-bar-0" style="background:#c9a84c;height:100%;width:0%;transition:width 0.4s;"></div></div>
+      </div>
       <div class="feat-line"></div>
     </div>
 
@@ -707,13 +803,19 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
         color:#4ade80;padding:2px 8px;">Reporting</span>
       </div>
-      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-1" onclick="event.stopPropagation();window.FincyLH.loadStage(1)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#4ade80';this.style.color='#4ade80'"
       onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
-      onclick="event.stopPropagation();handleLearningQuery('How can a Finance professional automate their work using Python and AI? Give me a step-by-step guide to: 1) Automating monthly P&L reports 2) Automating variance commentary using LLMs 3) Building a Budget vs Actuals tracker. Include specific Python libraries to use and code examples. Focus on practical FP&A automation.')">
+      >
       Start Stage 02 →</button>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);" id="lh-stage-prog-1">0/0 lessons</span>
+        </div>
+        <div style="background:var(--b);height:3px;"><div id="lh-stage-bar-1" style="background:#4ade80;height:100%;width:0%;transition:width 0.4s;"></div></div>
+      </div>
       <div class="feat-line" style="background:#4ade80;"></div>
     </div>
 
@@ -739,13 +841,19 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.2);
         color:#818cf8;padding:2px 8px;">Deploy</span>
       </div>
-      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-2" onclick="event.stopPropagation();window.FincyLH.loadStage(2)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#818cf8';this.style.color='#818cf8'"
       onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
-      onclick="event.stopPropagation();handleLearningQuery('How do I build an AI-powered finance tool like Fincy Intelligence? Walk me through the complete tech stack: Streamlit for UI, Plotly for charts, Pandas for data, and Groq LLM for AI CFO. What are the exact steps to go from CSV upload to AI insights? How do I deploy it? Give a practical blueprint for a Finance professional with basic Python skills.')">
+      >
       Start Stage 03 →</button>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);" id="lh-stage-prog-2">0/0 lessons</span>
+        </div>
+        <div style="background:var(--b);height:3px;"><div id="lh-stage-bar-2" style="background:#818cf8;height:100%;width:0%;transition:width 0.4s;"></div></div>
+      </div>
       <div class="feat-line" style="background:#818cf8;"></div>
     </div>
 
@@ -771,13 +879,19 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);
         color:#2dd4bf;padding:2px 8px;">Expert Level</span>
       </div>
-      <button style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-3" onclick="event.stopPropagation();window.FincyLH.loadStage(3)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#2dd4bf';this.style.color='#2dd4bf'"
       onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--text2)'"
-      onclick="event.stopPropagation();handleLearningQuery('How do I master prompt engineering for Finance and Accounting? Teach me how to write prompts that get CFO-quality insights from LLMs like Llama and GPT. Give me 5 specific prompt templates for: 1) Variance analysis commentary 2) Cash flow risk assessment 3) Budget performance narrative 4) Cost reduction recommendations 5) Board-ready executive summary. Explain what makes each prompt effective.')">
+      >
       Start Stage 04 →</button>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);" id="lh-stage-prog-3">0/0 lessons</span>
+        </div>
+        <div style="background:var(--b);height:3px;"><div id="lh-stage-bar-3" style="background:#2dd4bf;height:100%;width:0%;transition:width 0.4s;"></div></div>
+      </div>
       <div class="feat-line" style="background:#2dd4bf;"></div>
     </div>
 
@@ -948,7 +1062,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   <p class="cta-sub">Upload your CSV. Get P&amp;L intelligence in under 60 seconds. No code. No setup.</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
     <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
-    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">Get AI CFO Report – $12</button>
+    <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">💳 Get AI CFO Report – $12</button>
   </div>
   <div style="margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);">Free 7-day trial · No credit card · Your data stays yours</div>
 </div>
@@ -1090,7 +1204,7 @@ function openModalPro(){
   resetModal();
   document.getElementById('mEy').textContent='Pro Plan';
   document.getElementById('mTitle').textContent='Get Pro Access';
-  document.getElementById('mSub').textContent='Enter your details to proceed to secure PayPal checkout. $12/report — instant access via PayPal.';
+  document.getElementById('mSub').textContent="Enter your details below. You will be redirected to secure PayPal checkout — $12 per AI CFO report, instant access.";
   document.getElementById('mSubmit').textContent='Continue to Payment →';
   document.getElementById('modal').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1249,6 +1363,65 @@ function _appendChat(q,a){
 }
 
 
+/* ── Google Identity Services ────────────────────────────────────────────── */
+function triggerGoogleSignIn(){
+  google.accounts.id.prompt();
+}
+
+function handleGoogleSignIn(response){
+  /* Decode the JWT credential — contains name, email, picture */
+  try{
+    var parts = response.credential.split('.');
+    var payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
+    var email = payload.email || '';
+    var name  = payload.name  || email.split('@')[0];
+    /* Store in localStorage */
+    saveUser(name, email);
+    /* Update nav */
+    _updateNavForUser(name, email);
+    /* Send to Formspree for lead capture */
+    fetch('https://formspree.io/f/mvzvybpr',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({_subject:'Google Login: '+name, name:name, email:email,
+                           plan:'Free', _replyto:email})
+    }).catch(function(){});
+    /* Open Streamlit app with email as query param */
+    setTimeout(function(){
+      window.open(APP+'?user_email='+encodeURIComponent(email),'_blank');
+    },800);
+  }catch(e){
+    console.error('Google sign-in decode error:',e);
+  }
+}
+
+function _updateNavForUser(name, email){
+  var signInBtn = document.getElementById('nav-google-btn');
+  var badge     = document.getElementById('nav-user-badge');
+  var first     = name.split(' ')[0];
+  if(signInBtn) signInBtn.style.display='none';
+  if(badge){
+    badge.style.display='inline';
+    badge.textContent='✓ '+first;
+  }
+  /* Update all module buttons to go direct to app */
+  document.querySelectorAll('.mod-cta-btn').forEach(function(b){
+    b.textContent='Launch Module →';
+    b.onclick=function(){window.open(APP,'_blank');};
+  });
+}
+
+/* ── Razorpay payment ────────────────────────────────────────────────────── */
+var RZP_KEY    = 'rzp_live_YOUR_KEY_HERE';  /* Replace with your Razorpay key */
+var RZP_AMOUNT = 9900;                       /* ₹99 in paise */
+
+function openRazorpay(){
+  /* Direct Razorpay payment link — works without API key */
+  var rzpLink = 'https://rzp.io/rzp/SXkKqxe6';
+  window.open(rzpLink, '_blank');
+}
+
+/* ── On load: check if user already signed in ────────────────────────────── */
 window.addEventListener('resize',function(){
   if(window.innerWidth>768){
     var mn=document.getElementById('mobileNav');
@@ -1402,5 +1575,7 @@ function _appendFincyReply(q,ans){
   msgs.scrollTop=msgs.scrollHeight;
 }
 </script>
+<!-- Fincy Learning Hub Engine -->
+<script src="courseData.js"></script>
 </body>
 </html>
