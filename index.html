@@ -765,7 +765,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);
         color:var(--gold);padding:2px 8px;">FP&amp;A Use Cases</span>
       </div>
-      <button id="lh-stage-btn-0" onclick="event.stopPropagation();window.FincyLH.loadStage(0)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-0" onclick="event.stopPropagation();if(window.FincyLH){window.FincyLH.loadStage(0)}else{console.warn('FincyLH not ready');}" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'"
@@ -803,7 +803,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);
         color:#4ade80;padding:2px 8px;">Reporting</span>
       </div>
-      <button id="lh-stage-btn-1" onclick="event.stopPropagation();window.FincyLH.loadStage(1)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-1" onclick="event.stopPropagation();if(window.FincyLH){window.FincyLH.loadStage(1)}else{console.warn('FincyLH not ready');}" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#4ade80';this.style.color='#4ade80'"
@@ -841,7 +841,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(129,140,248,0.1);border:1px solid rgba(129,140,248,0.2);
         color:#818cf8;padding:2px 8px;">Deploy</span>
       </div>
-      <button id="lh-stage-btn-2" onclick="event.stopPropagation();window.FincyLH.loadStage(2)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-2" onclick="event.stopPropagation();if(window.FincyLH){window.FincyLH.loadStage(2)}else{console.warn('FincyLH not ready');}" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#818cf8';this.style.color='#818cf8'"
@@ -879,7 +879,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
         background:rgba(45,212,191,0.1);border:1px solid rgba(45,212,191,0.2);
         color:#2dd4bf;padding:2px 8px;">Expert Level</span>
       </div>
-      <button id="lh-stage-btn-3" onclick="event.stopPropagation();window.FincyLH.loadStage(3)" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
+      <button id="lh-stage-btn-3" onclick="event.stopPropagation();if(window.FincyLH){window.FincyLH.loadStage(3)}else{console.warn('FincyLH not ready');}" style="background:transparent;border:1px solid var(--b2);color:var(--text2);
       font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
       text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
       onmouseover="this.style.borderColor='#2dd4bf';this.style.color='#2dd4bf'"
@@ -1576,6 +1576,17 @@ function _appendFincyReply(q,ans){
 }
 </script>
 <!-- Fincy Learning Hub Engine -->
+<script>
+/* Fincy Learning Hub — early stub so onclick handlers never see undefined */
+/* Fincy LH stub — captures clicks before courseData.js loads */
+window._FLH_QUEUE = window._FLH_QUEUE || [];
+window.FincyLH = window.FincyLH || {
+  loadStage: function(n){ window._FLH_QUEUE.push(['loadStage',n]); },
+  loadModule: function(s,m){ window._FLH_QUEUE.push(['loadModule',s,m]); },
+  loadLesson: function(s,m,l){ window._FLH_QUEUE.push(['loadLesson',s,m,l]); },
+  closeModal: function(){ window._FLH_QUEUE.push(['closeModal']); }
+};
+</script>
 <script src="courseData.js"></script>
 </body>
 </html>

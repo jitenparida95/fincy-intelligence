@@ -2161,6 +2161,7 @@ var _activeModule = null;
 
 /* Inject engine styles once */
 function injectEngineStyles() {
+  try {
   if (document.getElementById('lh-engine-styles')) return;
   var s = document.createElement('style');
   s.id = 'lh-engine-styles';
@@ -2238,6 +2239,7 @@ function injectEngineStyles() {
     '.lh-share-btn:hover{opacity:0.85;}',
   ].join('\n');
   document.head.appendChild(s);
+  } catch(e) { console.warn('Fincy style injection failed:', e); }
 }
 
 /* ── MODAL SYSTEM ──────────────────────────────────────────── */
@@ -2270,9 +2272,10 @@ function refreshModal(html) {
 
 /* ── STAGE LOADER ──────────────────────────────────────────── */
 function loadStage(stageIdx) {
+  try {
   injectEngineStyles();
   var stage = FINCY_COURSE.stages[stageIdx];
-  if (!stage) return;
+  if (!stage) { console.warn('loadStage: no stage at index', stageIdx); return; }
 
   // Certification stage (index 4) has its own flow
   if (stage.isCertification) {
@@ -2358,6 +2361,7 @@ function loadStage(stageIdx) {
   }
 
   openModal(html, '◆ ' + stage.badge + ' — ' + stage.title);
+  } catch(e) { console.error('loadStage error:', e); }
 }
 
 /* ── MODULE LOADER ─────────────────────────────────────────── */
@@ -3333,3 +3337,19 @@ if (document.readyState === 'loading') {
 } else {
   initLearningHub();
 }
+
+/* ── DRAIN queued calls that happened before courseData.js loaded ── */
+(function() {
+  /* Drain any clicks queued by the stub before courseData.js loaded */
+  var q = window._FLH_QUEUE || [];
+  if (q.length && window.FincyLH) {
+    q.forEach(function(call) {
+      var fn = call[0];
+      if (typeof window.FincyLH[fn] === 'function') {
+        try { window.FincyLH[fn].apply(window.FincyLH, call.slice(1)); }
+        catch(e) { console.warn('FincyLH replay error:', e); }
+      }
+    });
+    window._FLH_QUEUE = [];   /* clear after replay */
+  }
+})();
