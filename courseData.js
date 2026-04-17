@@ -828,15 +828,23 @@ function loadProgress() {
   try {
     var raw = localStorage.getItem(PROGRESS_KEY);
     return raw ? JSON.parse(raw) : {
-      completedLessons:  [],   // ['l01_01_01', ...]
-      completedStages:   [],   // ['stage_01', ...]
-      completedProjects: [],   // for Builder badge
-      currentStage:      'stage_01',
-      currentLesson:     null,
-      totalPoints:       0,
-      streakDays:        0,
-      lastActiveDate:    null,
-      badges:            []
+      completedLessons:       [],
+      completedStages:        [],
+      completedProjects:      [],
+      currentStage:           'stage_01',
+      currentLesson:          null,
+      totalPoints:            0,
+      streakDays:             0,
+      lastActiveDate:         null,
+      badges:                 [],
+      // v4.0 additions
+      xp:                     0,
+      level:                  1,
+      dailyGoal:              2,
+      lessonsCompletedToday:  0,
+      lastDayDate:            null,
+      savedWork:              [],
+      aiMemory:               []
     };
   } catch(e) { return { completedLessons:[], completedStages:[], currentStage:'stage_01', currentLesson:null, totalPoints:0 }; }
 }
@@ -1186,19 +1194,20 @@ function handleAIRequest() {
 
   var groqKey = window.GROQ_KEY || '';
   var sysPrompt = _activeLesson.ai_prompt;
-  var msgs = [
-    { role: 'system', content: sysPrompt },
-    { role: 'user',   content: userText }
-  ];
+
+  // v4: Build messages with AI memory (last 3 conversations)
+  var msgs = handleAIMemory(sysPrompt, userText);
 
   if (!groqKey) {
-    // Fallback — redirect to Fincy app
     setTimeout(function() {
-      output.innerHTML =
-        'For AI-powered lesson responses, open Fincy Intelligence app → Learning Hub.<br><br>' +
-        '<a href="https://fincy-intelligence.streamlit.app/?m=learning" target="_blank" ' +
+      var fallback = (
+        'For AI-powered lesson responses, open Fincy Intelligence app.' +
+        ' <a href="https://fincy-intelligence.streamlit.app/?m=learning" target="_blank" ' +
         'style="color:var(--gold);font-family:IBM Plex Mono,monospace;font-size:0.65rem;' +
-        'letter-spacing:0.08em;text-transform:uppercase;">Open Full Learning Hub →</a>';
+        'letter-spacing:0.08em;text-transform:uppercase;">Open Full Learning Hub →</a>'
+      );
+      output.innerHTML = fallback;
+      saveUserWork(userText, fallback);  // v4: save even fallback responses
     }, 600);
     return;
   }
@@ -1222,7 +1231,17 @@ function handleAIRequest() {
       ? d.choices[0].message.content
       : 'No response. Try again.';
     output.textContent = ans;
-    // Mark project as complete for Builder badge
+
+    // v4: Save work automatically
+    saveUserWork(userText, ans);
+
+    // v4: Store in AI memory for context
+    _storeAIMemory(userText, ans);
+
+    // v4: Show psychological hook after AI responds
+    _showPsychHook(output);
+
+    // v4: Mark project complete for Builder badge
     if (_activeLesson && _activeLesson.isProject) {
       var p = loadProgress();
       p.completedProjects = p.completedProjects || [];
@@ -1241,25 +1260,135 @@ function handleAIRequest() {
 
 /* ── MARK COMPLETE ─────────────────────────────────────────── */
 function markComplete(lessonId, stageIdx, moduleIdx, lessonIdx) {
-  var p = loadProgress();
-  if (p.completedLessons.indexOf(lessonId) < 0) {
+  var p       = loadProgress();
+  var isNew   = p.completedLessons.indexOf(lessonId) < 0;
+
+  if (isNew) {
     p.completedLessons.push(lessonId);
     p.totalPoints += 10;
   }
-  // Check if stage is now complete
+
+  // Stage completion check
   var stage = FINCY_COURSE.stages[stageIdx];
   var allLessons = [];
   stage.modules.forEach(function(m){ m.lessons.forEach(function(l){ allLessons.push(l.id); }); });
-  if (allLessons.every(function(id){ return p.completedLessons.indexOf(id) >= 0; })) {
-    if (p.completedStages.indexOf(stage.id) < 0) p.completedStages.push(stage.id);
+  var stageJustDone = allLessons.every(function(id){ return p.completedLessons.indexOf(id) >= 0; });
+  if (stageJustDone && p.completedStages.indexOf(stage.id) < 0) {
+    p.completedStages.push(stage.id);
   }
+
   saveProgress(p);
   updateStreak();
+  handleDailySystem();       // v4: daily goal tracking
+  updateXP(10, stageJustDone ? 100 : 0);  // v4: XP + level
   checkAndAwardBadges();
   updateProgressBars();
   updateStreakDisplay();
-  // Reload lesson view with complete badge
-  loadLesson(stageIdx, moduleIdx, lessonIdx);
+
+  // Rebuild lesson view with complete state + auto-next
+  var html = _lessonCompleteHtml(lessonId, stageIdx, moduleIdx, lessonIdx, stageJustDone);
+  refreshModal(html);
+}
+
+/* Lesson complete view — shows celebration + next action */
+function _lessonCompleteHtml(lessonId, si, mi, li, stageJustDone) {
+  var stage = FINCY_COURSE.stages[si];
+  var mod   = stage.modules[mi];
+  var lesson = mod.lessons[li];
+  var p     = loadProgress();
+
+  // Psychological hook — rotates randomly
+  var hooks = [
+    'You just automated a 2-hour task. 🤖',
+    'This is a CFO-level skill. Very few analysts have it. 📊',
+    'Top 10% of FP&A professionals use this exact technique.',
+    'This skill can increase your salary by ₹2-5L. Keep going.',
+    'Senior managers spend hours on this. You can now do it in 60 seconds.',
+    'You are building skills most finance teams will not have for 5 years.',
+    'Every lesson here is a line you can add to your CV. 🏆'
+  ];
+  var hook = hooks[Math.floor(Math.random() * hooks.length)];
+
+  // Auto-next logic
+  var hasNextLesson = li < mod.lessons.length - 1;
+  var hasNextModule = mi < stage.modules.length - 1;
+  var hasNextStage  = si < FINCY_COURSE.stages.length - 1;
+
+  var nextBtn = '';
+  if (stageJustDone) {
+    nextBtn = (
+      '<div style="text-align:center;margin-top:20px;">' +
+      '<div style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;letter-spacing:0.14em;' +
+      'text-transform:uppercase;color:#2dd4bf;margin-bottom:12px;">🚀 Stage Complete!</div>' +
+      (hasNextStage ?
+        '<button class="lh-btn lh-btn-green" ' +
+        'onclick="window.FincyLH.loadStage(' + (si+1) + ')">Unlock Stage ' + (si+2) + ' →</button>' :
+        '<div style="color:var(--gold);font-size:0.88rem;font-weight:700;">🏆 All stages complete. You are an AI CFO Expert.</div>'
+      ) + '</div>'
+    );
+  } else if (hasNextLesson) {
+    nextBtn = (
+      '<div style="text-align:center;margin-top:16px;">' +
+      '<button class="lh-btn lh-btn-gold" ' +
+      'onclick="window.FincyLH.goToNextLesson(' + si + ',' + mi + ',' + li + ')">Continue to next lesson →</button>' +
+      '</div>'
+    );
+  } else if (hasNextModule) {
+    nextBtn = (
+      '<div style="text-align:center;margin-top:16px;">' +
+      '<div style="font-family:IBM Plex Mono,monospace;font-size:0.52rem;letter-spacing:0.1em;' +
+      'text-transform:uppercase;color:#4ade80;margin-bottom:8px;">🎉 Module Complete!</div>' +
+      '<button class="lh-btn lh-btn-gold" ' +
+      'onclick="window.FincyLH.loadModule(' + si + ',' + (mi+1) + ')">Start next module →</button>' +
+      '</div>'
+    );
+  }
+
+  // Daily goal progress
+  var doneToday  = p.lessonsCompletedToday || 0;
+  var dailyGoal  = p.dailyGoal || 2;
+  var goalPct    = Math.min(Math.round(doneToday / dailyGoal * 100), 100);
+  var goalDone   = doneToday >= dailyGoal;
+
+  return (
+    '<div style="text-align:center;padding:16px 0 8px;">' +
+    '<div style="font-size:2.2rem;margin-bottom:8px;">' + (stageJustDone ? '🏆' : '✅') + '</div>' +
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.58rem;letter-spacing:0.16em;' +
+    'text-transform:uppercase;color:var(--green);margin-bottom:4px;">Lesson Complete!</div>' +
+    '<div style="font-size:0.8rem;color:#c9a84c;font-weight:700;margin-bottom:16px;">+10 XP Earned 🚀' +
+    (stageJustDone ? '  +100 XP Stage Bonus!' : '') + '</div>' +
+    '</div>' +
+
+    // Psychological hook
+    '<div style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);' +
+    'padding:12px 16px;text-align:center;margin-bottom:16px;font-size:0.8rem;color:var(--text2);">' +
+    hook + '</div>' +
+
+    // Daily goal bar
+    '<div style="margin-bottom:16px;">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;color:var(--text3);' +
+    'letter-spacing:0.1em;text-transform:uppercase;">' +
+    (goalDone ? '🎯 Daily goal complete!' : 'Today: ' + doneToday + '/' + dailyGoal + ' lessons') +
+    '</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;color:var(--gold);">' +
+    goalPct + '%</span>' +
+    '</div>' +
+    '<div class="lh-progress-bar"><div class="lh-progress-fill" style="width:' + goalPct + '%;' +
+    'background:' + (goalDone ? '#4ade80' : 'var(--gold)') + ';transition:width 0.6s ease;"></div></div>' +
+    '</div>' +
+
+    // Lesson title + back button
+    '<div style="margin-bottom:16px;">' +
+    '<span class="lh-complete-badge">✓ ' + lesson.title + '</span>' +
+    '</div>' +
+
+    // Nav back
+    '<div class="lh-btn-row" style="justify-content:center;">' +
+    '<button class="lh-btn lh-btn-ghost" onclick="window.FincyLH.loadModule(' + si + ',' + mi + ')">← Back to Module</button>' +
+    '</div>' +
+    nextBtn
+  );
 }
 
 /* ── PROJECT LOADER ────────────────────────────────────────── */
@@ -1354,40 +1483,371 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+/* ══════════════════════════════════════════════════════════════
+   FINCY LEARNING HUB v4.0 — Addictive Daily Learning Engine
+   New: Daily System · XP/Level · Save Work · AI Memory · Hooks
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── FEATURE 1: DAILY LEARNING SYSTEM ─────────────────────── */
+
+/**
+ * handleDailySystem()
+ * Call on every lesson complete.
+ * Tracks daily goal, resets at midnight, shows streak messages.
+ */
+function handleDailySystem() {
+  var p     = loadProgress();
+  var today = new Date().toISOString().slice(0, 10);
+
+  // New day — reset daily counter
+  if (p.lastDayDate !== today) {
+    if (p.lastDayDate) {
+      // Check if they missed yesterday → streak already handled by updateStreak()
+      // Show streak message
+      var yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      var yStr = yesterday.toISOString().slice(0, 10);
+      if (p.lastDayDate === yStr) {
+        _showFloatingMsg("🔥 You're on a roll! " + (p.streakDays || 1) + " days in a row!");
+      } else {
+        _showFloatingMsg("You lost your streak 😬 — Start fresh today!");
+      }
+    }
+    p.lessonsCompletedToday = 0;
+    p.lastDayDate = today;
+  }
+
+  // Increment today's count
+  p.lessonsCompletedToday = (p.lessonsCompletedToday || 0) + 1;
+
+  // Daily goal reached?
+  if (p.lessonsCompletedToday >= (p.dailyGoal || 2)) {
+    p.xp = (p.xp || 0) + 20;  // bonus XP for hitting daily goal
+    setTimeout(function() {
+      _showFloatingMsg("🎯 Daily goal complete! +20 Bonus XP!");
+    }, 2000);
+  }
+
+  saveProgress(p);
+}
+
+/* ── FEATURE 2: XP + LEVEL SYSTEM ─────────────────────────── */
+
+/**
+ * updateXP(lessonXP, bonusXP)
+ * Awards XP, checks for level up, shows popup.
+ * lessonXP = 10 per lesson, bonusXP = 100 for stage complete.
+ */
+function updateXP(lessonXP, bonusXP) {
+  lessonXP = lessonXP || 0;
+  bonusXP  = bonusXP  || 0;
+  var totalXP  = lessonXP + bonusXP;
+  if (totalXP <= 0) return;
+
+  var p        = loadProgress();
+  var oldLevel = Math.floor((p.xp || 0) / 100) + 1;
+  p.xp         = (p.xp || 0) + totalXP;
+  var newLevel = Math.floor(p.xp / 100) + 1;
+  p.level      = newLevel;
+  saveProgress(p);
+
+  // XP gain toast
+  _showXPToast(totalXP, newLevel > oldLevel ? newLevel : null);
+
+  // Update level badge if on page
+  var lvlEl = document.getElementById('lhLevelBadge');
+  if (lvlEl) lvlEl.textContent = 'Lv.' + newLevel;
+  var xpEl  = document.getElementById('lhXPLabel');
+  if (xpEl)  xpEl.textContent  = p.xp + ' XP';
+}
+
+function _showXPToast(xp, newLevel) {
+  var toast = document.createElement('div');
+  toast.style.cssText = (
+    'position:fixed;top:80px;right:24px;z-index:10001;' +
+    'background:#101010;border:1px solid #c9a84c;' +
+    'padding:12px 18px;min-width:200px;' +
+    'animation:lhSlideIn 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.7);'
+  );
+  toast.innerHTML = (
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.58rem;font-weight:700;' +
+    'color:#c9a84c;margin-bottom:4px;">+' + xp + ' XP Earned 🚀</div>' +
+    (newLevel ?
+      '<div style="font-size:0.82rem;color:#4ade80;font-weight:700;">⬆ Level Up! Now Lv.' + newLevel + '</div>' :
+      '<div style="font-size:0.72rem;color:var(--text2);">' +
+      Math.round(((loadProgress().xp || 0) % 100)) + '/100 XP to next level</div>'
+    )
+  );
+  document.body.appendChild(toast);
+  setTimeout(function(){ toast.remove(); }, 3500);
+}
+
+/* ── FEATURE 3: SAVE USER WORK ─────────────────────────────── */
+
+/**
+ * saveUserWork(userInput, aiOutput)
+ * Auto-saves every AI interaction to localStorage.
+ * Keeps last 50 items to avoid storage overflow.
+ */
+function saveUserWork(userInput, aiOutput) {
+  if (!userInput || !aiOutput) return;
+  var p     = loadProgress();
+  p.savedWork = p.savedWork || [];
+
+  p.savedWork.unshift({
+    lessonId:  _activeLesson ? _activeLesson.id : 'unknown',
+    lessonTitle: _activeLesson ? (_activeLesson.title || 'Lesson') : 'Lesson',
+    userInput: userInput,
+    aiOutput:  aiOutput,
+    timestamp: new Date().toISOString()
+  });
+
+  // Keep last 50 only
+  if (p.savedWork.length > 50) p.savedWork = p.savedWork.slice(0, 50);
+  saveProgress(p);
+}
+
+/**
+ * showMyWork()
+ * Opens "My AI Work" panel in a modal — shows all saved interactions.
+ */
+function showMyWork() {
+  var p     = loadProgress();
+  var works = p.savedWork || [];
+
+  if (works.length === 0) {
+    openModal(
+      '<div style="text-align:center;padding:32px 0;color:var(--text3);font-size:0.84rem;">' +
+      'No saved work yet. Complete a lesson and ask AI — it will be saved here automatically.</div>',
+      '◆ My AI Work'
+    );
+    return;
+  }
+
+  var html = (
+    '<div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.1em;' +
+    'text-transform:uppercase;color:var(--text3);margin-bottom:16px;">' +
+    works.length + ' saved interactions — most recent first</div>' +
+    '<div style="display:flex;flex-direction:column;gap:12px;">'
+  );
+
+  works.slice(0, 20).forEach(function(w, i) {
+    var date = w.timestamp ? w.timestamp.slice(0,10) : '';
+    html += (
+      '<div style="background:var(--s);border:1px solid var(--b);border-left:3px solid var(--gold);' +
+      'padding:14px 16px;">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">' +
+      '<span style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.1em;' +
+      'text-transform:uppercase;color:var(--gold);">' + escHtml(w.lessonTitle || '') + '</span>' +
+      '<span style="font-family:IBM Plex Mono,monospace;font-size:0.48rem;color:var(--text3);">' + date + '</span>' +
+      '</div>' +
+      '<div style="font-size:0.72rem;color:var(--text3);margin-bottom:6px;font-style:italic;">' +
+      '"' + escHtml((w.userInput || '').slice(0, 100)) + (w.userInput && w.userInput.length > 100 ? '…' : '') + '"</div>' +
+      '<div style="font-size:0.78rem;color:var(--text2);line-height:1.7;margin-bottom:10px;' +
+      'white-space:pre-wrap;" id="work_ai_' + i + '">' +
+      escHtml((w.aiOutput || '').slice(0, 300)) + (w.aiOutput && w.aiOutput.length > 300 ? '…' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:8px;">' +
+      '<button class="lh-btn lh-btn-ghost" style="padding:5px 10px;font-size:0.52rem;" ' +
+      'onclick="window.FincyLH.copyText(\'work_ai_' + i + '\')">📋 Copy Output</button>' +
+      '<button class="lh-btn lh-btn-ghost" style="padding:5px 10px;font-size:0.52rem;" ' +
+      'onclick="document.getElementById(\'lhTaskInput\') && (document.getElementById(\'lhTaskInput\').value=' +
+      JSON.stringify(w.userInput || '') + '); window.FincyLH.closeModal();">↩ Reuse Prompt</button>' +
+      '</div></div>'
+    );
+  });
+
+  html += '</div>';
+  openModal(html, '◆ My AI Work (' + works.length + ')');
+}
+
+/* ── FEATURE 4: AI MEMORY SYSTEM ──────────────────────────── */
+
+/**
+ * handleAIMemory(sysPrompt, userText)
+ * Builds message array with last 3 conversations as context.
+ * Returns messages array for Groq API.
+ */
+function handleAIMemory(sysPrompt, userText) {
+  var p      = loadProgress();
+  var memory = p.aiMemory || [];
+
+  var msgs = [{ role: 'system', content: sysPrompt }];
+
+  // Inject last 3 turns as context (6 messages: user+assistant each)
+  var recent = memory.slice(-3);
+  recent.forEach(function(turn) {
+    if (turn.user) msgs.push({ role: 'user',      content: turn.user });
+    if (turn.ai)   msgs.push({ role: 'assistant', content: turn.ai   });
+  });
+
+  msgs.push({ role: 'user', content: userText });
+  return msgs;
+}
+
+/**
+ * _storeAIMemory(userText, aiResponse)
+ * Stores the latest exchange. Keeps last 3 only.
+ */
+function _storeAIMemory(userText, aiResponse) {
+  var p      = loadProgress();
+  p.aiMemory = p.aiMemory || [];
+  p.aiMemory.push({
+    lessonId: _activeLesson ? _activeLesson.id : 'unknown',
+    user: userText,
+    ai:   aiResponse.slice(0, 600)  // trim to avoid storage bloat
+  });
+  if (p.aiMemory.length > 3) p.aiMemory = p.aiMemory.slice(-3);
+  saveProgress(p);
+}
+
+/* ── FEATURE 5: AUTO NEXT LESSON ──────────────────────────── */
+
+/**
+ * goToNextLesson(si, mi, li)
+ * Advances to next lesson automatically.
+ * Handles module and stage boundaries.
+ */
+function goToNextLesson(si, mi, li) {
+  var stage = FINCY_COURSE.stages[si];
+  var mod   = stage.modules[mi];
+
+  if (li < mod.lessons.length - 1) {
+    // Next lesson in same module
+    loadLesson(si, mi, li + 1);
+  } else if (mi < stage.modules.length - 1) {
+    // First lesson of next module
+    loadModule(si, mi + 1);
+  } else if (si < FINCY_COURSE.stages.length - 1) {
+    // Next stage
+    loadStage(si + 1);
+  } else {
+    // All done!
+    openModal(
+      '<div style="text-align:center;padding:40px 20px;">' +
+      '<div style="font-size:2.5rem;margin-bottom:12px;">🏆</div>' +
+      '<div style="font-family:Playfair Display,serif;font-size:1.4rem;font-weight:900;' +
+      'color:var(--gold);margin-bottom:10px;">Course Complete!</div>' +
+      '<div style="font-size:0.84rem;color:var(--text2);line-height:1.8;max-width:400px;margin:0 auto;">' +
+      'You have completed all 4 stages of the Fincy AI Finance certification. ' +
+      'You are now in the top 5% of finance professionals in AI capability.</div>' +
+      '<div style="margin-top:20px;display:flex;gap:10px;justify-content:center;">' +
+      '<button class="lh-btn lh-btn-gold" onclick="window.FincyLH.showBadges()">View Your Badges →</button>' +
+      '<button class="lh-btn lh-btn-ghost" onclick="window.FincyLH.showMyWork()">View My AI Work →</button>' +
+      '</div></div>',
+      '◆ 🏆 Certification Complete'
+    );
+  }
+}
+
+/* ── FEATURE 6: PSYCHOLOGICAL HOOKS ───────────────────────── */
+
+var _PSYCH_HOOKS = [
+  'You just automated a 2-hour finance task. 🤖',
+  'This is a CFO-level skill. Very few analysts have it. 📊',
+  'Top 10% of FP&A professionals use this exact technique.',
+  'This skill can increase your salary by ₹2-5L. Keep going. 💰',
+  'Senior managers spend hours on this. You can do it in 60 seconds.',
+  'You are building skills most finance teams will not have for 5 years.',
+  'Every lesson here is a bullet point on your CV. 🏆',
+  'McKinsey analysts use this approach in board presentations.',
+  'You are now more productive than 80% of your peers in this skill.',
+  'Finance + AI = the rarest combination in today\'s job market.'
+];
+
+function _showPsychHook(outputEl) {
+  // Show after a short delay so user reads the AI response first
+  setTimeout(function() {
+    var hook = _PSYCH_HOOKS[Math.floor(Math.random() * _PSYCH_HOOKS.length)];
+    var hookEl = document.createElement('div');
+    hookEl.style.cssText = (
+      'margin-top:10px;background:rgba(201,168,76,0.08);' +
+      'border:1px solid rgba(201,168,76,0.2);' +
+      'padding:10px 14px;font-size:0.76rem;color:var(--text2);' +
+      'font-style:italic;animation:lhFadeIn 0.5s ease;'
+    );
+    hookEl.textContent = hook;
+    if (outputEl && outputEl.parentNode) {
+      outputEl.parentNode.insertBefore(hookEl, outputEl.nextSibling);
+    }
+  }, 1500);
+}
+
+/* ── FEATURE 7: FLOATING MESSAGE SYSTEM ───────────────────── */
+
+function _showFloatingMsg(msg) {
+  var el = document.createElement('div');
+  el.style.cssText = (
+    'position:fixed;bottom:140px;right:24px;z-index:10000;' +
+    'background:#101010;border:1px solid var(--gold);' +
+    'padding:12px 18px;max-width:280px;' +
+    'font-size:0.78rem;color:var(--text2);' +
+    'animation:lhSlideIn 0.3s ease;box-shadow:0 4px 20px rgba(0,0,0,0.6);'
+  );
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(function(){ el.remove(); }, 4000);
+}
+
 /* ── STREAK DISPLAY HELPERS ───────────────────────────────── */
 function _buildStreakBadgeRowHtml() {
   var p   = loadProgress();
   var s   = getStreakDisplay();
   p.badges = p.badges || [];
-  var earnedCount = p.badges.length;
-  var totalBadges = BADGES.length;
+  var earnedCount    = p.badges.length;
+  var totalBadges    = BADGES.length;
+  var xp             = p.xp || 0;
+  var level          = Math.floor(xp / 100) + 1;
+  var xpInLevel      = xp % 100;
+  var doneToday      = p.lessonsCompletedToday || 0;
+  var dailyGoal      = p.dailyGoal || 2;
+  var goalDone       = doneToday >= dailyGoal;
 
   return (
     // Streak pill
     '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
-    'border:1px solid var(--b);padding:7px 14px;cursor:pointer;" ' +
-    'title="Your learning streak" onclick="">' +
+    'border:1px solid var(--b);padding:7px 14px;" title="Daily streak">' +
     '<span style="font-size:1rem;" id="streakEmoji">' + s.emoji + '</span>' +
     '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
     'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);" id="streakLabel">' +
     s.days + ' day streak</span>' +
     '</div>' +
-    // Points pill
+    // XP + Level pill
     '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
-    'border:1px solid var(--b);padding:7px 14px;">' +
-    '<span style="font-size:0.9rem;">⭐</span>' +
+    'border:1px solid var(--b);padding:7px 14px;" title="XP and Level">' +
+    '<span style="font-size:0.9rem;">⚡</span>' +
     '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
-    'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);" id="pointsLabel">' +
-    (p.totalPoints || 0) + ' pts</span>' +
+    'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);" id="lhLevelBadge">' +
+    'Lv.' + level + '</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.48rem;' +
+    'color:var(--text3);" id="lhXPLabel">' + xp + ' XP</span>' +
     '</div>' +
-    // Badges pill (clickable → opens badge panel)
+    // Daily goal pill
+    '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
+    'border:1px solid ' + (goalDone ? 'var(--green)' : 'var(--b)') + ';padding:7px 14px;">' +
+    '<span style="font-size:0.9rem;">' + (goalDone ? '✅' : '🎯') + '</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
+    'letter-spacing:0.1em;text-transform:uppercase;' +
+    'color:' + (goalDone ? 'var(--green)' : 'var(--gold)') + ';" id="dailyGoalLabel">' +
+    doneToday + '/' + dailyGoal + ' today</span>' +
+    '</div>' +
+    // Badges pill
     '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
     'border:1px solid var(--b);padding:7px 14px;cursor:pointer;" ' +
     'onclick="window.FincyLH.showBadges()" title="View all badges">' +
     '<span style="font-size:0.9rem;">🏅</span>' +
     '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
     'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);">' +
-    earnedCount + '/' + totalBadges + ' badges</span>' +
+    earnedCount + '/' + totalBadges + '</span>' +
+    '</div>' +
+    // My Work button
+    '<div style="display:flex;align-items:center;gap:8px;background:var(--s);' +
+    'border:1px solid var(--b);padding:7px 14px;cursor:pointer;" ' +
+    'onclick="window.FincyLH.showMyWork()" title="View saved AI work">' +
+    '<span style="font-size:0.9rem;">📁</span>' +
+    '<span style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;' +
+    'letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);" id="workCount">' +
+    'My Work (' + ((p.savedWork || []).length) + ')</span>' +
     '</div>'
   );
 }
@@ -1396,17 +1856,34 @@ function updateStreakDisplay() {
   var s  = getStreakDisplay();
   var p  = loadProgress();
   p.badges = p.badges || [];
-  var se = document.getElementById('streakEmoji');
-  var sl = document.getElementById('streakLabel');
-  var pl = document.getElementById('pointsLabel');
-  if (se) se.textContent = s.emoji;
-  if (sl) sl.textContent = s.days + ' day streak';
-  if (pl) pl.textContent = (p.totalPoints || 0) + ' pts';
+  var xp    = p.xp || 0;
+  var level = Math.floor(xp / 100) + 1;
+
+  var upd = {
+    streakEmoji:    s.emoji,
+    streakLabel:    s.days + ' day streak',
+    lhLevelBadge:  'Lv.' + level,
+    lhXPLabel:     xp + ' XP',
+    dailyGoalLabel: (p.lessonsCompletedToday || 0) + '/' + (p.dailyGoal || 2) + ' today',
+    workCount:     'My Work (' + ((p.savedWork || []).length) + ')'
+  };
+  Object.keys(upd).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = upd[id];
+  });
+  // Update daily goal border color
+  var doneToday = p.lessonsCompletedToday || 0;
+  var goalEl = document.getElementById('dailyGoalLabel');
+  if (goalEl && goalEl.parentNode) {
+    goalEl.parentNode.style.borderColor = doneToday >= (p.dailyGoal || 2) ? 'var(--green)' : 'var(--b)';
+    goalEl.style.color = doneToday >= (p.dailyGoal || 2) ? 'var(--green)' : 'var(--gold)';
+  }
 }
 
 /* ── INJECT INTERACTIVE ELEMENTS into existing LH cards ───── */
 function initLearningHub() {
   injectEngineStyles();
+  handleDailySystem();    // v4: run daily system check on every page load
   updateProgressBars();
 
   // Inject overall progress bar below the LH heading
@@ -1507,6 +1984,12 @@ window.FincyLH = {
     if (navigator.clipboard) navigator.clipboard.writeText(url);
     alert('Link copied: ' + url);
   },
+  goToNextLesson:  goToNextLesson,
+  showMyWork:      showMyWork,
+  handleDailySystem: handleDailySystem,
+  updateXP:        updateXP,
+  saveUserWork:    saveUserWork,
+  handleAIMemory:  handleAIMemory,
   resetProgress: function(){
     localStorage.removeItem(PROGRESS_KEY);
     updateProgressBars();
