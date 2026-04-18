@@ -1084,6 +1084,41 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="feat-line" style="background:#2dd4bf;"></div>
     </div>
 
+    <!-- STAGE 05: CERTIFICATION CARD -->
+    <div class="feat" style="padding:24px 20px;cursor:pointer;transition:background 0.2s;border:1px solid #f97316;position:relative;"
+    onclick="if(window.FincyLH){window.FincyLH.loadStage(4)}else{console.warn('FincyLH not ready');}">
+      <div style="position:absolute;top:10px;right:12px;font-family:'IBM Plex Mono',monospace;font-size:0.42rem;letter-spacing:0.12em;text-transform:uppercase;color:#f97316;border:1px solid #f97316;padding:2px 7px;">🏆 Certification</div>
+      <div class="feat-n" style="color:#f97316;">STAGE 05 / CERTIFICATION</div>
+      <div class="feat-t">AI Finance Professional</div>
+      <div style="font-size:0.72rem;color:var(--text2);line-height:1.8;margin:8px 0;font-weight:300;">
+        Final assessment. 10 questions. Pass at 70% and earn your
+        <strong style="color:var(--white);">AI Finance Professional</strong> certificate
+        with a unique FINCY-2026-XXXX ID.
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:#f97316;padding:2px 8px;">MCQ</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:#f97316;padding:2px 8px;">Case Studies</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:#f97316;padding:2px 8px;">Prompt Challenges</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2);color:#f97316;padding:2px 8px;">Certificate</span>
+      </div>
+      <button id="lh-stage-btn-4"
+        onclick="event.stopPropagation();if(window.FincyLH){window.FincyLH.loadStage(4)}else{console.warn('FincyLH not ready');}"
+        style="background:transparent;border:1px solid #f97316;color:#f97316;
+        font-family:'IBM Plex Mono',monospace;font-size:0.56rem;letter-spacing:0.08em;
+        text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all 0.2s;"
+        onmouseover="this.style.background='rgba(249,115,22,0.1)'"
+        onmouseout="this.style.background='transparent'"
+      >
+      🔒 Locked — Complete all stages</button>
+      <div style="margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);" id="lh-stage-prog-4">Complete stages 1–4 first</span>
+        </div>
+        <div style="background:var(--b);height:3px;"><div id="lh-stage-bar-4" style="background:#f97316;height:100%;width:0%;transition:width 0.4s;"></div></div>
+      </div>
+      <div class="feat-line" style="background:#f97316;"></div>
+    </div>
+
   </div>
 
   <!-- Quick Questions Row -->
@@ -1518,15 +1553,24 @@ function handleLearningQuery(query) {
     headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
     body:JSON.stringify({model:'llama-3.1-8b-instant',messages:msgs,max_tokens:800,temperature:0.4})
   })
-  .then(function(r){return r.json();})
+  .then(function(r){
+    if(r.status===429){
+      if(loadingDiv) loadingDiv.style.display='none';
+      if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Rate limit reached — please wait 30 seconds and try again.';}
+      return null;
+    }
+    return r.json();
+  })
   .then(function(d){
+    if(!d) return;
     if(loadingDiv) loadingDiv.style.display='none';
     var ans=(d.choices&&d.choices[0]&&d.choices[0].message)?d.choices[0].message.content:'No response. Try again.';
     _appendChat(query,ans);
   })
   .catch(function(e){
     if(loadingDiv) loadingDiv.style.display='none';
-    if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Error: '+e.message;}
+    if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Connection error — check your internet and try again.';}
+    console.error('Learning query error:',e);
   });
 }
 
@@ -1724,7 +1768,7 @@ function sendFincyMessage(){
     body:JSON.stringify({
       model:'llama-3.1-8b-instant',
       messages:apiMsgs,
-      max_tokens:250,
+      max_tokens:450,
       temperature:0.3
     })
   })
@@ -1878,7 +1922,23 @@ function fincyShare() {
   if(navigator.clipboard) navigator.clipboard.writeText(txt);
 }
 
+<<<<<<< HEAD
+(function(){
+  if(document.getElementById('fdstyle'))return;
+  var s=document.createElement('style');
+  s.id='fdstyle';
+  s.textContent='@keyframes fIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}';
+  document.head.appendChild(s);
+  // Close all decision/explain panels on outside click
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.mod-card')) {
+      document.querySelectorAll('.fdp,.fep').forEach(function(p){ p.remove(); });
+    }
+  });
+})();
+=======
 (function(){if(document.getElementById('fdstyle'))return;var s=document.createElement('style');s.id='fdstyle';s.textContent='@keyframes fIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}';document.head.appendChild(s);})();
+>>>>>>> ce4c7f1c41d9a4badb2606468a3f9d4bace35be7
 </script>
 </body>
 </html>
