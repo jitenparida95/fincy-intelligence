@@ -305,6 +305,7 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   <div class="nav-links">
     <a href="#features">Features</a>
     <a href="#modules">Modules</a>
+    <a href="#workspace">AI CFO</a>
     <a href="#pricing">Pricing</a>
     <a href="#templates">Templates</a>
   </div>
@@ -349,14 +350,14 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-ey">AI-Powered · FP&amp;A Decision Intelligence</div>
-  <h1>Meet Your AI CFO —<br><em>Always On.</em></h1>
-  <p class="hero-sub">Upload any financial dataset. Get instant P&amp;L intelligence, cash flow analysis, reconciliation, cost benchmarking, and AI CFO insights — across 6 specialist modules.</p>
+  <div class="hero-ey">AI CFO · Decision Intelligence Platform</div>
+  <h1>Your AI CFO That Tells You<br><em>What To Do Next.</em></h1>
+  <p class="hero-sub">Upload your financial data. Your AI CFO analyzes risks, detects hidden profit leaks, and gives you clear decisions — in under 60 seconds.</p>
   <p style="font-size:0.88rem;color:var(--text2);margin-bottom:20px;font-weight:300;">
     💬 Ask your AI CFO anything — get instant answers on tax, savings, and investments.
   </p>
   <div class="hero-btns">
-    <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
+    <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Get My Financial Decision →</button>
     <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">💳 Get AI CFO Report – $12</button>
     <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;border-color:var(--gold);color:var(--gold);" onclick="openFincyChat()">💬 Chat with Fincy</button>
   </div>
@@ -396,6 +397,20 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   </div>
 </div>
 
+<!-- URGENCY STRIP -->
+<div style="background:var(--s);border-top:1px solid var(--b);border-bottom:1px solid var(--b);padding:20px 40px;">
+  <div style="max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);">⚠ Most businesses lose 10–30% profit from poor financial decisions</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--green);font-size:1rem;">📈</span><span style="font-size:0.76rem;color:var(--text2);">Cut costs by <strong style="color:var(--white);">18%</strong></span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="color:#f97316;font-size:1rem;">⚠️</span><span style="font-size:0.76rem;color:var(--text2);">Cash runway <strong style="color:var(--white);">5 months</strong></span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--gold);font-size:1rem;">💡</span><span style="font-size:0.76rem;color:var(--text2);">Raise prices <strong style="color:var(--white);">12%</strong></span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--green);font-size:1rem;">✅</span><span style="font-size:0.76rem;color:var(--text2);">EBITDA recovery <strong style="color:var(--white);">+₹8M</strong></span></div>
+    </div>
+    <button onclick="openModal()" class="btn-gold" style="padding:9px 20px;font-size:0.65rem;white-space:nowrap;">Ask AI CFO Now →</button>
+  </div>
+</div>
+
 <!-- FEATURES -->
 <section class="sec" id="features">
   <div class="ey">Core Capabilities</div>
@@ -426,6 +441,23 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="mod-t">FP&amp;A Decision Intelligence</div>
       <div class="mod-d">Complete P&amp;L suite — dashboards, variance analysis, budget vs actuals snapshot, financial modelling, and AI CFO. Everything in one place from any CSV.</div>
       <ul class="mod-ul"><li>10+ KPIs · P&amp;L bridge · Market heatmaps</li><li>Budget vs Actuals snapshot built-in</li><li>Financial modelling &amp; variance analysis</li><li>AI CFO — 👉 Problem · Insight · Action</li></ul>
+      
+      <!-- AI CFO Insight Panel -->
+      <div style="background:#0a0a08;border:1px solid var(--b);border-left:3px solid #f97316;padding:12px 14px;margin:12px 0 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:#f97316;">🧠 AI CFO Insight</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border:1px solid #f97316;color:#f97316;">⚠ Risk: Medium</span>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:8px;">If your COGS % exceeds 48% or EBITDA margin falls below 20%, your AI CFO will flag an immediate pricing or cost action.</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.68rem;color:var(--green);">📈 Expected:</span>
+          <span style="font-size:0.68rem;color:var(--text2);">Identify 3–6% margin recovery opportunity</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Core · Decision Suite')">👉 What should I do?</button>
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyExplain(this,'Core · Decision Suite')">💡 Explain This</button>
+      </div>
       <button class="mod-cta-btn" style="border-color:#c9a84c;color:#c9a84c;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#4ade80">
@@ -433,6 +465,23 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="mod-t">Reconciliation Engine</div>
       <div class="mod-d">ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Composite key matching — zero false breaks. Download exceptions report in seconds.</div>
       <ul class="mod-ul"><li>3-part composite key — zero false breaks</li><li>Matched · Amount Break · Missing A/B</li><li>Match rate donut + exceptions CSV</li><li>AI CFO — 👉 Problem · Insight · Action</li></ul>
+      
+      <!-- AI CFO Insight Panel -->
+      <div style="background:#0a0a08;border:1px solid var(--b);border-left:3px solid var(--red);padding:12px 14px;margin:12px 0 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);">🧠 AI CFO Insight</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--red);color:var(--red);">⚠ Risk: High</span>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:8px;">Unreconciled transactions above ₹500K are flagged automatically. Your AI CFO prioritizes which breaks need same-day resolution.</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.68rem;color:var(--green);">📈 Expected:</span>
+          <span style="font-size:0.68rem;color:var(--text2);">Catch breaks before close — save 4+ hours/month</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Reconciliation')">👉 What should I do?</button>
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyExplain(this,'Reconciliation')">💡 Explain This</button>
+      </div>
       <button class="mod-cta-btn" style="border-color:#4ade80;color:#4ade80;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#f472b6">
@@ -440,6 +489,23 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="mod-t">Cost Intelligence</div>
       <div class="mod-d">COGS and OPEX benchmarking with segment efficiency scores, cost waterfall charts, and AI-driven cost reduction recommendations per flagged line.</div>
       <ul class="mod-ul"><li>COGS % &amp; OPEX % vs configurable benchmarks</li><li>Flags above-benchmark lines in red</li><li>Cost waterfall + segment efficiency chart</li><li>AI CFO — 👉 Problem · Insight · Action</li></ul>
+      
+      <!-- AI CFO Insight Panel -->
+      <div style="background:#0a0a08;border:1px solid var(--b);border-left:3px solid var(--red);padding:12px 14px;margin:12px 0 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);">🧠 AI CFO Insight</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--red);color:var(--red);">⚠ Risk: High</span>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:8px;">If any cost line exceeds benchmark by 15%+, your AI CFO recommends the exact reduction lever and expected margin improvement.</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.68rem;color:var(--green);">📈 Expected:</span>
+          <span style="font-size:0.68rem;color:var(--text2);">Reduce COGS/OPEX by 8–18% on flagged lines</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Cost Analysis')">👉 What should I do?</button>
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyExplain(this,'Cost Analysis')">💡 Explain This</button>
+      </div>
       <button class="mod-cta-btn" style="border-color:#f472b6;color:#f472b6;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
 
@@ -448,6 +514,22 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="mod-t">Data Analysis Agent</div>
       <div class="mod-d">Upload any financial dataset. The agent auto-profiles your data, runs statistical analysis, builds correlation heatmaps, and answers any question in plain English.</div>
       <ul class="mod-ul"><li>Auto data profiling — nulls, dups, stats</li><li>Distribution charts + correlation heatmap</li><li>Category breakdowns + trend detection</li><li>AI Agent — 👉 Problem · Insight · Action</li></ul>
+      
+      <div style="background:#0a0a08;border:1px solid var(--b);border-left:3px solid var(--green);padding:12px 14px;margin:12px 0 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--green);">🧠 AI CFO Insight</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--green);color:var(--green);">⚠ Risk: Low</span>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:8px;">Ask any financial question in plain English — your AI agent cross-references your data and returns a CFO-quality answer instantly.</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.68rem;color:var(--green);">📈 Expected:</span>
+          <span style="font-size:0.68rem;color:var(--text2);">Replace 2–3 hours of manual analysis per query</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'AI Agent &nbsp;·&nbsp; New')">👉 What should I do?</button>
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyExplain(this,'AI Agent &nbsp;·&nbsp; New')">💡 Explain This</button>
+      </div>
       <button class="mod-cta-btn" style="border-color:#2dd4bf;color:#2dd4bf;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#a78bfa">
@@ -455,6 +537,22 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="mod-t">Personal Finance Engine</div>
       <div class="mod-d">Ask "Can I afford a ₹20,000 phone?" Enter your financial profile and get a Safe / Moderate / Risky decision with exact savings impact and AI recommendation.</div>
       <ul class="mod-ul"><li>Safe / Moderate / Risky decision engine</li><li>Exact savings impact calculation</li><li>AI personal finance advisor</li><li>PDF report download</li></ul>
+      
+      <div style="background:#0a0a08;border:1px solid var(--b);border-left:3px solid var(--green);padding:12px 14px;margin:12px 0 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--green);">🧠 AI CFO Insight</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--green);color:var(--green);">⚠ Risk: Low</span>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:8px;">Your AI CFO models every major financial decision against your income, savings rate, and investment goals before you commit.</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.68rem;color:var(--green);">📈 Expected:</span>
+          <span style="font-size:0.68rem;color:var(--text2);">Avoid decisions that hurt savings by 15–40%</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Personal · New')">👉 What should I do?</button>
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyExplain(this,'Personal · New')">💡 Explain This</button>
+      </div>
       <button class="mod-cta-btn" style="border-color:#a78bfa;color:#a78bfa;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
     <div class="mod-card" style="--mc:#06b6d4">
@@ -462,6 +560,22 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
       <div class="mod-t">Cash Flow Intelligence</div>
       <div class="mod-d">Upload your monthly cash flow statement. Get instant liquidity health, burn rate, runway analysis, and AI CFO insights — know where your cash is going before the board asks.</div>
       <ul class="mod-ul"><li>Closing balance trend + net CF waterfall</li><li>Burn rate · Runway months · Liquidity score</li><li>Operating / Investing / Financing breakdown</li><li>AI CFO — 👉 Problem · Insight · Action</li></ul>
+      
+      <div style="background:#0a0a08;border:1px solid var(--b);border-left:3px solid var(--red);padding:12px 14px;margin:12px 0 10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);">🧠 AI CFO Insight</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--red);color:var(--red);">⚠ Risk: High</span>
+        </div>
+        <div style="font-size:0.74rem;color:var(--text2);line-height:1.7;margin-bottom:8px;">If cash runway drops below 6 months, your AI CFO raises an immediate ⚠️ alert and gives a 3-step cash preservation plan.</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.68rem;color:var(--green);">📈 Expected:</span>
+          <span style="font-size:0.68rem;color:var(--text2);">Extend runway by 30–90 days with AI actions</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'New')">👉 What should I do?</button>
+        <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.54rem;padding:5px 10px;" onclick="fincyExplain(this,'New')">💡 Explain This</button>
+      </div>
       <button class="mod-cta-btn" style="border-color:#06b6d4;color:#06b6d4;" onclick="openModal()">Sign Up &amp; Launch →</button>
     </div>
   </div>
@@ -473,9 +587,13 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   <div class="ey">How It Works</div>
   <h2>From CSV to CFO insights<br><em>in 3 steps.</em></h2>
   <div class="steps">
-    <div class="step"><div class="step-n">01</div><div class="step-t">Upload Your Data</div><div class="step-d">Drop any financial CSV — P&amp;L exports, ERP data, bank statements, budget files. No template required. Any column structure works.</div></div>
-    <div class="step"><div class="step-n">02</div><div class="step-t">Map Your Columns</div><div class="step-d">60-second column mapper with auto-detection. Tell Fincy which column is Revenue, EBITDA, Budget — and you're live.</div></div>
-    <div class="step"><div class="step-n">03</div><div class="step-t">Ask Your AI CFO</div><div class="step-d">Your full dashboard is live. Ask the AI CFO in plain English — in every module. Export board-ready PDF reports.</div></div>
+    <div class="step"><div class="step-n">01</div><div class="step-t">Upload Your Data</div><div class="step-d">Drop any financial CSV — P&amp;L, ERP data, bank statements, budget files. No template required. Any column structure works.</div></div>
+    <div class="step"><div class="step-n">02</div><div class="step-t">AI Analyzes Your Business</div><div class="step-d">Your AI CFO instantly detects risks, cost leaks, cash pressure points, and variance drivers — across all 6 modules simultaneously.</div></div>
+    <div class="step"><div class="step-n">03</div><div class="step-t">Get Clear Decisions</div><div class="step-d">Not just charts. Your AI CFO tells you exactly what to do: cut costs here, protect cash there, raise prices on these SKUs — with expected impact.</div></div>
+  </div>
+  <div style="text-align:center;margin-top:32px;">
+    <button onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})" class="btn-gold" style="padding:12px 28px;font-size:0.72rem;margin-right:12px;">Open AI CFO Workspace →</button>
+    <button onclick="openModal()" class="btn-ghost" style="padding:12px 28px;font-size:0.72rem;">Start Free Trial</button>
   </div>
 </section>
 
@@ -485,6 +603,77 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
   <div class="q-text">EBITDA is green but <em>cash flow is bleeding.</em><br>Fincy tells you why — before your CFO asks.</div>
   <div class="q-by">Fincy Intelligence · Founder: Jitendra Parida · Senior FP&amp;A Analyst · IBM / Reckitt</div>
 </div>
+
+<!-- AI CFO BRAIN + WORKSPACE -->
+<section class="sec" id="workspace" style="padding-bottom:60px;">
+  <div class="ey">AI CFO Brain</div>
+  <h2>One system. <br><em>Every decision.</em></h2>
+  <p class="sub" style="margin-bottom:32px;">Your AI CFO combines outputs from all 6 modules — P&amp;L, Cash Flow, Reconciliation, Costs, and more — to generate a unified financial decision. Not a dashboard. A decision engine.</p>
+
+  <!-- What Fincy Tells You — proof strip -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:40px;">
+    <div style="background:var(--s);border:1px solid var(--b);border-left:3px solid var(--green);padding:16px 18px;">
+      <div style="font-size:0.62rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">📈 Growth Decision</div>
+      <div style="font-size:0.92rem;color:var(--white);font-weight:700;margin-bottom:4px;">"Cut expenses by 18%"</div>
+      <div style="font-size:0.7rem;color:var(--text3);">COGS above benchmark — 3 vendor lines identified</div>
+    </div>
+    <div style="background:var(--s);border:1px solid var(--b);border-left:3px solid #f97316;padding:16px 18px;">
+      <div style="font-size:0.62rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:#f97316;margin-bottom:6px;">⚠ Cash Alert</div>
+      <div style="font-size:0.92rem;color:var(--white);font-weight:700;margin-bottom:4px;">"Cash runway: 5 months"</div>
+      <div style="font-size:0.7rem;color:var(--text3);">Accelerate collections · Defer non-critical capex</div>
+    </div>
+    <div style="background:var(--s);border:1px solid var(--b);border-left:3px solid var(--gold);padding:16px 18px;">
+      <div style="font-size:0.62rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">💡 Pricing Opportunity</div>
+      <div style="font-size:0.92rem;color:var(--white);font-weight:700;margin-bottom:4px;">"Increase pricing 12%"</div>
+      <div style="font-size:0.7rem;color:var(--text3);">Elasticity model shows low volume risk on top SKUs</div>
+    </div>
+    <div style="background:var(--s);border:1px solid var(--b);border-left:3px solid var(--green);padding:16px 18px;">
+      <div style="font-size:0.62rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:6px;">✅ Recovery Action</div>
+      <div style="font-size:0.92rem;color:var(--white);font-weight:700;margin-bottom:4px;">"EBITDA recovery +₹8M"</div>
+      <div style="font-size:0.7rem;color:var(--text3);">Price + cost actions combined over 90-day horizon</div>
+    </div>
+  </div>
+
+  <!-- Alert system preview -->
+  <div id="fincy-alerts" style="margin-bottom:28px;display:flex;flex-direction:column;gap:8px;">
+    <div class="fincy-alert" style="background:#1a0a0a;border:1px solid var(--red);padding:10px 16px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1rem;">⚠️</span>
+      <span style="font-size:0.76rem;color:#f87171;">Alert: Expenses +22% MoM detected — review vendor contracts immediately</span>
+      <button onclick="this.parentElement.style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9rem;">✕</button>
+    </div>
+    <div class="fincy-alert" style="background:#0a1a10;border:1px solid var(--green);padding:10px 16px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:1rem;">📈</span>
+      <span style="font-size:0.76rem;color:var(--green);">Opportunity: Revenue per unit is 8% below market benchmark — pricing increase viable</span>
+      <button onclick="this.parentElement.style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9rem;">✕</button>
+    </div>
+  </div>
+
+  <!-- Iframe embed -->
+  <div style="background:var(--s);border:1px solid var(--b);overflow:hidden;">
+    <div style="background:#0f0f0c;border-bottom:1px solid var(--b);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite;"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);">AI CFO Workspace — Live</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="openModal()" class="btn-ghost" style="padding:6px 14px;font-size:0.58rem;">Sign Up Free</button>
+        <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="padding:6px 14px;font-size:0.58rem;text-decoration:none;display:inline-flex;align-items:center;">Open Full App ↗</a>
+      </div>
+    </div>
+    <iframe
+      src="https://fincy-intelligence.streamlit.app/?embed=true"
+      width="100%"
+      height="860"
+      style="border:none;display:block;background:var(--bg);"
+      title="Fincy Intelligence — AI CFO Workspace"
+      loading="lazy"
+      allow="clipboard-write"
+    ></iframe>
+  </div>
+  <p style="font-size:0.68rem;color:var(--text3);text-align:center;margin-top:10px;">Fincy Intelligence runs on Groq + Llama 3.1. Your data never leaves your session.</p>
+</section>
+
+<hr class="divider"/>
 
 <!-- TESTIMONIALS -->
 <section class="sec" id="testimonials">
@@ -1058,10 +1247,10 @@ footer{padding:24px 20px;flex-direction:column;text-align:center;}
 
 <!-- CTA -->
 <div class="cta-wrap">
-  <h2>Ready to meet<br><em>your AI CFO?</em></h2>
-  <p class="cta-sub">Upload your CSV. Get P&amp;L intelligence in under 60 seconds. No code. No setup.</p>
+  <h2>Ready for a CFO that tells you<br><em>exactly what to do?</em></h2>
+  <p class="cta-sub">Upload your data. Get your first financial decision in under 60 seconds. No code. No setup.</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-    <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Start Free Trial →</button>
+    <button class="btn-gold" style="padding:13px 28px;font-size:0.72rem;" onclick="openModal()">Get My Financial Decision →</button>
     <button class="btn-ghost" style="padding:13px 28px;font-size:0.72rem;" onclick="openModalPro()">💳 Get AI CFO Report – $12</button>
   </div>
   <div style="margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:0.54rem;color:var(--text3);">Free 7-day trial · No credit card · Your data stays yours</div>
@@ -1588,5 +1777,108 @@ window.FincyLH = window.FincyLH || {
 };
 </script>
 <script src="courseData.js"></script>
+
+<script>
+/* Fincy AI CFO Decision Engine */
+var FINCY_DECISIONS = {
+  "Core · Decision Suite": {
+    "actions": [
+      "📊 Run variance waterfall — identify top 3 P&L drivers vs budget",
+      "💡 If COGS > 48%: request vendor re-quote on top 5 suppliers this week",
+      "📈 Test 5% price increase on your highest-margin SKUs",
+      "🔍 Segment EBITDA by market — cut or rebalance bottom 2 performers",
+      "✅ Set a 90-day EBITDA target with a named owner for each action"
+    ],
+    "explain": {
+      "what": "FP&A Decision Intelligence is your complete P&L cockpit. It shows Revenue, Gross Profit, EBITDA, and Budget vs Actuals in one place.",
+      "why": "Without a unified P&L view, most finance teams spend 3+ hours building reports that are already out of date.",
+      "example": "A consumer goods company uploads their FMCG P&L. In 60 seconds Germany market shows 34% GP margin vs 52% company average — a hidden profit drain identified instantly.",
+      "action": "Upload your P&L CSV and ask: \"Which market is destroying my margin and why?\""
+    }
+  },
+  "Reconciliation": {
+    "actions": [
+      "🔁 Upload ERP vs Bank CSV — identify all unmatched transactions today",
+      "⚠️ Flag any break > Rs100K for same-day CFO review",
+      "📋 Categorize breaks: timing, amount, missing in A, missing in B",
+      "📅 Set a 2-day close standard — reconciliation done by Day 2",
+      "✅ Schedule weekly recon to prevent month-end surprises"
+    ],
+    "explain": {
+      "what": "Reconciliation Engine matches your ERP data against Bank data line by line — flagging every break, mismatch, and missing entry automatically.",
+      "why": "Manual reconciliation takes 4+ hours per close and is the #1 source of reporting errors.",
+      "example": "A finance controller uploads 1,200 ERP lines and 1,180 bank lines. Fincy finds 3 amount breaks in 30 seconds — replacing half a day of manual work.",
+      "action": "Export your ERP and Bank statements as CSVs. Upload both and review the exceptions report."
+    }
+  },
+  "Cost Analysis": {
+    "actions": [
+      "💰 Identify COGS lines above benchmark — focus on the top 3 by Rs value",
+      "📊 Build vendor scorecard: cost per unit + service level + lead time",
+      "🔍 Compare OPEX as % of revenue vs prior year — flag any line up 15%+",
+      "💡 Model: every 1% COGS reduction = how much EBITDA improvement?",
+      "✅ Set cost-reduction target by category with 30-day owner accountability"
+    ],
+    "explain": {
+      "what": "Cost Intelligence benchmarks every COGS and OPEX line against industry standards and your own history — flagging out-of-range lines instantly.",
+      "why": "Cost creep is silent. Most finance teams do not notice a 3% increase per line until it becomes 18% margin compression.",
+      "example": "An FMCG brand discovers packaging costs grew 22% YoY vs a 5% industry benchmark. AI CFO surfaces this and recommends re-tendering immediately.",
+      "action": "Upload your cost data and ask: \"Which lines are above benchmark and how much margin can I recover?\""
+    }
+  },
+  "default": {
+    "actions": [
+      "📊 Upload your financial data to get a personalized AI analysis",
+      "🧠 Ask your AI CFO a specific question about your numbers",
+      "📈 Review AI insights and identify your single biggest priority",
+      "✅ Set one measurable action for the next 30 days",
+      "🔁 Return next month and track your improvement"
+    ],
+    "explain": {
+      "what": "This module analyzes a specific area of your financial data and delivers AI CFO insights.",
+      "why": "Each module replaces hours of manual analysis with instant AI-driven decisions.",
+      "example": "Finance professionals using Fincy report saving 4-8 hours per close cycle.",
+      "action": "Sign up free and upload your data to see real insights in under 60 seconds."
+    }
+  }
+};
+
+function fincyDecisionMode(btn, mod) {
+  var d = FINCY_DECISIONS[mod] || FINCY_DECISIONS.default;
+  var card = btn; while(card && !card.classList.contains('mod-card')) card = card.parentElement;
+  if (!card) return;
+  var ex = card.querySelector('.fdp'); if(ex){ex.remove();return;}
+  var p = document.createElement('div'); p.className='fdp';
+  p.style.cssText='background:#0a0a08;border:1px solid var(--gold);padding:16px 18px;margin-top:10px;animation:fIn .25s ease;';
+  p.innerHTML='<div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🎯 Top 5 Priority Actions</div>'+
+    d.actions.map(function(a,i){return '<div style="display:flex;gap:10px;margin-bottom:7px;padding:8px 10px;background:var(--s);border-left:2px solid var(--gold)"><span style="font-family:IBM Plex Mono,monospace;font-size:0.46rem;color:var(--text3);min-width:14px;">'+(i+1)+'</span><span style="font-size:0.74rem;color:var(--text2);line-height:1.6;">'+a+'</span></div>';}).join('')+
+    '<button onclick="fincyShare()" style="margin-top:10px;background:transparent;border:1px solid var(--b2);color:var(--text3);font-family:IBM Plex Mono,monospace;font-size:0.52rem;letter-spacing:0.08em;text-transform:uppercase;padding:6px 12px;cursor:pointer;">🚀 Share This Insight</button>';
+  btn.parentElement.parentElement.insertBefore(p, btn.parentElement.nextSibling);
+}
+
+function fincyExplain(btn, mod) {
+  var d = FINCY_DECISIONS[mod] || FINCY_DECISIONS.default; var info=d.explain;
+  var card = btn; while(card && !card.classList.contains('mod-card')) card = card.parentElement;
+  if (!card) return;
+  var ex = card.querySelector('.fep'); if(ex){ex.remove();return;}
+  var p = document.createElement('div'); p.className='fep';
+  p.style.cssText='background:#0a0a08;border:1px solid var(--b);padding:16px 18px;margin-top:10px;animation:fIn .25s ease;';
+  p.innerHTML='<div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">💡 What This Means</div>'+
+    '<div style="margin-bottom:10px;"><div style="font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px;">What it is</div><div style="font-size:0.78rem;color:var(--text2);line-height:1.7;">'+info.what+'</div></div>'+
+    '<div style="margin-bottom:10px;"><div style="font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px;">Why it matters</div><div style="font-size:0.78rem;color:var(--text2);line-height:1.7;">'+info.why+'</div></div>'+
+    '<div style="margin-bottom:10px;background:var(--s);border-left:2px solid var(--gold);padding:10px 12px;"><div style="font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Real example</div><div style="font-size:0.75rem;color:var(--text);line-height:1.7;font-style:italic;">'+info.example+'</div></div>'+
+    '<div style="font-size:0.76rem;color:var(--green);line-height:1.6;"><strong>Action:</strong> '+info.action+'</div>';
+  btn.parentElement.parentElement.insertBefore(p, btn.parentElement.nextSibling);
+}
+
+function fincyShare() {
+  var txt = 'My AI CFO just gave me the top 5 priority actions to improve my financial performance — built on Fincy Intelligence. Free for finance professionals: https://jitenparida95.github.io/fincy-intelligence/ #FPandA #AI #Finance';
+  var url = encodeURIComponent('https://jitenparida95.github.io/fincy-intelligence/');
+  window.open('https://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+encodeURIComponent('Fincy AI CFO Insights'),'_blank');
+  if(navigator.clipboard) navigator.clipboard.writeText(txt);
+}
+
+(function(){if(document.getElementById('fdstyle'))return;var s=document.createElement('style');s.id='fdstyle';s.textContent='@keyframes fIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}';document.head.appendChild(s);})();
+</script>
 </body>
 </html>
