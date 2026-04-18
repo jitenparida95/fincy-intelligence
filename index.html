@@ -1518,59 +1518,47 @@ function handleLearningQuery(query) {
   if (errorDiv)   { errorDiv.style.display='none'; errorDiv.textContent=''; }
   if (loadingDiv)   loadingDiv.style.display='block';
 
-  var sysPr = 'You are an expert AI Finance Tutor for Finance and Accounting professionals.\n'+
-    'Your mission: help them become irreplaceable by mastering AI tools and automation.\n\n'+
-    'Always structure your response as:\n'+
-    '1. Clear Explanation (2-3 sentences, practical, no jargon)\n'+
-    '2. Real-World Finance Example (specific scenario with numbers)\n'+
-    '3. Practical Steps to Get Started (numbered, actionable, tools named)\n'+
-    '4. One Immediate Action (what to do TODAY)\n\n'+
-    'Tone: senior mentor, direct, encouraging. Use specific tools, numbers, and career outcomes.';
+  var sysPr = 'You are an expert AI Finance Tutor for Finance and Accounting professionals.\n'
+    + 'Your mission: help them become irreplaceable by mastering AI tools, FP&A automation, and CFO-level thinking.\n\n'
+    + 'Always structure your response as:\n'
+    + '1. Clear Explanation (2-3 sentences, practical, no jargon)\n'
+    + '2. Real-World Finance Example (specific scenario with numbers)\n'
+    + '3. Practical Steps to Get Started (numbered, actionable, tools named)\n'
+    + '4. One Immediate Action (what to do TODAY)\n\n'
+    + 'Tone: senior mentor, direct, encouraging. Use specific tools, numbers, and career outcomes.';
 
-  var msgs = [{ role:'system', content:sysPr }];
-  _lhHistory.forEach(function(t){
-    msgs.push({role:'user',content:t.q});
-    msgs.push({role:'assistant',content:t.a});
-  });
-  msgs.push({role:'user',content:query});
+  /* Build conversation history */
+  var userContent = sysPr + '\n\nConversation so far:\n';
+  _lhHistory.forEach(function(t) { userContent += 'User: ' + t.q + '\nTutor: ' + t.a + '\n'; });
+  userContent += 'User: ' + query;
 
-  var groqKey = window.GROQ_KEY || '';
-  if (!groqKey) {
-    if (loadingDiv) loadingDiv.style.display='none';
-    _appendChat(query,
-      'For a full AI-powered answer, open the Data Analysis Agent inside Fincy \u2014 '+
-      'it runs on Groq Llama 3.1 and can answer any finance + AI question.\n\n'+
-      '<a href="'+APP+'/?m=dataanalyst" target="_blank" '+
-      'style="color:var(--gold);font-family:\'IBM Plex Mono\',monospace;font-size:0.65rem;'+
-      'letter-spacing:0.08em;text-transform:uppercase;">'+
-      'Open AI Finance Tutor in App \u2192</a>'
-    );
-    return;
-  }
-
-  fetch('https://api.groq.com/openai/v1/chat/completions',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+groqKey},
-    body:JSON.stringify({model:'llama-3.1-8b-instant',messages:msgs,max_tokens:800,temperature:0.4})
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 900,
+      messages: [{ role: 'user', content: userContent }]
+    })
   })
-  .then(function(r){
-    if(r.status===429){
-      if(loadingDiv) loadingDiv.style.display='none';
-      if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Rate limit reached — please wait 30 seconds and try again.';}
+  .then(function(r) {
+    if (r.status === 429) {
+      if (loadingDiv) loadingDiv.style.display='none';
+      if (errorDiv) { errorDiv.style.display='block'; errorDiv.textContent='Rate limit reached — please wait 30 seconds and try again.'; }
       return null;
     }
     return r.json();
   })
-  .then(function(d){
-    if(!d) return;
-    if(loadingDiv) loadingDiv.style.display='none';
-    var ans=(d.choices&&d.choices[0]&&d.choices[0].message)?d.choices[0].message.content:'No response. Try again.';
-    _appendChat(query,ans);
+  .then(function(d) {
+    if (!d) return;
+    if (loadingDiv) loadingDiv.style.display='none';
+    var ans = (d.content && d.content[0] && d.content[0].text) ? d.content[0].text : 'No response. Try again.';
+    _appendChat(query, ans);
   })
-  .catch(function(e){
-    if(loadingDiv) loadingDiv.style.display='none';
-    if(errorDiv){errorDiv.style.display='block';errorDiv.textContent='Connection error — check your internet and try again.';}
-    console.error('Learning query error:',e);
+  .catch(function(e) {
+    if (loadingDiv) loadingDiv.style.display='none';
+    if (errorDiv) { errorDiv.style.display='block'; errorDiv.textContent='Connection error — check your internet and try again.'; }
+    console.error('Learning query error:', e);
   });
 }
 
@@ -1702,91 +1690,57 @@ function toggleChat(){
   else{box.classList.add('open');document.getElementById('fincy-chat-input').focus();}
 }
 
-function sendFincyMessage(){
-  var inp=document.getElementById('fincy-chat-input');
-  var q=(inp.value||'').trim();
-  if(!q) return;
-  inp.value='';
+var _fincyHistory = [];
+function sendFincyMessage() {
+  var inp   = document.getElementById('fincyInput');
+  var q     = (inp ? inp.value : '').trim();
+  if (!q) return;
+  if (inp) inp.value = '';
 
-  var msgs=document.getElementById('fincy-chat-msgs');
-
-  /* User bubble */
-  var uDiv=document.createElement('div');
-  uDiv.className='fc-msg-you';
-  uDiv.innerHTML='You <span>'+String(q).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</span>';
-  msgs.appendChild(uDiv);
-
-  /* Typing indicator */
-  var typing=document.createElement('div');
-  typing.className='fc-typing';
-  typing.id='fc-typing-'+Date.now();
-  var typingId=typing.id;
-  typing.textContent='\u25c6 Fincy AI is thinking\u2026';
-  msgs.appendChild(typing);
-  msgs.scrollTop=msgs.scrollHeight;
-
-  _fcHistory.push({role:'user',content:q});
-
-  /* System prompt — no apostrophes in string delimiters */
-  var sysPr=(
-    "You are Fincy AI CFO, a professional AI assistant for the Fincy Intelligence platform. "+
-    "Always start your reply with 'Fincy AI:'. Answer in 2-3 sentences. "+
-    "Topics: FP&A analytics, India tax FY2024-25, reconciliation, cash flow, "+
-    "cost intelligence, personal finance, and how to use Fincy modules. "+
-    "Be concise, direct, and helpful. Never say you cannot help."
+  var typingId = 'typing_' + Date.now();
+  _appendFincyReply(q,
+    '<span id="' + typingId + '" style="color:var(--text3);font-size:0.76rem;">'
+    + '<span class="lh-spinner" style="width:10px;height:10px;border-width:1.5px;"></span>'
+    + ' Fincy AI is thinking…</span>'
   );
 
-  var apiMsgs=[{role:'system',content:sysPr}];
-  _fcHistory.slice(-6).forEach(function(m){apiMsgs.push(m);});
-  apiMsgs.push({role:'user',content:q});
+  /* System prompt for the chat widget */
+  var sysPr = 'You are Fincy AI CFO — a senior FP&A expert and AI finance advisor. '
+    + 'Answer questions about finance, FP&A, reconciliation, budgeting, cash flow, AI in finance, and how to use Fincy Intelligence. '
+    + 'Be concise (3-5 sentences), direct, and use specific numbers when helpful. '
+    + 'If asked about Fincy features, be enthusiastic and specific. '
+    + 'End every reply with one actionable next step.';
 
-  var groqKey=window.GROQ_KEY||'';
+  /* Build context from chat history (last 3 turns) */
+  var chatContent = sysPr + '\n\nConversation:\n';
+  _fincyHistory.slice(-3).forEach(function(t) { chatContent += 'User: '+t.q+'\nFincy: '+t.a+'\n'; });
+  chatContent += 'User: ' + q;
 
-  /* No Groq key — show styled fallback linking to Streamlit app */
-  if(!groqKey){
-    var fbMsg=(
-      "Fincy AI: I am fully live inside the Fincy app \u2014 running on Groq Llama 3.1, zero setup required. "+
-      "<br><br>"+
-      "<a href='"+APP+"' target='_blank' "+
-      "style='display:inline-block;background:#c9a84c;color:#0a0a08;"+
-      "font-family:IBM Plex Mono,monospace;font-size:0.62rem;font-weight:700;"+
-      "letter-spacing:0.08em;text-transform:uppercase;padding:9px 18px;"+
-      "text-decoration:none;margin-top:4px;'>"+
-      "Open Fincy App \u2014 Chat with AI CFO \u2192</a>"
-    );
-    document.getElementById(typingId).remove();
-    _appendFincyReply(q,fbMsg);
-    return;
-  }
-
-  fetch('https://api.groq.com/openai/v1/chat/completions',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'Authorization':'Bearer '+groqKey
-    },
-    body:JSON.stringify({
-      model:'llama-3.1-8b-instant',
-      messages:apiMsgs,
-      max_tokens:450,
-      temperature:0.3
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 450,
+      messages: [{ role: 'user', content: chatContent }]
     })
   })
-  .then(function(r){return r.json();})
-  .then(function(d){
-    document.getElementById(typingId) && document.getElementById(typingId).remove();
-    var ans=(d.choices&&d.choices[0]&&d.choices[0].message)
-      ? d.choices[0].message.content
-      : 'Fincy AI: Sorry, could not get a response. Please try again.';
-    _appendFincyReply(q,ans);
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    var typEl = document.getElementById(typingId);
+    if (typEl) typEl.remove();
+    var ans = (d.content && d.content[0] && d.content[0].text)
+      ? d.content[0].text
+      : 'Fincy AI: Sorry, something went wrong. Try again.';
+    _appendFincyReply(q, ans);
   })
-  .catch(function(e){
-    document.getElementById(typingId) && document.getElementById(typingId).remove();
-    _appendFincyReply(q,'Fincy AI: Connection error \u2014 '+e.message+
-      '. <a href="'+APP+'" target="_blank" style="color:#c9a84c;">Open Fincy App</a>');
+  .catch(function(e) {
+    var typEl = document.getElementById(typingId);
+    if (typEl) typEl.remove();
+    _appendFincyReply(q, 'Fincy AI: Connection error — please check your internet and try again.');
+    console.error('sendFincyMessage:', e);
   });
 }
-
 
 function openFincyChat(){
   var box=document.getElementById('fincy-chat-box');
