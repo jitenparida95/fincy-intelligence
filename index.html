@@ -477,20 +477,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
     </div>
   </div>
 
-  <!-- Live app embed -->
-  <div class="workspace-chrome" id="workspace" style="margin-bottom:32px;">
-    <div class="workspace-bar">
-      <div style="display:flex;align-items:center;gap:9px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;"></div>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);">AI CFO Workspace — Live</span>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="openModal()" class="btn-ghost" style="padding:5px 12px;font-size:0.55rem;">Sign Up Free</button>
-      </div>
-    </div>
-    <iframe src="https://fincy-intelligence.streamlit.app/?embed=true" width="100%" height="760" style="border:none;display:block;background:var(--bg);" title="Fincy Intelligence AI CFO Workspace" loading="lazy" allow="clipboard-write"></iframe>
-  </div>
-  <p style="font-size:0.62rem;color:var(--text3);text-align:center;margin-bottom:40px;">Powered by Groq + Llama 3.1 &middot; Your data never leaves your session &middot; Session isolated by design</p>
+
 
   <!-- Module cards subheader -->
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--b);">
@@ -523,7 +510,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'FP&A Decision Intelligence')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'FP&A Decision Intelligence')">💡 Explain This</button>
       </div>
-      <button class="mod-cta-btn" style="border-color:var(--gold);color:var(--gold);width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
+      <button class="mod-cta-btn" style="border-color:var(--gold);color:var(--gold);width:100%;" onclick="openModuleModal('fpa','FP&A Decision Intelligence')">Try Free — Sign Up →</button>
     </div>
 
     <!-- RECON -->
@@ -546,7 +533,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Reconciliation')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Reconciliation')">💡 Explain This</button>
       </div>
-      <button class="mod-cta-btn" style="border-color:#4ade80;color:#4ade80;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
+      <button class="mod-cta-btn" style="border-color:#4ade80;color:#4ade80;width:100%;" onclick="openModuleModal('recon','Reconciliation')">Try Free — Sign Up →</button>
     </div>
 
     <!-- COST -->
@@ -569,7 +556,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Cost Analysis')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Cost Analysis')">💡 Explain This</button>
       </div>
-      <button class="mod-cta-btn" style="border-color:#f97316;color:#f97316;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
+      <button class="mod-cta-btn" style="border-color:#f97316;color:#f97316;width:100%;" onclick="openModuleModal('cost','Cost Analysis')">Try Free — Sign Up →</button>
     </div>
 
     <!-- DATA AGENT -->
@@ -592,7 +579,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Data Analysis')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Data Analysis')">💡 Explain This</button>
       </div>
-      <button class="mod-cta-btn" style="border-color:#22d3ee;color:#22d3ee;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
+      <button class="mod-cta-btn" style="border-color:#22d3ee;color:#22d3ee;width:100%;" onclick="openModuleModal('dataanalyst','Data Analysis')">Try Free — Sign Up →</button>
     </div>
 
     <!-- PERSONAL -->
@@ -615,7 +602,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Personal Finance')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Personal Finance')">💡 Explain This</button>
       </div>
-      <button class="mod-cta-btn" style="border-color:#a78bfa;color:#a78bfa;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
+      <button class="mod-cta-btn" style="border-color:#a78bfa;color:#a78bfa;width:100%;" onclick="openModuleModal('personal','Personal Finance')">Try Free — Sign Up →</button>
     </div>
 
     <!-- CASH FLOW -->
@@ -638,7 +625,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Cash Flow')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Cash Flow')">💡 Explain This</button>
       </div>
-      <button class="mod-cta-btn" style="border-color:#06b6d4;color:#06b6d4;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
+      <button class="mod-cta-btn" style="border-color:#06b6d4;color:#06b6d4;width:100%;" onclick="openModuleModal('cashflow','Cash Flow')">Try Free — Sign Up →</button>
     </div>
 
   </div><!-- end mods-grid -->
@@ -1075,9 +1062,10 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div id="modalForm" class="modal-body">
+      <input type="hidden" id="pendingModule" value=""/>
       <div class="modal-ey">Free Access · No Credit Card</div>
-      <div class="modal-title">Get Instant Access</div>
-      <div class="modal-sub">All 7 modules free. Your data stays in your session — we never store it. No spam. Unsubscribe anytime.</div>
+      <div class="modal-title" id="modalTitle">Get Instant Access</div>
+      <div class="modal-sub" id="modalSub">All 7 modules free. Your data stays in your session — we never store it. No spam. Unsubscribe anytime.</div>
       <div class="form-field">
         <label>Full Name *</label>
         <input type="text" id="fName" placeholder="Your Name"/>
@@ -1100,8 +1088,8 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
     <div id="modalSuccess" class="modal-success" style="display:none;">
       <span class="modal-success-icon">◆</span>
       <div class="modal-success-title">You're in.</div>
-      <div class="modal-success-sub">Taking you to the app now. Use the sample templates to see your AI CFO in action in under 60 seconds.</div>
-      <button onclick="closeModal()" class="btn-gold" style="display:inline-block;padding:12px 24px;border:none;cursor:pointer;">Got it — Explore Fincy →</button>
+      <div class="modal-success-sub" id="successSub">Launching your module now — in a new tab.</div>
+      <button onclick="launchPendingModule()" class="btn-gold" style="display:inline-block;padding:12px 24px;border:none;cursor:pointer;" id="launchBtn">Launch Module →</button>
     </div>
   </div>
 </div>
@@ -1159,26 +1147,76 @@ document.getElementById('privacyModal').addEventListener('click',function(e){
   if(e.target===this)closePrivacy();
 });
 
+/* ── Module-aware modal ── */
+var MODULE_URLS={
+  fpa:'https://fincy-intelligence.streamlit.app/?m=fpa',
+  recon:'https://fincy-intelligence.streamlit.app/?m=recon',
+  cost:'https://fincy-intelligence.streamlit.app/?m=cost',
+  dataanalyst:'https://fincy-intelligence.streamlit.app/?m=dataanalyst',
+  personal:'https://fincy-intelligence.streamlit.app/?m=personal',
+  cashflow:'https://fincy-intelligence.streamlit.app/?m=cashflow',
+  default:'https://fincy-intelligence.streamlit.app/'
+};
+var MODULE_NAMES={
+  fpa:'FP&A Decision Intelligence',
+  recon:'Reconciliation Engine',
+  cost:'Cost Intelligence',
+  dataanalyst:'Data Analysis Agent',
+  personal:'Personal Finance Engine',
+  cashflow:'Cash Flow Intelligence'
+};
+
+function openModuleModal(mod, name){
+  document.getElementById('pendingModule').value=mod||'default';
+  var title=document.getElementById('modalTitle');
+  var sub=document.getElementById('modalSub');
+  if(mod&&name){
+    title.textContent='Sign up to launch '+name;
+    sub.textContent='Free access. After signing up you'll go straight into '+name+'. No credit card. No setup.';
+  } else {
+    title.textContent='Get Instant Access';
+    sub.textContent='All 7 modules free. Your data stays in your session.';
+  }
+  document.getElementById('signupModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function launchPendingModule(){
+  var mod=document.getElementById('pendingModule').value||'default';
+  var url=MODULE_URLS[mod]||MODULE_URLS.default;
+  window.open(url,'_blank');
+  closeModal();
+}
+
 /* ── Form submit ── */
 function submitForm(){
   var name=document.getElementById('fName').value.trim();
   var email=document.getElementById('fEmail').value.trim();
   if(!name){alert('Please enter your name.');return;}
   if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
+  var mod=document.getElementById('pendingModule').value||'default';
+  var modName=MODULE_NAMES[mod]||'the app';
   // Formspree POST
   fetch('https://formspree.io/f/mvzvybpr',{
     method:'POST',
     headers:{'Content-Type':'application/json','Accept':'application/json'},
     body:JSON.stringify({
-      _subject:'New Fincy Signup: '+name,
+      _subject:'New Fincy Signup: '+name+' → '+modName,
       name:name,email:email,
       company:document.getElementById('fCompany').value.trim()||'N/A',
       role:document.getElementById('fRole').value.trim()||'N/A',
+      module:modName,
       _replyto:email
     })
   }).catch(function(){});
+  // Show success + auto-redirect in 2 seconds
   document.getElementById('modalForm').style.display='none';
+  document.getElementById('successSub').textContent='Opening '+modName+' now in a new tab. Welcome to Fincy!';
   document.getElementById('modalSuccess').style.display='block';
+  setTimeout(function(){
+    var url=MODULE_URLS[mod]||MODULE_URLS.default;
+    window.open(url,'_blank');
+  },1800);
 }
 
 /* ── FAQ toggle ── */
