@@ -336,6 +336,47 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   .trust-strip{gap:12px;padding:12px 16px;}
   footer{padding:36px 20px 28px;}
 }
+
+/* ── Learning Hub tabs ── */
+.lh-tab{font-family:'IBM Plex Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;padding:10px 18px;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+.lh-tab:hover{color:var(--text2);}
+.lh-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+.lh-tab-cert{color:var(--text3);}
+.lh-tab-cert.active{color:#c9a84c;border-bottom-color:#c9a84c;}
+/* ── Module cards inside learning hub ── */
+.lh-mod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;}
+.lh-mod-card{background:var(--s);border:1px solid var(--b);padding:20px 18px;cursor:pointer;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.15s;}
+.lh-mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--lc,var(--gold));}
+.lh-mod-card:hover{border-color:var(--lc,var(--gold));transform:translateY(-1px);}
+.lh-mod-card.done{opacity:0.7;}
+.lh-mod-card.done::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--green);font-size:0.9rem;font-weight:700;}
+.lh-mod-num{font-family:'IBM Plex Mono',monospace;font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.lh-mod-title{font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:700;color:var(--white);margin-bottom:5px;}
+.lh-mod-desc{font-size:0.7rem;color:var(--text2);line-height:1.6;font-weight:300;}
+/* ── Stage header ── */
+.lh-stage-hd{margin-bottom:20px;}
+.lh-stage-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:5px;}
+.lh-stage-sub{font-size:0.78rem;color:var(--text2);line-height:1.7;font-weight:300;max-width:600px;}
+.lh-stage-prog{font-family:'IBM Plex Mono',monospace;font-size:0.52rem;color:var(--text3);margin-top:8px;}
+/* ── Module detail ── */
+.lh-detail-box{background:var(--s);border:1px solid var(--b);border-left:3px solid var(--lc,var(--gold));padding:22px 24px;margin-bottom:14px;}
+.lh-detail-label{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.lh-detail-text{font-size:0.8rem;color:var(--text2);line-height:1.85;font-weight:300;}
+.lh-task-input{width:100%;background:#0a0a08;border:1px solid var(--b);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:0.82rem;padding:10px 13px;outline:none;margin-top:8px;resize:vertical;min-height:80px;transition:border-color 0.2s;}
+.lh-task-input:focus{border-color:var(--gold);}
+/* ── Cert quiz ── */
+.cert-q{background:var(--s);border:1px solid var(--b);padding:20px 22px;margin-bottom:12px;}
+.cert-q-num{font-family:'IBM Plex Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+.cert-q-text{font-size:0.84rem;color:var(--white);font-weight:500;margin-bottom:12px;line-height:1.5;}
+.cert-opt{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;margin-bottom:6px;border:1px solid var(--b);cursor:pointer;transition:border-color 0.15s;font-size:0.78rem;color:var(--text2);}
+.cert-opt:hover{border-color:var(--gold);color:var(--text);}
+.cert-opt.selected{border-color:var(--gold);color:var(--white);background:rgba(201,168,76,0.06);}
+.cert-opt.correct{border-color:var(--green);background:rgba(74,222,128,0.06);color:var(--green);}
+.cert-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.06);color:var(--red);}
+.cert-textarea{width:100%;background:#0a0a08;border:1px solid var(--b);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:0.8rem;padding:10px;outline:none;resize:vertical;min-height:80px;margin-top:6px;}
+.cert-textarea:focus{border-color:var(--gold);}
+@media(max-width:768px){.lh-mod-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.lh-mod-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -736,116 +777,73 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
 </section>
 <hr class="divider"/>
 
-<!-- ══ LEARNING HUB ═══════════════════════════════════════════════════= -->
+<!-- ══ LEARNING HUB — REBUILT ═══════════════════════════════════════════ -->
 <section class="sec" id="learning">
-  <div class="ey">AI Learning Hub</div>
-  <h2>Become irreplaceable.<br><em>AI + Finance = Future-proof.</em></h2>
+  <div class="ey">AI Finance Learning System</div>
+  <h2>From Analyst to <em>AI Finance Leader.</em></h2>
 
   <div class="learn-intro">
-    <div class="learn-intro-title">Finance professionals who master AI won't be replaced by AI. They will replace those who don't.</div>
-    <div class="learn-intro-sub">McKinsey estimates 50%+ of Finance tasks will be automated by 2030. The FP&amp;A analyst who can build AI tools, prompt LLMs for insights, and automate month-end close will command a 2–3x salary premium. This hub gives you the exact skills to get there — built by someone who made the transition from manual FP&amp;A to AI-powered finance.</div>
+    <div class="learn-intro-title">5 stages. 30+ modules. One outcome — you become irreplaceable.</div>
+    <div class="learn-intro-sub">Built on 6+ years of FP&amp;A experience at IBM/Reckitt and Capgemini/Unilever. Every module is a real decision you will face in your finance career — now powered by AI. Not theory. Not tutorials. Job-ready skills from Day 1.</div>
   </div>
 
-  <div class="learn-grid">
-    <div class="learn-card" style="--lc:var(--gold)">
-      <div class="learn-stage">Stage 01 · Beginner</div>
-      <div class="learn-title">AI in Finance Basics</div>
-      <div class="learn-desc">What are LLMs? How do AI agents work? Why is Fincy built on Groq + Llama 3.1? How will AI change your FP&amp;A role? Start here if you have zero AI background.</div>
-      <div class="learn-tags">
-        <span class="learn-tag">LLMs</span>
-        <span class="learn-tag">AI Agents</span>
-        <span class="learn-tag">Groq</span>
-        <span class="learn-tag">FP&amp;A Use Cases</span>
+  <!-- Progress bar + resume CTA -->
+  <div id="lh-progress-bar" style="background:var(--s);border:1px solid var(--b);padding:18px 24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;">Your Progress</div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:200px;height:4px;background:var(--b);border-radius:2px;"><div id="lh-bar-fill" style="height:100%;background:var(--gold);border-radius:2px;width:0%;transition:width 0.5s;"></div></div>
+        <span id="lh-bar-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.58rem;color:var(--gold);">0 / 30 modules</span>
       </div>
-      <button class="learn-cta" onclick="openTutor('What are LLMs and how do they apply to FP&A finance work?')">Start Learning →</button>
     </div>
-
-    <div class="learn-card" style="--lc:#4ade80">
-      <div class="learn-stage">Stage 02 · Intermediate</div>
-      <div class="learn-title">Automating Finance Work</div>
-      <div class="learn-desc">Automate month-end close, variance reports, reconciliation, and board packs using AI. Cut 10 hours of manual work to 10 minutes. No Python required to start.</div>
-      <div class="learn-tags">
-        <span class="learn-tag">Automation</span>
-        <span class="learn-tag">Variance Reports</span>
-        <span class="learn-tag">Month-End Close</span>
-        <span class="learn-tag">Board Packs</span>
-      </div>
-      <button class="learn-cta" style="--lc:#4ade80" onclick="openTutor('How do I automate month-end close and variance analysis using AI?')">Start Learning →</button>
-    </div>
-
-    <div class="learn-card" style="--lc:#60a5fa">
-      <div class="learn-stage">Stage 03 · Advanced</div>
-      <div class="learn-title">Build AI Finance Tools</div>
-      <div class="learn-desc">The Fincy Blueprint. Learn how this platform was built. Build your own AI-powered finance dashboards. Streamlit + Plotly + Groq API. Deploy in a weekend.</div>
-      <div class="learn-tags">
-        <span class="learn-tag">Streamlit</span>
-        <span class="learn-tag">Plotly</span>
-        <span class="learn-tag">Groq API</span>
-        <span class="learn-tag">Deploy</span>
-      </div>
-      <button class="learn-cta" style="--lc:#60a5fa" onclick="openTutor('How do I build an AI finance dashboard using Streamlit and Groq API like Fincy Intelligence?')">Start Learning →</button>
-    </div>
-
-    <div class="learn-card" style="--lc:#a78bfa">
-      <div class="learn-stage">Stage 04 · Expert</div>
-      <div class="learn-title">Prompt Engineering for CFOs</div>
-      <div class="learn-desc">Master prompt engineering. Write prompts that extract CFO-quality insights. 5 ready-to-use templates for variance, cash flow, board packs, and more — copy-paste and use today.</div>
-      <div class="learn-tags">
-        <span class="learn-tag">Prompting</span>
-        <span class="learn-tag">Templates</span>
-        <span class="learn-tag">LLM Strategy</span>
-        <span class="learn-tag">CFO Level</span>
-      </div>
-      <button class="learn-cta" style="--lc:#a78bfa" onclick="openTutor('Give me 5 copy-paste prompt templates for FP&A variance analysis, cash flow, and board pack preparation using AI')">Get Templates →</button>
-    </div>
+    <button id="lh-resume-btn" onclick="lhResume()" class="btn-gold" style="padding:8px 20px;font-size:0.62rem;border:none;display:none;">Continue Where You Left Off →</button>
+    <button onclick="lhStartFresh()" class="btn-ghost" style="padding:8px 20px;font-size:0.62rem;">Start Learning Journey →</button>
   </div>
 
-  <!-- Quick questions -->
-  <div style="margin-top:28px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Ask your AI Finance Tutor</div>
-    <div class="quick-q-grid">
-      <button class="quick-q" onclick="openTutor('Will AI replace FP&A analysts?')">Will AI replace me as an FP&A analyst?</button>
-      <button class="quick-q" onclick="openTutor('What is the difference between Groq, GPT-4 and Llama 3.1 for finance use cases?')">Groq vs GPT vs Llama for Finance?</button>
-      <button class="quick-q" onclick="openTutor('Give me a 30-day plan to learn AI skills as a Finance professional with no coding background')">30-day AI learning plan for Finance</button>
-      <button class="quick-q" onclick="openTutor('How do I automate my month-end close process using AI — step by step for a non-technical finance analyst?')">Automate month-end close with AI</button>
-      <button class="quick-q" onclick="openTutor('What are the top 5 AI skills a CFO or FP&A analyst needs in 2026?')">Top 5 AI skills for CFOs in 2026</button>
-      <button class="quick-q" onclick="openTutor('How do I build a personal brand on LinkedIn as a Finance professional focused on AI?')">Build AI Finance brand on LinkedIn</button>
+  <!-- Stage tabs -->
+  <div id="lh-stage-tabs" style="display:flex;gap:0;border-bottom:1px solid var(--b);margin-bottom:24px;overflow-x:auto;">
+    <button class="lh-tab active" onclick="lhShowStage(0)" id="lh-tab-0">Stage 1</button>
+    <button class="lh-tab" onclick="lhShowStage(1)" id="lh-tab-1">Stage 2</button>
+    <button class="lh-tab" onclick="lhShowStage(2)" id="lh-tab-2">Stage 3</button>
+    <button class="lh-tab" onclick="lhShowStage(3)" id="lh-tab-3">Stage 4</button>
+    <button class="lh-tab lh-tab-cert" onclick="lhShowStage(4)" id="lh-tab-4">&#127941; Certification</button>
+  </div>
+
+  <!-- Stage panels — generated by JS -->
+  <div id="lh-stage-panel"></div>
+
+  <!-- Module detail overlay -->
+  <div id="lh-module-detail" style="display:none;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <button onclick="lhCloseModule()" style="background:none;border:1px solid var(--b);color:var(--text2);font-family:'IBM Plex Mono',monospace;font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;padding:6px 14px;cursor:pointer;">&#8592; Back to Stage</button>
+      <div id="lh-mod-stage-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);"></div>
     </div>
+    <div id="lh-mod-content"></div>
+  </div>
+
+  <!-- Certification panel -->
+  <div id="lh-cert-panel" style="display:none;">
+    <div id="lh-cert-content"></div>
   </div>
 
   <!-- AI Tutor widget -->
-  <div class="tutor-wrap" id="tutorWidget" style="display:none;">
+  <div class="tutor-wrap" id="tutorWidget" style="display:none;margin-top:24px;">
     <div class="tutor-header">
       <div class="tutor-status">
         <div class="tutor-dot"></div>
-        <span class="tutor-label">AI Finance Tutor — Powered by Groq + Llama 3.1</span>
+        <span class="tutor-label" id="tutorLabel">AI Finance Tutor</span>
       </div>
-      <button onclick="closeTutor()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9rem;">✕ Close</button>
+      <button onclick="closeTutor()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:0.9rem;">&#10005; Close</button>
     </div>
     <div class="tutor-messages" id="tutorMessages">
-      <div class="tutor-msg ai">Hi! I'm your AI Finance Tutor — built on Llama 3.1 via Groq. Ask me anything about AI in Finance, FP&amp;A skills, career growth, automation, or how Fincy works. What would you like to learn today?</div>
+      <div class="tutor-msg ai">I am your AI CFO tutor. Ask me about any concept, case study, or finance problem — I will give you a CFO-level answer with specific numbers and action steps.</div>
     </div>
     <div class="tutor-input-row">
-      <input class="tutor-input" id="tutorInput" type="text" placeholder="Ask about AI, FP&A, automation, career..." onkeydown="if(event.key==='Enter')sendTutor()"/>
-      <button class="tutor-send" onclick="sendTutor()">Send →</button>
+      <input class="tutor-input" id="tutorInput" type="text" placeholder="Ask your AI CFO anything about finance…" onkeydown="if(event.key==='Enter')sendTutor()"/>
+      <button class="tutor-send" onclick="sendTutor()">Ask CFO &#8594;</button>
     </div>
   </div>
 
-  <!-- Skills strip -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);margin-top:28px;">
-    <div style="background:var(--s);padding:20px 18px;">
-      <div style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--white);margin-bottom:6px;">AI Tool Builder</div>
-      <div style="font-size:0.74rem;color:var(--text2);line-height:1.75;font-weight:300;">Build your own finance dashboards and AI tools. A finance professional who ships working software commands 2–3× salary.</div>
-    </div>
-    <div style="background:var(--s);padding:20px 18px;">
-      <div style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--white);margin-bottom:6px;">Prompt Engineer</div>
-      <div style="font-size:0.74rem;color:var(--text2);line-height:1.75;font-weight:300;">Extract CFO-quality insights from AI. Prompt engineering is the highest-leverage skill in finance today and takes weeks, not years to learn.</div>
-    </div>
-    <div style="background:var(--s);padding:20px 18px;">
-      <div style="font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--white);margin-bottom:6px;">Automation Architect</div>
-      <div style="font-size:0.74rem;color:var(--text2);line-height:1.75;font-weight:300;">Automate reconciliation, reports, and variance analysis. Turn 10 hours of manual close work into 10-minute automated pipelines.</div>
-    </div>
-  </div>
 </section>
 <hr class="divider"/>
 
@@ -1227,16 +1225,555 @@ function toggleFaq(el){
   if(!wasOpen)item.classList.add('open');
 }
 
-/* ── AI Tutor ── */
-var GROQ_KEY=''; // Set your Groq API key here for live AI tutor — or leave blank for demo mode
+/* ═══════════════════════════════════════════════════════════════════════
+   FINCY INTELLIGENCE — LEARNING HUB ENGINE v2.0
+   Premium AI Finance Learning System
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Course Data ─────────────────────────────────────────────────────── */
+var LH_COURSE = {
+  stages: [
+    {
+      id: 's1',
+      name: 'Stage 1: Financial Intelligence Core',
+      color: '#c9a84c',
+      sub: 'Master the financial language every CFO speaks. Build fluency in P&L, EBITDA, cash flow, and the metrics that drive board decisions.',
+      modules: [
+        {
+          id: 's1m1', title: 'Reading a P&L Like a CFO',
+          concept: 'A P&L (Profit & Loss) statement shows Revenue → Gross Profit → EBITDA → Net Profit. Each line tells a story. Revenue growth with margin decline signals a pricing or cost problem. EBITDA growth with negative cash flow signals a working capital trap. A CFO reads P&L in 90 seconds and identifies the single biggest risk.',
+          example: 'Reckitt India Q3: Revenue +12% YoY but EBITDA margin fell from 22% to 17%. Root cause: Trade Promo spend increased from 8% to 14% of NR due to competitive pressure in Dettol category. Action: Re-evaluate promotional ROI by channel.',
+          task: 'You are the Finance Manager. Revenue: ₹42.8M. COGS: ₹19.6M. Trade Promo: ₹4.8M. OPEX: ₹8.2M. Calculate Gross Profit, Gross Margin %, Net Revenue after Promo, and EBITDA. Write your CFO interpretation in 3 lines.',
+          ai_prompt: 'Act as CFO. Revenue ₹42.8M, COGS ₹19.6M, Trade Promo ₹4.8M, OPEX ₹8.2M. Calculate GP%, EBITDA%, identify the biggest margin risk, and give 3 specific actions to improve EBITDA by 200bps in 90 days.',
+          tags: ['P&L', 'EBITDA', 'Gross Margin', 'CFO Thinking']
+        },
+        {
+          id: 's1m2', title: 'EBITDA: The Real Business Health Score',
+          concept: 'EBITDA (Earnings Before Interest, Tax, Depreciation, Amortisation) strips out financing and accounting decisions to show the true operating performance of a business. EBITDA margin = EBITDA / Net Revenue × 100. FMCG benchmark: 15–25%. Below 12% triggers board-level concern. Above 25% signals pricing power.',
+          example: 'Unilever ANZ division: EBITDA 18.2% in Q1, dropped to 13.4% by Q3. Investigation revealed distribution cost inflation (+₹2.1M), not revenue decline. P&L masked this because Revenue was flat. EBITDA exposed it immediately.',
+          task: 'Your company has: Revenue ₹85M, COGS ₹38M, Distribution ₹8M, Marketing ₹7M, Admin ₹6M, D&A ₹4M, Interest ₹2M, Tax ₹3M. Calculate EBITDA and EBITDA margin. Is this business healthy? What one action would move EBITDA 100bps?',
+          ai_prompt: 'Revenue ₹85M, COGS ₹38M, Distribution ₹8M, Marketing ₹7M, Admin ₹6M, D&A ₹4M. Calculate EBITDA margin, benchmark against FMCG industry (15-22%), identify the single highest-impact cost lever, and model the EBITDA impact if that cost drops 10%.',
+          tags: ['EBITDA', 'Margin Analysis', 'Cost Benchmarking', 'FMCG']
+        },
+        {
+          id: 's1m3', title: 'Cash Flow vs Profit: The Silent Trap',
+          concept: 'A business can be profitable and bankrupt simultaneously. This happens when profit is tied up in receivables, inventory, or prepaid expenses. Cash Conversion Cycle (CCC) = DIO + DSO - DPO. High CCC means profit is trapped. Every CFO monitors CCC monthly — it predicts cash crises 60-90 days before they hit.',
+          example: 'FMCG distributor in Africa: Net Profit ₹12M, but cash balance fell ₹8M. Investigation: Receivables grew from 45 to 78 days (DSO +33 days), collecting ₹15M of profit on paper. CEO was confused. CFO said: "We are collecting invoices, not cash." Emergency collection drive launched.',
+          task: 'Company data: Revenue ₹120M, COGS ₹60M, Receivables ₹28M, Inventory ₹18M, Payables ₹14M. Calculate DSO, DIO, DPO, and CCC. If you reduce DSO by 10 days, how much cash does that release? Show your working.',
+          ai_prompt: 'Revenue ₹120M (daily ₹329K), COGS ₹60M (daily ₹164K), Receivables ₹28M, Inventory ₹18M, Payables ₹14M. Calculate CCC, identify which component is worst vs FMCG benchmark (DSO 30d, DIO 45d, DPO 60d), and prescribe a 3-step cash improvement plan with ₹ impact.',
+          tags: ['Cash Flow', 'CCC', 'DSO', 'DIO', 'Working Capital']
+        },
+        {
+          id: 's1m4', title: 'Gross Margin Deep Dive',
+          concept: 'Gross Margin = (Revenue - COGS) / Revenue × 100. It is the first test of business viability. Gross margin declining faster than revenue growing signals input cost inflation, pricing weakness, or mix shift to lower-margin products. FMCG best-in-class: 50-60%. Below 35% is a structural problem.',
+          example: 'Consumer goods brand: GM fell from 52% to 44% in 6 months. Revenue grew 8%. Looked healthy. But COGS grew 24% — driven by packaging cost (+18%), raw material inflation (+12%), and FX impact on imports (+9%). Price increase of 6% was not enough to offset. Board demanded immediate cost recovery plan.',
+          task: 'SKU analysis: SKU-A Revenue ₹15M GM 58%, SKU-B Revenue ₹22M GM 41%, SKU-C Revenue ₹8M GM 66%, SKU-D Revenue ₹18M GM 35%. Calculate blended GM. Which SKU is destroying margin? If you discontinue SKU-D, what happens to blended GM? Show the math.',
+          ai_prompt: 'Portfolio: SKU-A ₹15M at 58% GM, SKU-B ₹22M at 41% GM, SKU-C ₹8M at 66% GM, SKU-D ₹18M at 35% GM. Calculate portfolio GM, identify the SKU-mix shift needed to reach 50% portfolio GM, and model what price increase on SKU-B would achieve this without discontinuing any SKU.',
+          tags: ['Gross Margin', 'SKU Analysis', 'Pricing', 'Mix Shift']
+        },
+        {
+          id: 's1m5', title: 'Trade Promo ROI: The FMCG Silent Killer',
+          concept: 'Trade Promotion (TP) spend is the discount, rebate, and activation cost paid to retailers. In FMCG, TP runs 8-18% of Gross Revenue. Poor TP management destroys Net Revenue without appearing on the top line. TP ROI = Incremental Volume × Contribution Margin / TP Spend. ROI > 1.0 = accretive. Below 1.0 = destroying value.',
+          example: 'Brand X ran a 15% off promotion on Dettol for 4 weeks. Gross Revenue: ₹10M. TP Spend: ₹1.5M. Incremental volume vs baseline: +12% (not +15% as expected). Contribution margin 38%. TP ROI = (₹10M × 12% × 38%) / ₹1.5M = 0.30. Every ₹1 of promo destroyed ₹0.70. Brand X ran 24 such promos.',
+          task: 'Promotion: Baseline Volume 10,000 units at ₹500. Promo price ₹425 (-15%). Promo volume 13,500 units. Variable cost ₹200/unit. Calculate: TP Spend, Incremental Revenue, Contribution at promo price, TP ROI. Should you run this promotion again?',
+          ai_prompt: 'Promo analysis: Baseline 10,000 units at ₹500, promo price ₹425, promo volume 13,500 units, COGS ₹200/unit. Calculate TP ROI, incremental profit, and payback. If the goal is TP ROI > 1.2, what minimum volume uplift is required? What pricing floor maintains ROI target?',
+          tags: ['Trade Promo', 'ROI', 'Net Revenue', 'FMCG Pricing']
+        },
+        {
+          id: 's1m6', title: 'Budget vs Actuals: The Variance Framework',
+          concept: 'Variance = Actual - Budget. Favourable (F) if profit line exceeds budget. Adverse (A) if below. Every variance has a cause: Volume variance (more/less units), Price variance (different price), Mix variance (different product sold), or Efficiency variance (cost per unit different). CFOs demand root cause — not just the number.',
+          example: 'UK Division P&L: Revenue Actual ₹48M vs Budget ₹52M = -₹4M (A). Price Variance: +₹1.2M (sold at higher price). Volume Variance: -₹5.8M (sold fewer units). Mix Variance: +₹0.6M (sold more high-margin SKUs). Total: -₹4M. Action: Volume recovery plan for next quarter.',
+          task: 'Actual: Revenue ₹38M, Units 76,000. Budget: Revenue ₹42M, Units 84,000 at ₹500. Actual price ₹500. Calculate total variance, price variance, volume variance. Which variance is bigger? What does this tell you about the business problem?',
+          ai_prompt: 'Revenue variance: Actual ₹38M (76,000 units at ₹500) vs Budget ₹42M (84,000 units at ₹500). Decompose into price, volume, and mix variance. Identify the root cause of the shortfall. Give 3 specific recovery actions for next quarter with expected revenue impact.',
+          tags: ['Variance Analysis', 'Budget', 'Volume', 'Price Variance']
+        }
+      ]
+    },
+    {
+      id: 's2',
+      name: 'Stage 2: Financial Analysis Engine',
+      color: '#4ade80',
+      sub: 'Build the analytical toolkit that separates senior FP&A professionals from junior ones. Forecasting, reconciliation, cash flow modelling, and board-ready reporting.',
+      modules: [
+        {
+          id: 's2m1', title: 'Forecasting That CFOs Trust',
+          concept: 'Finance forecasts fall into three methods: (1) Top-down: apply growth % to prior year. (2) Bottom-up: build from volume × price by SKU. (3) Driver-based: model Revenue as a function of key drivers (store count, average basket, footfall). CFOs trust bottom-up and driver-based. Top-down is for napkins.',
+          example: 'FMCG Africa market: Top-down forecast said Revenue +10%. Bottom-up by market × brand showed: Nigeria +22%, Kenya -8%, Ghana +15%, Egypt -4%. Blended +10% masked a collapsing Kenya business that needed immediate intervention. Bottom-up saved Q3.',
+          task: 'Build a bottom-up revenue forecast for Q2. Markets: UK (Q1 ₹12M, expected +8%), DE (₹8M, +5%), FR (₹6M, +12%), SA (₹4M, -6%). Calculate market-level Q2 forecast, portfolio Q2 total, and overall growth %. Which market is the swing factor?',
+          ai_prompt: 'Q1 Actuals: UK ₹12M, DE ₹8M, FR ₹6M, SA ₹4M. Growth assumptions: UK +8%, DE +5%, FR +12%, SA -6%. Build Q2 bottom-up forecast, calculate portfolio variance vs a simple +5% top-down assumption, identify the biggest forecast risk, and recommend hedging strategy.',
+          tags: ['Forecasting', 'Bottom-Up', 'Driver-Based', 'Portfolio Planning']
+        },
+        {
+          id: 's2m2', title: 'Reconciliation: Zero False Breaks',
+          concept: 'Reconciliation matches two data sources to find discrepancies. ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. A match = same ID + amount within tolerance. A break has four types: Amount Break (same ID, different amount), Missing in A (exists in ERP, not in Bank), Missing in B (exists in Bank, not in ERP), Duplicate (ID appears multiple times). Priority: Missing > Amount Break > Duplicate.',
+          example: 'Month-end close: ERP showed ₹85.2M in payments. Bank showed ₹83.7M. ₹1.5M gap. Manual reconciliation: 3 days. Fincy: 30 seconds. Root causes found: 2 payments in transit (₹0.8M), 1 reversed but not journaled (₹0.4M), 1 bank charge not recorded (₹0.3M). All resolved before CFO review.',
+          task: 'ERP records: TXN001 ₹15,200, TXN002 ₹8,400, TXN003 ₹22,100, TXN004 ₹6,800. Bank records: TXN001 ₹15,200, TXN002 ₹8,350 (break), TXN003 ₹22,100, TXN005 ₹4,200 (missing in ERP). List all exceptions, categorise them, calculate total exposure, and write the reconciliation commentary.',
+          ai_prompt: 'Reconciliation results: 847 ERP records, 839 Bank records. Matched: 831 (98.1%). Amount Breaks: 8 (total diff ₹23,400). Missing in Bank: 16 (₹84,200). Missing in ERP: 8 (₹31,600). Which exceptions need same-day resolution? Prioritise by financial risk and write the CFO memo.',
+          tags: ['Reconciliation', 'ERP', 'Month-End Close', 'Exception Management']
+        },
+        {
+          id: 's2m3', title: 'Cash Flow Modelling: 13-Week View',
+          concept: 'The 13-week cash flow model is the CFO\'s most critical tool. It forecasts Opening Balance + Operating Cash In - Operating Cash Out + Investing - Financing = Closing Balance, week by week. Runway = Closing Balance / Weekly Burn Rate. Below 8 weeks of runway triggers crisis management. CFOs review this every Monday.',
+          example: 'Startup in MENARP: P&L showed profitable. But 13-week cash model showed Week 9 balance going negative (₹-2.3M). Why: ₹8M tax payment due Week 9, ₹3M capex committed Week 7, but receivables collection only ₹1M/week. CFO acted in Week 1 — negotiated tax deferral, rescheduled capex, accelerated collections. Avoided insolvency.',
+          task: 'Starting balance ₹15M. Weeks 1-4: Weekly collections ₹2.5M, Weekly payments ₹3.2M. Week 5: Tax payment ₹6M. Weeks 6-8: Collections ₹3.8M, Payments ₹2.9M. Week 9: Capex ₹4M. Build the 13-week model, identify the lowest cash point, and recommend 2 interventions.',
+          ai_prompt: 'Cash model: Opening ₹15M. Weeks 1-4: +₹2.5M/-₹3.2M weekly. Week 5: -₹6M tax. Weeks 6-8: +₹3.8M/-₹2.9M. Week 9: -₹4M capex. Weeks 10-13: +₹3M/-₹2.6M. Calculate week-by-week closing balance, identify crisis point, calculate minimum cash buffer needed, and give 3 mitigation strategies with week-by-week impact.',
+          tags: ['Cash Flow', '13-Week Model', 'Liquidity', 'Runway']
+        },
+        {
+          id: 's2m4', title: 'Cost Intelligence: COGS Decomposition',
+          concept: 'COGS has 4 components: Raw Materials, Packaging, Manufacturing Labour, and Overhead Absorption. Each can be decomposed into Rate × Volume. Cost per unit increasing = Rate problem (supplier pricing, FX). Volume without COGS savings = Efficiency problem. Benchmarking each line vs industry peers reveals the biggest opportunity.',
+          example: 'COGS rose ₹4.2M despite volume growing 8%. Decomposition: Raw Materials +₹1.8M (price), Packaging +₹2.1M (new sustainable packaging mandate), Labour +₹0.6M (overtime), Overhead -₹0.3M (efficiency gain). Packaging was the culprit. Alternative supplier evaluation: saved ₹1.4M annualised.',
+          task: 'COGS breakdown: Raw Materials 35% of COGS, Packaging 22%, Labour 18%, Overhead 25%. Total COGS ₹28M. Industry benchmarks: RM 30%, Packaging 18%, Labour 20%, Overhead 22%. Identify which lines are above benchmark, calculate the ₹ gap, and estimate the saving if each line hits benchmark.',
+          ai_prompt: 'COGS ₹28M breakdown: RM 35% (industry 30%), Packaging 22% (industry 18%), Labour 18% (industry 20%), Overhead 25% (industry 22%). Calculate ₹ gap vs benchmark for each line. If you close 50% of the gap on RM and Packaging in 6 months, what is the annualised COGS saving? What EBITDA margin improvement does this deliver on ₹85M revenue?',
+          tags: ['COGS', 'Cost Decomposition', 'Benchmarking', 'Savings']
+        },
+        {
+          id: 's2m5', title: 'Board Pack: CFO Narrative Writing',
+          concept: 'The board pack is not a data dump — it is a decision document. Structure: (1) Executive Summary (1 page, 3 headlines). (2) P&L Performance (actual vs budget vs PY). (3) Cash Position and Outlook. (4) Risks and Mitigations. (5) Decisions Required. Every number needs a narrative: What happened? Why? What are we doing? The best CFO board packs take 10 minutes to read and contain 3 decisions.',
+          example: 'Reckitt MENARP board pack Q3: Headline 1: "Revenue +8% vs budget but EBITDA -320bps due to Egypt FX devaluation — ₹2.1M impact." Headline 2: "Cash position strong at ₹42M; 6.2 months runway." Headline 3: "Decision needed: Approve ₹8M capex for Nigerian warehouse or defer to Q1." Three facts. Three decisions. 12 minutes in board room.',
+          task: 'Write the Executive Summary for this data: Revenue ₹48M actual vs ₹52M budget (A₹4M). EBITDA 16.2% vs 19.8% budget. Cash ₹18M, down from ₹24M. Key risk: Supplier contract renewal in 60 days. Write 3 headline statements and 2 decisions required from the board.',
+          ai_prompt: 'Board pack input: Revenue ₹48M vs budget ₹52M (-7.7%). EBITDA 16.2% vs 19.8% budget (-360bps). Cash ₹18M down from ₹24M. Supplier contract expires in 60 days. Write a CFO-quality Executive Summary: 3 headline statements (each max 25 words), root cause analysis, 2 board decisions required, and forward outlook for next quarter.',
+          tags: ['Board Pack', 'CFO Communication', 'Narrative', 'Executive Summary']
+        },
+        {
+          id: 's2m6', title: 'Pricing Strategy: The Margin Lever',
+          concept: 'A 1% price increase on ₹100M revenue = ₹1M incremental profit, assuming zero volume impact. But pricing has elasticity: % Volume Change / % Price Change. In FMCG, elasticity ranges from -0.3 (inelastic, essentials) to -2.8 (elastic, discretionary). Optimal price = maximize Revenue × Margin, not just volume. Underpricers leave money on the table. Overpricers lose market share.',
+          example: 'Dettol India: Price elasticity estimated at -0.6. Price increase from ₹85 to ₹92 (+8.2%). Expected volume decline: 8.2% × 0.6 = -4.9%. Actual decline: -3.2% (lower than expected, brand strength). Net Revenue impact: +₹3.8M. Gross Margin improved 180bps. Optimal price confirmed.',
+          task: 'Product: ₹500 price, 50,000 units, COGS ₹200. Elasticity -0.8. Model: What is Revenue and Contribution Margin at ₹480, ₹500, ₹520, ₹540? At which price is Total Contribution maximised? Show the decision matrix.',
+          ai_prompt: 'Pricing model: Current ₹500, 50,000 units, COGS ₹200, elasticity -0.8. Calculate Revenue, Volume, and Contribution Margin at price points ₹460, ₹480, ₹500, ₹520, ₹540, ₹560. Identify the optimal price for contribution maximisation. What is the breakeven volume at ₹540? Present as a CFO recommendation.',
+          tags: ['Pricing', 'Elasticity', 'Contribution Margin', 'Revenue Optimisation']
+        }
+      ]
+    },
+    {
+      id: 's3',
+      name: 'Stage 3: AI Decision Lab',
+      color: '#60a5fa',
+      sub: 'Apply AI to real CFO decisions. Learn to prompt AI for CFO-quality output, build decision models, and use Fincy Intelligence to analyse real data.',
+      modules: [
+        {
+          id: 's3m1', title: 'Prompt Engineering for CFO Insights',
+          concept: 'Prompt engineering for finance is not about asking questions — it is about giving AI the right role, data, constraints, and output format. Structure: ROLE + CONTEXT + DATA + QUESTION + FORMAT. Bad prompt: "Analyse my P&L." Good prompt: "Act as CFO of a ₹200M FMCG company. Q3 data: Revenue ₹48M, GM 44%, EBITDA 16%. Budget: Revenue ₹52M, GM 48%, EBITDA 20%. Identify the 3 biggest margin risks and give specific action steps with ₹ impact for Q4."',
+          example: 'FP&A analyst at a GCC used a generic prompt: "What is wrong with my margins?" Response: generic 5-paragraph essay, no numbers. Same analyst used CFO prompt structure with actual data. Response: 3 specific actions, ₹ impact for each, 30-day timeline. Saved 3 hours of analysis. Used in board pack same day.',
+          task: 'Rewrite this weak prompt into a CFO-quality prompt: "My revenue is down. What should I do?" Include: role, company context, specific numbers you would provide, desired output format (max 5 bullet points with ₹ impact), and time horizon.',
+          ai_prompt: 'Act as a senior FP&A coach. Evaluate this prompt for CFO-quality output: [USER INPUT]. Score it 1-10 on: specificity, role clarity, data richness, output format, and actionability. Rewrite it to score 9+. Explain each improvement made.',
+          tags: ['Prompt Engineering', 'AI CFO', 'LLM Strategy', 'Output Quality']
+        },
+        {
+          id: 's3m2', title: 'Scenario Modelling with AI',
+          concept: 'Scenario modelling builds 3 futures: Base (most likely), Bull (best case), Bear (worst case). For each: define the key driver assumption, calculate P&L impact, calculate cash impact, and identify the trigger point (when do you switch playbooks). AI accelerates this from 3 days to 3 hours.',
+          example: 'MENARP region scenario model for FY2026: Base: 8% revenue growth, EBITDA 18%. Bull: 14% growth (Nigeria stabilises), EBITDA 21%. Bear: 2% growth (Egypt FX devaluation -20%), EBITDA 12%. Trigger: If Egypt revenue <₹8M in Q1, activate cost-reduction playbook immediately.',
+          task: 'Build a 3-scenario model for a ₹200M business. Base assumption: 8% growth, COGS 42% of revenue, OPEX ₹18M fixed. Bull scenario: 15% growth, COGS 40% (scale efficiency). Bear scenario: -3% growth, COGS 46% (input cost inflation). Calculate Revenue, Gross Profit, EBITDA for each. Which scenario triggers a restructuring decision?',
+          ai_prompt: 'Scenario analysis: ₹200M base revenue. Base: +8% growth, COGS 42%, OPEX ₹18M. Bull: +15%, COGS 40%. Bear: -3%, COGS 46%. Calculate EBITDA for all 3 scenarios. Define the EBITDA threshold that triggers a cost restructuring. Build a decision matrix: which 2 early indicators most reliably predict the Bear scenario 90 days early?',
+          tags: ['Scenario Planning', 'Modelling', 'Bull/Bear/Base', 'Risk Management']
+        },
+        {
+          id: 's3m3', title: 'AI-Driven Cost Optimisation',
+          concept: 'AI cost optimisation works in 4 steps: (1) Classify costs as Fixed, Variable, or Semi-variable. (2) Identify costs above industry benchmark. (3) Model the saving if each above-benchmark cost hits benchmark. (4) Sequence actions by ease × impact. AI can process 1,000 cost lines in seconds and surface the top 3 opportunities.',
+          example: 'Supply chain OPEX review: 847 cost lines. AI identified: Logistics costs 18% of revenue vs 12% benchmark (₹5.1M saving opportunity). Temporary labour 11% of COGS vs 7% benchmark (₹2.8M). Packaging waste 4% of COGS vs 2% benchmark (₹1.4M). Total: ₹9.3M annual saving. Prioritised logistics first (₹5.1M, 6-month payback).',
+          task: 'Cost audit: Logistics ₹12M (revenue ₹85M), Temp Labour ₹8M (COGS ₹38M), Packaging ₹6M. Industry benchmarks: Logistics 10% of revenue, Temp Labour 15% of COGS, Packaging 5% of revenue. Calculate gap vs benchmark in ₹ and %. Rank by saving potential. Write the cost optimisation recommendation.',
+          ai_prompt: 'Cost optimisation: Logistics ₹12M vs ₹85M revenue (14.1% vs benchmark 10%), Temp Labour ₹8M vs ₹38M COGS (21% vs benchmark 15%), Packaging ₹6M vs ₹85M revenue (7% vs benchmark 5%). Calculate ₹ saving if each hits benchmark. Rank by: (a) ₹ impact, (b) ease of achievement (1-5 scale). Build a 6-month action plan with milestone targets.',
+          tags: ['Cost Optimisation', 'Benchmarking', 'AI Analysis', 'ROI']
+        },
+        {
+          id: 's3m4', title: 'Working Capital Optimisation',
+          concept: 'Working capital = Current Assets - Current Liabilities. Optimisation targets 3 levers: (1) Reduce DSO: faster collection, early payment discounts, factoring. (2) Reduce DIO: demand forecasting, safety stock reduction, SKU rationalisation. (3) Increase DPO: negotiate longer payment terms, use supply chain financing. Each 10-day improvement in CCC on ₹100M revenue releases ~₹2.7M cash.',
+          example: 'Unilever Australia: CCC was 68 days (DSO 52, DIO 62, DPO 46). Initiatives: (1) Extended DPO to 60 days with 20 suppliers (DPO +14 days, ₹12M cash released). (2) Safety stock reduction via demand AI (DIO -8 days, ₹7M). (3) Early payment discount for top 5 distributors (DSO -6 days, ₹5.3M). Total cash released: ₹24.3M in 12 months.',
+          task: 'Company: Revenue ₹180M, COGS ₹90M. Receivables ₹36M, Inventory ₹28M, Payables ₹18M. Calculate current CCC. Target: DSO 35d (currently ?), DIO 50d (currently ?), DPO 55d (currently ?). Calculate cash released if all 3 targets are hit simultaneously. What is the priority sequence?',
+          ai_prompt: 'Working capital optimisation: Revenue ₹180M, COGS ₹90M, Receivables ₹36M, Inventory ₹28M, Payables ₹18M. Calculate current CCC. FMCG benchmarks: DSO 32d, DIO 45d, DPO 60d. Calculate cash trapped vs benchmark. Build a 12-month WC improvement roadmap: sequence of initiatives, ₹ cash release per quarter, and total cash unlocked by month 12.',
+          tags: ['Working Capital', 'CCC', 'DSO', 'DPO', 'Cash Release']
+        },
+        {
+          id: 's3m5', title: 'Make vs Buy: The Strategic Cost Decision',
+          concept: 'Make vs Buy analysis compares: In-house cost per unit (Fixed + Variable) vs Supplier cost per unit, factoring quality, lead time, IP risk, and strategic value. Break-even volume = Fixed Cost / (Supplier Price - Variable Cost). Below break-even: Buy. Above: Make. But strategic factors can override — never outsource your core competitive advantage.',
+          example: 'FMCG company: In-house manufacturing: Fixed cost ₹8M/year, Variable ₹180/unit. External supplier: ₹240/unit. Break-even: ₹8M / (₹240-₹180) = 133,333 units. Current volume: 85,000 units. Decision: Buy (below break-even by 48,333 units). But — supplier is in single country (supply chain risk). Hybrid decision: outsource 60%, keep 40% in-house for resilience.',
+          task: 'Decision: Make or Buy new product line. Make: ₹5M fixed investment, ₹150/unit variable, capacity 60,000 units. Buy: ₹200/unit from supplier, no fixed cost. Current forecast: 40,000 units Year 1, 65,000 Year 2, 80,000 Year 3. Calculate break-even. What is the NPV of Make vs Buy over 3 years at 12% discount rate?',
+          ai_prompt: 'Make vs Buy: Make option: ₹5M fixed, ₹150/unit variable, capacity 60,000. Buy: ₹200/unit. Volumes: Y1 40,000, Y2 65,000, Y3 80,000. Discount rate 12%. Calculate: (1) break-even volume, (2) annual profit comparison for each year, (3) NPV of Make vs Buy, (4) sensitivity analysis — what supplier price makes Buy always inferior? Recommend with confidence level.',
+          tags: ['Make vs Buy', 'NPV', 'Break-Even', 'Strategic Finance']
+        }
+      ]
+    },
+    {
+      id: 's4',
+      name: 'Stage 4: Wealth Builder System',
+      color: '#a78bfa',
+      sub: 'Apply institutional finance thinking to personal wealth. Build investing fluency, use AI for personal financial decisions, and create a personal CFO operating system.',
+      modules: [
+        {
+          id: 's4m1', title: 'Your Personal P&L and Balance Sheet',
+          concept: 'Run your personal finances like a CFO. Personal P&L: Income (salary + side income) minus Expenses (fixed + variable) = Personal EBITDA. Personal Balance Sheet: Assets (savings, investments, property) minus Liabilities (loans, credit card) = Net Worth. Track monthly. Improve quarterly. Goal: Personal EBITDA positive and growing.',
+          example: 'FP&A analyst earning ₹1.2L/month: Fixed expenses ₹45K (rent, EMIs), Variable ₹28K (food, transport, lifestyle). Personal EBITDA: ₹47K/month. But: ₹15L in savings (0% real return in savings account), ₹8L in FDs (6.5%). Net Worth: ₹23L. CFO diagnosis: Underinvesting. Target: Move ₹10L from savings to equity + debt mix. Projected net worth in 5 years: ₹62L vs ₹31L if stayed in savings.',
+          task: 'Your financials: Monthly income ₹1.5L. Fixed costs: Rent ₹22K, EMI ₹18K, Insurance ₹5K. Variable: Food ₹12K, Transport ₹8K, Entertainment ₹10K, Shopping ₹15K. Build your personal P&L. Calculate Personal EBITDA margin. Identify one variable cost to cut by 30% and model the 12-month savings impact.',
+          ai_prompt: 'Personal finance CFO: Monthly income ₹1.5L. Fixed: Rent ₹22K, EMI ₹18K, Insurance ₹5K. Variable: Food ₹12K, Transport ₹8K, Entertainment ₹10K, Shopping ₹15K. Calculate Personal EBITDA margin. Build a 5-year net worth projection assuming 30% savings rate invested in 60:40 equity:debt mix at 13%:7% average return. What is the 10-year net worth at this rate?',
+          tags: ['Personal Finance', 'Net Worth', 'Personal P&L', 'Budgeting']
+        },
+        {
+          id: 's4m2', title: 'Investment Portfolio: CFO Framework',
+          concept: 'Portfolio construction follows the same logic as business capital allocation: Risk (Volatility/Beta) × Return (Expected CAGR) × Liquidity. Asset classes: Equity (high return, high risk), Debt (moderate return, low risk), Gold (hedge, uncorrelated), Real Estate (illiquid, inflation hedge), Cash (zero risk, negative real return). Rule: Never hold more cash than 3 months of expenses.',
+          example: 'Finance professional, age 32, ₹40L corpus: Allocation: Equity 60% (₹24L): Index fund 40% + sectoral 20%. Debt 25% (₹10L): PPF + corporate bonds. Gold 10% (₹4L): Sovereign Gold Bonds. Cash 5% (₹2L): Emergency fund. Projected 10-year corpus at 12% blended: ₹1.24 Cr. Same in savings account at 4%: ₹59L. Difference: ₹65L.',
+          task: 'You have ₹25L to invest. Age 28. Risk appetite: moderate. Goal: ₹1Cr in 15 years. Calculate required CAGR. Propose allocation across 4 asset classes. Calculate projected corpus at proposed allocation assuming equity 13% CAGR, debt 7%, gold 9%, cash 4%. Does it reach ₹1Cr? If not, what adjustment is needed?',
+          ai_prompt: 'Portfolio planning: ₹25L corpus, age 28, goal ₹1Cr in 15 years, moderate risk. Calculate required CAGR to hit goal. Propose optimal allocation across equity/debt/gold/cash. Calculate 15-year projected corpus at proposed allocation. If target is missed, give 3 options: (1) higher allocation to equity, (2) additional monthly SIP amount, (3) extended time horizon. Show maths for each.',
+          tags: ['Portfolio', 'Asset Allocation', 'CAGR', 'Wealth Building']
+        },
+        {
+          id: 's4m3', title: 'AI for Personal Financial Decisions',
+          concept: 'The personal finance AI framework evaluates every major decision through 3 lenses: (1) Affordability (can I afford it without impacting emergency fund?), (2) Opportunity Cost (what does this ₹ not invested cost me in 10 years?), (3) Strategic Fit (does this decision move me toward my 10-year financial goal?). Fincy\'s Personal Finance module applies this framework in 60 seconds.',
+          example: 'Finance manager wanted to buy a ₹12L car (full payment). AI CFO analysis: (1) Affordability: Yes, has ₹28L savings. (2) Opportunity Cost: ₹12L invested at 13% CAGR = ₹41.8L in 10 years. Lost: ₹29.8L. (3) Strategic Fit: Goal is ₹1Cr corpus in 12 years — this delays by 14 months. Decision: Buy on 70% car loan (EMI ₹18K/month = 12% of income), invest remaining ₹8.4L. Net cost: ₹3.6L interest saved ₹29.8L opportunity cost.',
+          task: 'Decision: Should you buy a ₹18L car outright or on a 5-year loan at 9% interest? Your savings: ₹32L. Monthly income: ₹1.8L. EMI on 100% loan: ₹37,000/month. Emergency fund needed: ₹3L. Investment target: ₹20K/month SIP. Run the affordability, opportunity cost, and strategic fit analysis. What is your decision?',
+          ai_prompt: 'Personal finance decision: ₹18L car purchase. Savings ₹32L, income ₹1.8L/month. Option A: Full cash payment. Option B: 20% down + 5yr loan at 9% (EMI ₹37,000). Emergency fund requirement: ₹3L. SIP target: ₹20K/month. Calculate: (1) Opportunity cost of Option A over 5 years at 13% equity return, (2) Total interest cost of Option B, (3) Net wealth impact of each option at year 5 and year 10. Which maximises 10-year net worth?',
+          tags: ['Personal Decisions', 'Opportunity Cost', 'AI CFO', 'Loan vs Cash']
+        },
+        {
+          id: 's4m4', title: 'Tax Optimisation: The Finance Professional\'s Edge',
+          concept: 'In India, Section 80C (₹1.5L), NPS 80CCD(1B) (₹50K), HRA, LTA, and standard deduction (₹75K under new regime) are the primary tax levers. Old regime favours those with high deductions. New regime favours those with fewer deductions but cleaner. Rule of thumb: If total deductions < ₹3.75L, new regime is better. Tax saved = Cash in hand.',
+          example: 'Finance professional earning ₹18L CTC. Old regime: 80C ₹1.5L, NPS ₹50K, HRA ₹1.8L, LTA ₹40K, Standard ₹50K. Total deductions: ₹4.7L. Taxable income: ₹13.3L. Tax: ₹2.27L. New regime: Standard ₹75K only. Taxable: ₹17.25L. Tax: ₹2.85L. Old regime saves ₹58,000. Decision: Old regime. File NPS immediately.',
+          task: 'CTC: ₹22L. Basic: ₹11L, HRA: ₹4.4L (rent paid: ₹20K/month, city: metro). 80C investments: ₹1.2L. NPS: not yet invested. Standard deduction both regimes. Calculate tax under old and new regime. How much tax can you save by investing ₹30K in NPS under 80CCD(1B)? What is the after-tax hourly rate you are earning?',
+          ai_prompt: 'Tax optimisation: CTC ₹22L, Basic ₹11L, HRA ₹4.4L, rent paid ₹20K/month (metro). 80C ₹1.2L invested. Calculate: (1) Tax under old regime with maximum HRA exemption, (2) Tax under new regime, (3) Additional saving from NPS ₹50K, (4) Optimal regime decision with breakeven deduction level, (5) 3 additional tax optimisation moves available this financial year.',
+          tags: ['Tax', '80C', 'NPS', 'Old vs New Regime', 'India Tax']
+        },
+        {
+          id: 's4m5', title: 'FIRE Planning: Financial Independence',
+          concept: 'FIRE (Financial Independence, Retire Early): Corpus needed = Annual Expenses / Safe Withdrawal Rate (4%). Rule: Save 25× your annual expenses. Reach corpus → financially independent (work becomes optional). Accelerators: (1) Increase savings rate (2) Reduce target expenses (3) Increase return. Time to FIRE = f(Savings Rate, Return). At 50% savings rate + 12% return: ~17 years.',
+          example: 'Finance analyst, 30 years old, monthly expenses ₹60K. Annual expenses: ₹7.2L. FIRE corpus needed: ₹7.2L / 0.04 = ₹1.8 Cr. Current corpus: ₹18L. Monthly savings: ₹40K → ₹4.8L/year. At 13% CAGR, FIRE achieved in 18 years = age 48. To reach age 45: needs ₹55K/month savings (52% savings rate). Possible with side income from Fincy.',
+          task: 'Monthly expenses: ₹75,000. Current corpus: ₹25L. Monthly savings: ₹55,000. Expected return: 12% CAGR. Calculate: (1) FIRE corpus needed, (2) years to FIRE at current savings rate, (3) what monthly savings achieves FIRE in 15 years from now, (4) impact of side income of ₹25,000/month on FIRE timeline.',
+          ai_prompt: 'FIRE planning: Monthly expenses ₹75K, corpus ₹25L, monthly savings ₹55K, return 12% CAGR. Calculate FIRE corpus (4% SWR). Model years to FIRE. Sensitivity analysis: impact on FIRE date of (a) increasing savings by ₹10K/month, (b) expense reduction to ₹60K/month, (c) return increasing to 14%. Which lever moves the date most? Build a year-by-year corpus growth table for the next 20 years.',
+          tags: ['FIRE', 'Financial Independence', 'Retirement Planning', 'Savings Rate']
+        }
+      ]
+    },
+    {
+      id: 's5',
+      name: 'Stage 5: Certification — AI Finance Professional',
+      color: '#c9a84c',
+      isCert: true,
+      sub: 'Real business case examination. 15 questions across MCQ, scenario analysis, and AI prompt challenges. Pass at 70% to earn your Fincy AI Finance Professional certificate.',
+      questions: [
+        { type: 'mcq', q: 'An FMCG company reports Revenue +12% YoY but EBITDA margin down from 22% to 17%. The most likely root cause is:', options: ['Volume decline in core markets', 'Trade Promotion spend increase or input cost inflation', 'FX headwinds on reported numbers', 'Management change causing operational disruption'], correct: 1, explanation: 'Revenue growing with EBITDA declining signals cost pressure below the revenue line — most commonly Trade Promo overspend or COGS inflation.' },
+        { type: 'mcq', q: 'Cash Conversion Cycle = ?', options: ['DSO + DPO - DIO', 'DIO + DSO - DPO', 'DPO - DSO + DIO', 'DSO × DIO / DPO'], correct: 1, explanation: 'CCC = DIO + DSO - DPO. Higher CCC = more cash trapped in operations. Target: minimise CCC.' },
+        { type: 'mcq', q: 'A product has Price Elasticity of -1.4. If you raise price 10%, volume will change by approximately:', options: ['+14%', '-14%', '-10%', '+10%'], correct: 1, explanation: 'Elasticity = % Volume Change / % Price Change. Volume Change = -1.4 × 10% = -14%.' },
+        { type: 'mcq', q: 'Trade Promotion ROI of 0.6 means:', options: ['Every ₹1 of promo generates ₹1.60 of incremental contribution', 'Every ₹1 of promo destroys ₹0.40 of value', 'The promotion is at breakeven', 'Volume uplift was 60% of baseline'], correct: 1, explanation: 'TP ROI = Incremental Contribution / TP Spend. ROI of 0.6 means for every ₹1 spent, only ₹0.60 of contribution is generated — destroying ₹0.40 of value per rupee spent.' },
+        { type: 'mcq', q: 'In a 13-week cash flow model, which event should trigger immediate CFO action?', options: ['Week 6 closing balance drops 15% below Week 1', 'Projected closing balance turns negative in any week', 'Total outflows exceed inflows for 2 consecutive weeks', 'Cash runway drops below 26 weeks'], correct: 1, explanation: 'Any week with a negative projected closing balance signals insolvency risk. Immediate action is required — not waiting for it to happen.' },
+        { type: 'scenario', q: 'SCENARIO: You are CFO of an FMCG company. Q3 results: Revenue ₹48M (Budget ₹52M). EBITDA 14.2% (Budget 19.8%). Cash ₹12M, down from ₹22M. Two major observations: (1) Trade Promo was ₹8.4M vs budget ₹5.2M. (2) Receivables grew from 38 days to 62 days. Write your analysis: What happened? Why? What are your 3 immediate actions? What will you tell the board?', placeholder: 'Write your CFO analysis here — include root causes, ₹ impact, 3 actions, and board message…' },
+        { type: 'mcq', q: 'Make vs Buy break-even volume formula when choosing to manufacture in-house:', options: ['Fixed Cost ÷ (Selling Price - Variable Cost)', 'Fixed Cost ÷ (Supplier Price - In-house Variable Cost)', 'Total Cost ÷ Units', 'Revenue ÷ Contribution Margin'], correct: 1, explanation: 'Break-even = Fixed Cost / (Supplier Price - In-house Variable Cost). Above this volume, manufacturing in-house is cheaper.' },
+        { type: 'mcq', q: 'Gross Margin declined from 52% to 44% while Revenue grew 8%. The most diagnostic next question is:', options: ['What is the headcount trend?', 'Which cost line within COGS grew faster than revenue?', 'What is the DSO trend?', 'Did advertising spend increase?'], correct: 1, explanation: 'GM decline with revenue growth is always a COGS problem. The diagnostic question is which COGS component (RM, packaging, labour, overhead) drove the increase.' },
+        { type: 'mcq', q: 'A 1% price increase on ₹200M revenue with zero volume elasticity impact generates:', options: ['₹200K additional profit', '₹2M additional profit', '₹20M additional profit', 'Depends on COGS structure'], correct: 1, explanation: '1% of ₹200M = ₹2M. With zero volume impact and no cost change, this flows entirely to profit. Price is the highest-leverage margin lever.' },
+        { type: 'scenario', q: 'PROMPT CHALLENGE: You have been asked to analyse why EBITDA dropped from 20% to 14% in one quarter. Revenue was flat. Write a CFO-quality AI prompt that would extract: (1) Root cause analysis, (2) Specific cost line investigation, (3) Recovery actions with ₹ impact, (4) Board communication draft. Your prompt must include role, data structure, and desired output format.', placeholder: 'Write your AI prompt here — make it CFO-quality, specific, and structured…' },
+        { type: 'mcq', q: 'FIRE corpus for someone with annual expenses of ₹9L using the 4% Safe Withdrawal Rate:', options: ['₹36L', '₹225L', '₹180L', '₹360L'], correct: 1, explanation: 'FIRE corpus = Annual Expenses / 4% = ₹9L / 0.04 = ₹225L (₹2.25 Crore).' },
+        { type: 'mcq', q: 'In working capital optimisation, which lever releases cash most immediately?', options: ['Reduce DIO (inventory days) by improving demand forecasting', 'Increase DPO (extend supplier payment terms)', 'Reduce DSO (collect receivables faster)', 'All three have equal immediate impact'], correct: 2, explanation: 'DSO reduction releases cash fastest — chasing existing receivables is immediate. DPO extension requires supplier negotiation. DIO reduction requires demand planning changes (slower).' },
+        { type: 'scenario', q: 'REAL CASE: Unilever India reports: Gross Revenue ₹8,200 Cr, Trade Discounts ₹1,640 Cr, Net Revenue ₹6,560 Cr, COGS ₹2,886 Cr, Distribution ₹394 Cr, Marketing ₹984 Cr, Admin ₹262 Cr, EBIT ₹2,034 Cr. Calculate: (1) Net Revenue Margin, (2) Gross Margin on Net Revenue, (3) EBITDA margin (assume D&A ₹180 Cr), (4) Trade Discount as % of Gross Revenue. Benchmark each against FMCG industry norms and identify what stands out.', placeholder: 'Show your calculations and CFO interpretation…' },
+        { type: 'mcq', q: 'Portfolio variance analysis: Actual Revenue ₹42M, 84,000 units. Budget: ₹46M, 92,000 units at ₹500. Actual average price: ₹500. Total variance is ₹-4M. The price variance is:', options: ['₹-4M (Adverse)', '₹0 (Neutral)', '₹+4M (Favourable)', 'Cannot be calculated without product mix'], correct: 1, explanation: 'Price variance = (Actual Price - Budget Price) × Actual Volume = (₹500 - ₹500) × 84,000 = ₹0. The entire ₹4M variance is volume variance: (84,000 - 92,000) × ₹500 = -₹4M.' },
+        { type: 'scenario', q: 'FINAL CASE — Board Decision: You are presenting to the board. Two options: (A) Invest ₹15M in new warehouse — expected to reduce logistics cost by ₹3M/year, 5-year payback. (B) Invest ₹15M in AI-powered demand forecasting — expected to reduce inventory by ₹8M (one-time cash release) and reduce waste by ₹2M/year. Discount rate 12%. Calculate NPV for both options and make a recommendation. Include your assumptions and sensitivity analysis.', placeholder: 'Show your NPV calculations, assumptions, sensitivity analysis, and board recommendation…' }
+      ]
+    }
+  ]
+};
+
+/* ── Progress system (localStorage) ─────────────────────────────────── */
+function lhGetProgress(){
+  try{ return JSON.parse(localStorage.getItem('fincy_lh')||'{}'); }catch(e){return {};}
+}
+function lhSaveProgress(p){
+  try{ localStorage.setItem('fincy_lh',JSON.stringify(p)); }catch(e){}
+}
+function lhMarkDone(modId){
+  var p=lhGetProgress(); p[modId]=true; lhSaveProgress(p); lhUpdateBar();
+}
+function lhIsDone(modId){ return !!lhGetProgress()[modId]; }
+function lhTotalDone(){
+  var p=lhGetProgress(); var n=0;
+  LH_COURSE.stages.forEach(function(s){ if(s.modules) s.modules.forEach(function(m){ if(p[m.id])n++; }); });
+  return n;
+}
+function lhTotalModules(){
+  var n=0; LH_COURSE.stages.forEach(function(s){ if(s.modules) n+=s.modules.length; }); return n;
+}
+function lhUpdateBar(){
+  var done=lhTotalDone(), total=lhTotalModules();
+  var pct=total?Math.round(done/total*100):0;
+  var fill=document.getElementById('lh-bar-fill');
+  var label=document.getElementById('lh-bar-label');
+  var resumeBtn=document.getElementById('lh-resume-btn');
+  if(fill) fill.style.width=pct+'%';
+  if(label) label.textContent=done+' / '+total+' modules  ('+pct+'%)';
+  if(resumeBtn) resumeBtn.style.display=done>0?'inline-block':'none';
+}
+function lhResume(){
+  var p=lhGetProgress();
+  for(var si=0;si<LH_COURSE.stages.length-1;si++){
+    var s=LH_COURSE.stages[si];
+    if(!s.modules)continue;
+    for(var mi=0;mi<s.modules.length;mi++){
+      if(!p[s.modules[mi].id]){ lhShowStage(si); setTimeout(function(sIdx,mIdx){return function(){lhOpenModule(sIdx,mIdx);};}(si,mi),200); return; }
+    }
+  }
+  lhShowStage(4);
+}
+function lhStartFresh(){
+  lhShowStage(0);
+  document.getElementById('learning').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── Current state ────────────────────────────────────────────────────── */
+var LH_CURRENT_STAGE = 0;
+var LH_CURRENT_MOD   = -1;
+
+/* ── Stage renderer ──────────────────────────────────────────────────── */
+function lhShowStage(idx){
+  LH_CURRENT_STAGE=idx;
+  LH_CURRENT_MOD=-1;
+  // Update tabs
+  document.querySelectorAll('.lh-tab').forEach(function(t,i){ t.classList.toggle('active',i===idx); });
+  // Hide module detail and cert
+  document.getElementById('lh-module-detail').style.display='none';
+  document.getElementById('lh-cert-panel').style.display='none';
+  document.getElementById('tutorWidget').style.display='none';
+  var panel=document.getElementById('lh-stage-panel');
+  var s=LH_COURSE.stages[idx];
+  if(s.isCert){ panel.style.display='none'; document.getElementById('lh-cert-panel').style.display='block'; lhRenderCert(); return; }
+  panel.style.display='block';
+  var p=lhGetProgress();
+  var done=s.modules.filter(function(m){return p[m.id];}).length;
+  var locked=idx>0 && lhGetProgress()['stage_'+(idx-1)+'_done']===undefined && done===0;
+  var html='<div class="lh-stage-hd"><div class="lh-stage-name">'+s.name+'</div><div class="lh-stage-sub">'+s.sub+'</div><div class="lh-stage-prog">'+done+' of '+s.modules.length+' modules completed</div></div>';
+  if(locked){
+    html+='<div style="background:var(--s);border:1px solid var(--b);padding:24px;text-align:center;"><div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Stage Locked</div><div style="font-size:0.8rem;color:var(--text2);">Complete the previous stage to unlock.</div></div>';
+  } else {
+    html+='<div class="lh-mod-grid">';
+    s.modules.forEach(function(m,i){
+      var isDone=!!p[m.id];
+      html+='<div class="lh-mod-card'+(isDone?' done':'')+'" style="--lc:'+s.color+'" onclick="lhOpenModule('+idx+','+i+')">'
+        +'<div class="lh-mod-num">'+s.id.toUpperCase()+' · Module '+(i+1)+'</div>'
+        +'<div class="lh-mod-title">'+m.title+'</div>'
+        +'<div class="lh-mod-desc">'+m.concept.substring(0,120)+'…</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:10px;">'
+        +m.tags.map(function(t){return '<span class="learn-tag">'+t+'</span>';}).join('')
+        +'</div></div>';
+    });
+    html+='</div>';
+  }
+  panel.innerHTML=html;
+}
+
+/* ── Module detail renderer ──────────────────────────────────────────── */
+function lhOpenModule(stageIdx, modIdx){
+  LH_CURRENT_MOD=modIdx;
+  var s=LH_COURSE.stages[stageIdx];
+  var m=s.modules[modIdx];
+  document.getElementById('lh-stage-panel').style.display='none';
+  var detail=document.getElementById('lh-module-detail');
+  detail.style.display='block';
+  document.getElementById('lh-mod-stage-label').textContent=s.name+' · Module '+(modIdx+1)+' of '+s.modules.length;
+  var isDone=lhIsDone(m.id);
+  var html='<div style="border-left:3px solid '+s.color+';padding-left:18px;margin-bottom:20px;">'
+    +'<div style="font-family:\'Playfair Display\',serif;font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:4px;">'+m.title+'</div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:5px;">'
+    +m.tags.map(function(t){return '<span class="learn-tag">'+t+'</span>';}).join('')
+    +'</div></div>';
+  html+='<div class="lh-detail-box" style="border-left-color:'+s.color+'"><div class="lh-detail-label">Concept</div><div class="lh-detail-text">'+m.concept+'</div></div>';
+  html+='<div class="lh-detail-box" style="border-left-color:#4ade80"><div class="lh-detail-label">Real-World Example</div><div class="lh-detail-text">'+m.example+'</div></div>';
+  html+='<div class="lh-detail-box" style="border-left-color:#60a5fa"><div class="lh-detail-label">Your Task</div><div class="lh-detail-text" style="margin-bottom:10px;">'+m.task+'</div>'
+    +'<textarea class="lh-task-input" id="lh-task-'+m.id+'" placeholder="Work through the task here. Show your calculations and reasoning…"></textarea></div>';
+  html+='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">'
+    +'<button onclick="lhAskCFO(\''+m.id+'\')" class="btn-gold" style="border:none;padding:10px 22px;font-size:0.65rem;cursor:pointer;">Ask AI CFO →</button>'
+    +'<button onclick="lhMarkDoneAndNext('+stageIdx+','+modIdx+')" class="btn-ghost" style="padding:10px 22px;font-size:0.65rem;">'+(isDone?'✓ Completed — Next Module →':'Mark Complete + Next →')+'</button>'
+    +(modIdx>0?'<button onclick="lhOpenModule('+stageIdx+','+(modIdx-1)+')" class="btn-ghost" style="padding:10px 22px;font-size:0.65rem;">← Previous</button>':'')
+    +'</div>';
+  html+='<div id="lh-cfo-output-'+m.id+'" style="display:none;margin-top:16px;"></div>';
+  document.getElementById('lh-mod-content').innerHTML=html;
+  detail.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function lhMarkDoneAndNext(stageIdx, modIdx){
+  var m=LH_COURSE.stages[stageIdx].modules[modIdx];
+  lhMarkDone(m.id);
+  lhUpdateBar();
+  var s=LH_COURSE.stages[stageIdx];
+  var allDone=s.modules.every(function(mod){return lhIsDone(mod.id);});
+  if(allDone){ var p=lhGetProgress(); p['stage_'+stageIdx+'_done']=true; lhSaveProgress(p); }
+  if(modIdx<s.modules.length-1){ lhOpenModule(stageIdx,modIdx+1); }
+  else if(stageIdx<LH_COURSE.stages.length-1){ lhShowStage(stageIdx+1); }
+  else { lhShowStage(4); }
+}
+
+function lhCloseModule(){
+  document.getElementById('lh-module-detail').style.display='none';
+  document.getElementById('lh-stage-panel').style.display='block';
+  document.getElementById('tutorWidget').style.display='none';
+  lhShowStage(LH_CURRENT_STAGE);
+}
+
+function lhAskCFO(modId){
+  var stageIdx=LH_CURRENT_STAGE, modIdx=LH_CURRENT_MOD;
+  var m=LH_COURSE.stages[stageIdx].modules[modIdx];
+  var userInput=document.getElementById('lh-task-'+modId);
+  var userText=userInput?userInput.value.trim():'';
+  var fullPrompt=m.ai_prompt+(userText?'\n\nStudent analysis: '+userText:'');
+  var outDiv=document.getElementById('lh-cfo-output-'+modId);
+  outDiv.style.display='block';
+  outDiv.innerHTML='<div class="ai-box" style="line-height:1.85;"><span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;">AI CFO analysing…</span></div>';
+  document.getElementById('tutorWidget').style.display='block';
+  document.getElementById('tutorLabel').textContent='AI CFO — '+m.title;
+  var msgs=document.getElementById('tutorMessages');
+  msgs.innerHTML='';
+  addMsg('Analysing: '+m.title,'ai');
+  var inp=document.getElementById('tutorInput');
+  inp.value=fullPrompt;
+  sendTutor();
+  inp.value='';
+  outDiv.style.display='none';
+  document.getElementById('tutorWidget').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── Certification renderer ──────────────────────────────────────────── */
+var CERT_ANSWERS={};
+var CERT_SUBMITTED=false;
+
+function lhRenderCert(){
+  var s=LH_COURSE.stages[4];
+  CERT_ANSWERS={}; CERT_SUBMITTED=false;
+  var html='<div class="lh-stage-hd"><div class="lh-stage-name">'+s.name+'</div><div class="lh-stage-sub">'+s.sub+'</div></div>';
+  html+='<div style="background:var(--s);border:1px solid var(--b);border-left:3px solid var(--gold);padding:18px 22px;margin-bottom:24px;font-size:0.78rem;color:var(--text2);line-height:1.75;">'
+    +'<strong style="color:var(--gold);">Instructions:</strong> 15 questions — MCQ (auto-scored), Scenario Analysis (AI-evaluated), and Prompt Challenges. Pass mark: 70%. '
+    +'Complete all questions before submitting. Your certificate is generated on screen and downloadable. Time: no limit — quality matters.'
+    +'</div>';
+  s.questions.forEach(function(q,i){
+    html+='<div class="cert-q" id="cert-q-'+i+'">'
+      +'<div class="cert-q-num">Question '+(i+1)+' of '+s.questions.length+' &nbsp;·&nbsp; '+(q.type==='mcq'?'Multiple Choice':q.type==='scenario'?'Scenario Analysis':'Prompt Challenge')+'</div>'
+      +'<div class="cert-q-text">'+q.q+'</div>';
+    if(q.type==='mcq'){
+      q.options.forEach(function(opt,oi){
+        html+='<div class="cert-opt" id="cert-opt-'+i+'-'+oi+'" onclick="certSelect('+i+','+oi+')">'+
+          '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.6rem;color:var(--text3);flex-shrink:0;">'+String.fromCharCode(65+oi)+'.</span>'+opt+'</div>';
+      });
+    } else {
+      html+='<textarea class="cert-textarea" id="cert-ans-'+i+'" placeholder="'+q.placeholder+'" rows="5"></textarea>';
+    }
+    html+='<div id="cert-exp-'+i+'" style="display:none;margin-top:8px;font-size:0.74rem;color:var(--text3);border-left:2px solid var(--gold);padding-left:10px;"></div>';
+    html+='</div>';
+  });
+  html+='<div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">'
+    +'<button onclick="certSubmit()" class="btn-gold" style="padding:12px 28px;font-size:0.7rem;border:none;cursor:pointer;">Submit for Certificate →</button>'
+    +'<button onclick="lhShowStage(0)" class="btn-ghost" style="padding:12px 28px;font-size:0.7rem;">← Back to Modules</button>'
+    +'</div>'
+    +'<div id="cert-result" style="display:none;margin-top:28px;"></div>';
+  document.getElementById('lh-cert-content').innerHTML=html;
+}
+
+function certSelect(qIdx,optIdx){
+  if(CERT_SUBMITTED)return;
+  CERT_ANSWERS[qIdx]=optIdx;
+  var q=LH_COURSE.stages[4].questions[qIdx];
+  q.options.forEach(function(_,oi){
+    var el=document.getElementById('cert-opt-'+qIdx+'-'+oi);
+    if(el) el.classList.toggle('selected',oi===optIdx);
+  });
+}
+
+function certSubmit(){
+  var s=LH_COURSE.stages[4];
+  var name=prompt('Enter your full name for the certificate:','');
+  if(!name||!name.trim()){alert('Please enter your name to generate the certificate.');return;}
+  name=name.trim();
+  CERT_SUBMITTED=true;
+  var correct=0, total=0, mcqTotal=0;
+  s.questions.forEach(function(q,i){
+    if(q.type==='mcq'){
+      mcqTotal++;
+      var ans=CERT_ANSWERS[i];
+      var isCorrect=(ans===q.correct);
+      if(isCorrect)correct++;
+      q.options.forEach(function(_,oi){
+        var el=document.getElementById('cert-opt-'+i+'-'+oi);
+        if(!el)return;
+        el.classList.remove('selected');
+        if(oi===q.correct) el.classList.add('correct');
+        else if(oi===ans && !isCorrect) el.classList.add('wrong');
+      });
+      var exp=document.getElementById('cert-exp-'+i);
+      if(exp){exp.style.display='block';exp.textContent='Explanation: '+q.explanation;}
+    }
+  });
+  var scenarioAnswered=0;
+  s.questions.forEach(function(q,i){
+    if(q.type!=='mcq'){
+      var ta=document.getElementById('cert-ans-'+i);
+      if(ta&&ta.value.trim().length>30)scenarioAnswered++;
+    }
+  });
+  var scenarioTotal=s.questions.filter(function(q){return q.type!=='mcq';}).length;
+  var scenarioScore=scenarioTotal>0?Math.round(scenarioAnswered/scenarioTotal*100):100;
+  var mcqScore=mcqTotal>0?Math.round(correct/mcqTotal*100):0;
+  var blendedScore=Math.round(mcqScore*0.6+scenarioScore*0.4);
+  var passed=blendedScore>=70;
+  var uid='FINCY-'+new Date().getFullYear()+'-'+Math.random().toString(36).substr(2,6).toUpperCase();
+  var resultDiv=document.getElementById('cert-result');
+  if(passed){
+    resultDiv.innerHTML='<div style="background:var(--s);border:2px solid var(--gold);padding:40px;text-align:center;position:relative;">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>'
+      +'<div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.52rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Certificate of Achievement</div>'
+      +'<div style="font-family:\'Playfair Display\',serif;font-size:0.9rem;color:var(--text2);margin-bottom:6px;">This certifies that</div>'
+      +'<div style="font-family:\'Playfair Display\',serif;font-size:2rem;font-weight:700;color:var(--white);margin-bottom:6px;">'+name+'</div>'
+      +'<div style="font-family:\'Playfair Display\',serif;font-size:0.9rem;color:var(--text2);margin-bottom:20px;">has successfully completed</div>'
+      +'<div style="font-family:\'Playfair Display\',serif;font-size:1.2rem;font-weight:700;color:var(--gold);margin-bottom:6px;">AI Finance Professional</div>'
+      +'<div style="font-size:0.8rem;color:var(--text2);margin-bottom:20px;">Fincy Intelligence · Decision Intelligence &amp; AI Learning for Finance</div>'
+      +'<div style="display:flex;justify-content:center;gap:40px;margin-bottom:20px;flex-wrap:wrap;">'
+      +'<div><div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);">Score</div><div style="font-family:\'Playfair Display\',serif;font-size:1.6rem;font-weight:700;color:var(--green);">'+blendedScore+'%</div></div>'
+      +'<div><div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);">Certificate ID</div><div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.8rem;color:var(--gold);">'+uid+'</div></div>'
+      +'<div><div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.46rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text3);">Issued</div><div style="font-family:\'IBM Plex Mono\',monospace;font-size:0.8rem;color:var(--text2);">'+new Date().toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'})+'</div></div>'
+      +'</div>'
+      +'<div style="font-size:0.7rem;color:var(--text3);margin-bottom:20px;">Jitendra Parida · Founder, Fincy Intelligence · Senior FP&amp;A Analyst, IBM/Reckitt</div>'
+      +'<button onclick="certDownload(\''+name+'\',\''+uid+'\','+blendedScore+')" class="btn-gold" style="border:none;padding:12px 28px;font-size:0.65rem;cursor:pointer;margin-right:10px;">Download Certificate →</button>'
+      +'<button onclick="certShare(\''+name+'\',\''+uid+'\','+blendedScore+')" class="btn-ghost" style="padding:12px 28px;font-size:0.65rem;">Share on LinkedIn →</button>'
+      +'</div>';
+    var p=lhGetProgress(); p.certified=uid; p.certName=name; p.certScore=blendedScore; lhSaveProgress(p);
+  } else {
+    resultDiv.innerHTML='<div style="background:var(--s);border:1px solid var(--red);padding:32px;text-align:center;">'
+      +'<div style="font-family:\'Playfair Display\',serif;font-size:1.4rem;font-weight:700;color:var(--white);margin-bottom:8px;">Score: '+blendedScore+'% — Not Passed</div>'
+      +'<div style="font-size:0.82rem;color:var(--text2);margin-bottom:16px;">Pass mark is 70%. MCQ score: '+mcqScore+'%. Review incorrect answers above, revisit the relevant modules, and retake the assessment.</div>'
+      +'<button onclick="lhRenderCert()" class="btn-gold" style="border:none;padding:10px 22px;font-size:0.65rem;cursor:pointer;margin-right:10px;">Retake Assessment →</button>'
+      +'<button onclick="lhShowStage(0)" class="btn-ghost" style="padding:10px 22px;font-size:0.65rem;">Review Modules →</button>'
+      +'</div>';
+  }
+  resultDiv.style.display='block';
+  resultDiv.scrollIntoView({behavior:'smooth'});
+}
+
+function certDownload(name,uid,score){
+  var w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><title>Fincy Certificate — '+name+'</title>'
+    +'<style>body{font-family:Georgia,serif;background:#0a0a08;color:#e8e2d4;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;}'
+    +'.cert{border:2px solid #c9a84c;padding:60px;max-width:700px;width:90%;text-align:center;position:relative;}'
+    +'.cert::before{content:"";position:absolute;top:8px;left:8px;right:8px;bottom:8px;border:1px solid rgba(201,168,76,0.3);pointer-events:none;}'
+    +'</style></head><body><div class="cert">'
+    +'<div style="font-family:monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c9a84c;margin-bottom:24px;">Certificate of Achievement</div>'
+    +'<div style="font-size:16px;color:#a09880;margin-bottom:8px;">This certifies that</div>'
+    +'<div style="font-size:38px;font-weight:700;color:#fafaf8;margin:12px 0;">'+name+'</div>'
+    +'<div style="font-size:16px;color:#a09880;margin-bottom:16px;">has successfully completed</div>'
+    +'<div style="font-size:22px;font-weight:700;color:#c9a84c;margin-bottom:6px;">AI Finance Professional</div>'
+    +'<div style="font-size:14px;color:#a09880;margin-bottom:32px;">Fincy Intelligence · Decision Intelligence & AI Learning for Finance</div>'
+    +'<div style="display:flex;justify-content:center;gap:60px;margin-bottom:28px;">'
+    +'<div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#5a5648;">Score</div><div style="font-size:28px;font-weight:700;color:#4ade80;">'+score+'%</div></div>'
+    +'<div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#5a5648;">Certificate ID</div><div style="font-size:14px;font-family:monospace;color:#c9a84c;">'+uid+'</div></div>'
+    +'<div><div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#5a5648;">Date</div><div style="font-size:14px;font-family:monospace;color:#a09880;">'+new Date().toLocaleDateString('en-IN',{year:'numeric',month:'long'})+'</div></div>'
+    +'</div>'
+    +'<div style="font-size:12px;color:#5a5648;">Jitendra Parida · Founder, Fincy Intelligence · Senior FP&A Analyst, IBM/Reckitt</div>'
+    +'</div></body></html>');
+  w.document.close();
+  w.print();
+}
+
+function certShare(name,uid,score){
+  var text=encodeURIComponent('I just earned the AI Finance Professional certificate from @FincyIntelligence! Score: '+score+'% | Certificate: '+uid+' | AI + FP&A skills for the future of finance. #FPandA #AIFinance #FincyIntelligence');
+  var url=encodeURIComponent('https://jitenparida95.github.io/fincy-intelligence/');
+  window.open('https://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+encodeURIComponent('AI Finance Professional Certificate')+'&summary='+text,'_blank');
+}
+
+/* ── AI Tutor (preserved + enhanced) ────────────────────────────────── */
 function openTutor(question){
   var w=document.getElementById('tutorWidget');
   w.style.display='block';
   w.scrollIntoView({behavior:'smooth',block:'nearest'});
-  if(question){
-    document.getElementById('tutorInput').value=question;
-    sendTutor();
-  }
+  if(question){ document.getElementById('tutorInput').value=question; sendTutor(); }
 }
 function closeTutor(){
   document.getElementById('tutorWidget').style.display='none';
@@ -1250,34 +1787,44 @@ function addMsg(text,role){
   msgs.scrollTop=msgs.scrollHeight;
   return div;
 }
+
+var LH_DEMO_RESPONSES={
+  'ebitda':'EBITDA = Revenue - COGS - OPEX (before Interest, Tax, D&A). EBITDA margin = EBITDA / Net Revenue × 100. FMCG benchmark: 15-25%. Below 12% triggers board concern. Key insight: if revenue is growing but EBITDA is shrinking, you have a cost problem — most likely COGS inflation, trade promo overspend, or fixed cost leverage not working at the current scale.',
+  'variance':'Variance = Actual - Budget. Decompose into: Price Variance = (Actual Price - Budget Price) × Actual Volume. Volume Variance = (Actual Volume - Budget Volume) × Budget Price. Mix Variance = (Actual Mix - Budget Mix) × Contribution Rate. Root cause 90% of the time: volume (market conditions), price (competitive pressure), or cost (input inflation). Never blame "FX" without quantifying the ₹ impact.',
+  'cash flow':'Cash flow and profit diverge when: receivables grow (you sell but don\'t collect), inventory builds (you buy but don\'t sell), or when working capital expands faster than the business. The 13-week cash model is the CFO\'s most important tool. Cash Runway = Cash Balance / Weekly Burn Rate. Below 8 weeks: crisis management. Below 4 weeks: existential risk.',
+  'reconciliation':'Reconciliation matches two data sources. Exception types: (1) Amount Break — same ID, different amount — investigate immediately. (2) Missing in A — in source B but not A — possible unrecorded liability. (3) Missing in B — in A but not B — possible timing difference or error. Priority: resolve by ₹ value, not by count.',
+  'fire':'FIRE corpus = Annual Expenses ÷ 4% (Safe Withdrawal Rate) = 25 × Annual Expenses. At 50% savings rate and 12% return: FIRE in ~17 years. Each 1% increase in savings rate reduces time to FIRE by ~8 months. The most powerful lever: earn more, not spend less — because earning scales, frugality has a floor.',
+  'trade promo':'TP ROI = Incremental Contribution ÷ TP Spend. ROI > 1.0 = accretive. Below 1.0 = destroying value. Most FMCG companies run 30-40% of promos with ROI < 0.8. Fix: (1) Set minimum ROI threshold of 1.2. (2) Require pre-promotion modelling. (3) Post-evaluation within 2 weeks. (4) Eliminate all ROI < 1.0 promos immediately.',
+  'pricing':'Price elasticity measures volume sensitivity to price change. Elasticity = % Volume Change / % Price Change. Essentials: -0.2 to -0.6 (inelastic). Discretionary: -1.5 to -3.0 (elastic). Optimal pricing = price that maximises Total Contribution = Revenue × Contribution Margin. Do not optimise for volume. Do not optimise for revenue. Optimise for contribution.',
+  'ccc':'Cash Conversion Cycle = DIO + DSO - DPO. DIO (Days Inventory Outstanding) = Inventory / (COGS/365). DSO (Days Sales Outstanding) = Receivables / (Revenue/365). DPO (Days Payable Outstanding) = Payables / (COGS/365). Each 10-day reduction in CCC on ₹100M revenue releases ~₹2.7M cash. Levers: collect faster (DSO), hold less stock (DIO), pay slower (DPO).',
+  'working capital':'Working capital trap: profitable company runs out of cash because cash is stuck in receivables and inventory. Solution: (1) Reduce DSO — early payment discounts, factoring, stricter credit terms. (2) Reduce DIO — demand forecasting, safety stock reduction, SKU rationalisation. (3) Increase DPO — negotiate longer supplier terms, supply chain financing. Target: CCC < 45 days for FMCG.',
+  'board pack':'CFO board pack structure: (1) Executive Summary — 3 headlines, each max 25 words. (2) P&L vs Budget vs PY. (3) Cash position and 13-week outlook. (4) Top 3 risks with mitigation status. (5) Decisions required. Golden rule: every number needs a narrative (what, why, so what). The best board packs create 3 decisions in 15 minutes — not confusion over data.'
+};
+
 async function sendTutor(){
   var inp=document.getElementById('tutorInput');
-  var q=inp.value.trim();if(!q)return;
+  var q=inp.value.trim(); if(!q)return;
   inp.value='';
   addMsg(q,'user');
-  var thinking=addMsg('◆ thinking…','ai');
-  thinking.style.fontFamily='IBM Plex Mono, monospace';
-  thinking.style.fontSize='0.6rem';
+  var thinking=addMsg('◆ analysing…','ai');
+  thinking.style.fontFamily='IBM Plex Mono,monospace';
+  thinking.style.fontSize='0.58rem';
   thinking.style.color='var(--text3)';
-  // Fallback demo responses if no API key
-  var demoResponses={
-    'will ai replace':'AI will not replace FP&A analysts — it will replace FP&A analysts who don\'t use AI. The skills that become premium: knowing which questions to ask, interpreting AI output critically, and building tools. Your job shifts from doing analysis to directing it. The analysts who adapt fastest will command 2–3x salary within 5 years.',
-    'groq vs gpt':'For Finance use cases: Groq runs Llama 3.1 with the fastest inference available — responses in under 2 seconds. GPT-4 is more capable but slower and more expensive. For FP&A tasks like variance analysis, reconciliation commentary, and cash flow narrative, Llama 3.1 on Groq is excellent and cost-effective. GPT-4 is better for complex multi-step reasoning.',
-    '30-day':'Week 1: Learn what LLMs are and try prompting ChatGPT/Claude with your actual variance data. Week 2: Use Fincy Intelligence on your real P&L CSV — all 7 modules. Week 3: Write 5 custom AI prompts for your specific finance tasks. Week 4: Automate one repetitive report using AI. By Day 30 you\'ll have saved 3+ hours and have a skill most finance professionals don\'t have yet.',
-    'automate month':'Month-end automation starts with identifying what you do manually: (1) Data consolidation — use Python/Excel macros or AI agents. (2) Variance commentary — prompt an LLM with your actuals vs budget numbers and ask for a CFO-ready narrative. (3) Reconciliation — use Fincy\'s reconciliation module instead of manual ERP vs Bank matching. (4) Report generation — AI can write the board pack narrative from bullet points you provide. Start with step 2 — it\'s zero technical skill and saves 2 hours immediately.',
-    'top 5':'Top 5 AI skills for Finance in 2026: (1) Prompt Engineering — extracting CFO-quality analysis from AI with precise prompts. (2) AI Tool Building — basic Streamlit or Python skills to build your own dashboards. (3) Data Automation — using AI to clean, consolidate, and reconcile financial data. (4) LLM Literacy — understanding model capabilities and limitations so you don\'t trust wrong outputs. (5) AI Workflow Design — knowing which tasks to automate vs which need human judgment.',
-    'linkedin':'Finance + AI LinkedIn strategy: Post about specific problems you solved using AI — not generic AI hype. Example: "I spent 4 hours on ERP vs Bank reconciliation every close. I built a tool that does it in 30 seconds. Here\'s how." Specificity wins. Post once a week, minimum. Show the before/after. Your IBM/Reckitt background is credibility — name it explicitly. Build in public: share what you\'re learning, what you\'re building, what failed. That authenticity compounds faster than polished posts.'
-  };
   setTimeout(function(){
     thinking.remove();
-    var qLower=q.toLowerCase();
-    var resp='Great question about finance and AI. The short answer: the finance professionals who invest in AI skills now will have an enormous advantage. Start by applying AI to one specific repetitive task you do today — variance commentary, reconciliation, or report summarisation. That first win builds momentum. Ask me something more specific and I\'ll give you a detailed answer tailored to your situation.';
-    for(var key in demoResponses){
-      if(qLower.includes(key)){resp=demoResponses[key];break;}
-    }
+    var qL=q.toLowerCase();
+    var resp='As your AI CFO tutor: the finance professionals who combine domain expertise with AI fluency will command 2-3x salary premium by 2028. The key is applying AI to real decisions with real data — not theoretical examples. Ask me about a specific concept, case study, calculation, or career question and I will give you a CFO-level answer with specific numbers.';
+    for(var key in LH_DEMO_RESPONSES){ if(qL.includes(key)){resp=LH_DEMO_RESPONSES[key];break;} }
     addMsg(resp,'ai');
-  },1200);
+  },1100);
 }
+
+/* ── Init ────────────────────────────────────────────────────────────── */
+(function(){
+  lhUpdateBar();
+  lhShowStage(0);
+})();
+
 
 /* ── Decision mode & Explain (kept from original) ── */
 var FINCY_DECISIONS={
