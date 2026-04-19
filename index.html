@@ -1602,26 +1602,97 @@ function lhCloseModule(){
   lhShowStage(LH_CURRENT_STAGE);
 }
 
+/* ── Groq key — paste your key here (free at console.groq.com) ── */
+var FINCY_GROQ_KEY = '';  /* e.g. 'gsk_abc123...' */
+
+function lhCallGroq(systemPrompt, userPrompt, onSuccess, onFallback){
+  /* Groq supports CORS — works directly from browser on static sites */
+  if(!FINCY_GROQ_KEY){
+    onFallback('NO_KEY');
+    return;
+  }
+  fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+FINCY_GROQ_KEY
+    },
+    body:JSON.stringify({
+      model:'llama-3.1-8b-instant',
+      max_tokens:900,
+      temperature:0.25,
+      messages:[
+        {role:'system',content:systemPrompt},
+        {role:'user',content:userPrompt}
+      ]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data&&data.choices&&data.choices[0]&&data.choices[0].message){
+      onSuccess(data.choices[0].message.content);
+    } else if(data&&data.error){
+      onFallback('ERR:'+data.error.message);
+    } else {
+      onFallback('ERR:unexpected');
+    }
+  })
+  .catch(function(e){ onFallback('NET:'+e.message); });
+}
+
 function lhAskCFO(modId){
   var stageIdx=LH_CURRENT_STAGE, modIdx=LH_CURRENT_MOD;
   var m=LH_COURSE.stages[stageIdx].modules[modIdx];
   var userInput=document.getElementById('lh-task-'+modId);
   var userText=userInput?userInput.value.trim():'';
-  var fullPrompt=m.ai_prompt+(userText?'\n\nStudent analysis: '+userText:'');
-  var outDiv=document.getElementById('lh-cfo-output-'+modId);
-  outDiv.style.display='block';
-  outDiv.innerHTML='<div class="ai-box" style="line-height:1.85;"><span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;">AI CFO analysing…</span></div>';
+
+  var systemPrompt='You are a Senior CFO and FP&A advisor with 20 years at FMCG companies including Reckitt and Unilever. '
+    +'Give precise, data-driven answers. Always include: specific ₹ numbers, % calculations, and one concrete 30-day action. '
+    +'Structure every answer as: KEY INSIGHT → CALCULATION → RISK/OPPORTUNITY → ACTION STEP. '
+    +'Be direct. No filler. Reference the exact numbers in the question.';
+
+  var userPrompt = m.ai_prompt;
+  if(userText) userPrompt += '\n\nStudent work to review and build on:\n' + userText;
+
+  /* Show tutor widget */
   document.getElementById('tutorWidget').style.display='block';
   document.getElementById('tutorLabel').textContent='AI CFO — '+m.title;
   var msgs=document.getElementById('tutorMessages');
   msgs.innerHTML='';
-  addMsg('Analysing: '+m.title,'ai');
-  var inp=document.getElementById('tutorInput');
-  inp.value=fullPrompt;
-  sendTutor();
-  inp.value='';
-  outDiv.style.display='none';
+  addMsg(userText ? 'Reviewing your analysis for: '+m.title : 'Running CFO analysis: '+m.title, 'ai');
+  var thinking=addMsg('◆ calculating…','ai');
+  thinking.style.fontFamily='IBM Plex Mono,monospace';
+  thinking.style.fontSize='0.58rem';
+  thinking.style.color='var(--text3)';
   document.getElementById('tutorWidget').scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  lhCallGroq(systemPrompt, userPrompt,
+    function(text){
+      /* Success */
+      thinking.remove();
+      var out=addMsg(text,'ai');
+      out.style.whiteSpace='pre-wrap';
+      var outDiv=document.getElementById('lh-cfo-output-'+modId);
+      if(outDiv){
+        outDiv.style.display='block';
+        outDiv.innerHTML='<div class="ai-box" style="line-height:1.85;white-space:pre-wrap;">'
+          +'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;display:block;margin-bottom:8px;">AI CFO Analysis — '+m.title+'</span>'
+          +text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+      }
+    },
+    function(reason){
+      /* Fallback — show rich demo response */
+      thinking.remove();
+      var demoKey=Object.keys(LH_DEMO_RESPONSES).find(function(k){
+        return m.title.toLowerCase().includes(k) || m.ai_prompt.toLowerCase().includes(k);
+      });
+      var fallback = demoKey ? LH_DEMO_RESPONSES[demoKey] :
+        reason==='NO_KEY'
+          ? '⚙️ To enable live AI CFO answers: open index.html, find FINCY_GROQ_KEY, and paste your free Groq API key (console.groq.com). Until then, here is a direct answer to this module:\n\n'+m.ai_prompt.substring(0,400)
+          : '📡 Connection issue ('+reason+'). Cached answer:\n\n'+m.ai_prompt.substring(0,400);
+      addMsg(fallback,'ai');
+    }
+  );
 }
 
 /* ── Certification renderer ──────────────────────────────────────────── */
@@ -1763,9 +1834,36 @@ function certDownload(name,uid,score){
 }
 
 function certShare(name,uid,score){
-  var text=encodeURIComponent('I just earned the AI Finance Professional certificate from @FincyIntelligence! Score: '+score+'% | Certificate: '+uid+' | AI + FP&A skills for the future of finance. #FPandA #AIFinance #FincyIntelligence');
-  var url=encodeURIComponent('https://jitenparida95.github.io/fincy-intelligence/');
-  window.open('https://www.linkedin.com/shareArticle?mini=true&url='+url+'&title='+encodeURIComponent('AI Finance Professional Certificate')+'&summary='+text,'_blank');
+  /* Step 1: Open the printable certificate in a new tab so user can screenshot it */
+  certDownload(name,uid,score);
+  /* Step 2: After 800ms open LinkedIn compose with pre-filled post text */
+  setTimeout(function(){
+    var post = name+' just earned the AI Finance Professional certificate.\n\n'
+      +'Score: '+score+'% | ID: '+uid+'\n\n'
+      +'Built on real FP&A workflows from IBM/Reckitt and Capgemini/Unilever.\n\n'
+      +'5 stages covering: P&L intelligence, variance analysis, cash flow modelling, AI decision making, and wealth planning.\n\n'
+      +'Platform: Fincy Intelligence — Decision Intelligence & AI Learning for Finance\n'
+      +'jitenparida95.github.io/fincy-intelligence\n\n'
+      +'#AIFinance #FPandA #CFO #FinanceCareer #FincyIntelligence #AILearning';
+    /* Copy to clipboard then open LinkedIn */
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(post).catch(function(){});
+    }
+    var liUrl='https://www.linkedin.com/post/new/?shareUrn='+encodeURIComponent('https://jitenparida95.github.io/fincy-intelligence/')
+      +'&text='+encodeURIComponent(post);
+    window.open(liUrl,'_blank');
+    /* Small notice to user */
+    setTimeout(function(){
+      var res=document.getElementById('cert-result');
+      if(res){
+        var notice=document.createElement('div');
+        notice.style.cssText='margin-top:12px;font-family:IBM Plex Mono,monospace;font-size:0.54rem;color:var(--gold);text-align:center;letter-spacing:0.08em;';
+        notice.textContent='Certificate opened for screenshot · LinkedIn post text copied to clipboard';
+        res.appendChild(notice);
+        setTimeout(function(){if(notice.parentNode)notice.parentNode.removeChild(notice);},4000);
+      }
+    },200);
+  },800);
 }
 
 /* ── AI Tutor (preserved + enhanced) ────────────────────────────────── */
@@ -1801,22 +1899,79 @@ var LH_DEMO_RESPONSES={
   'board pack':'CFO board pack structure: (1) Executive Summary — 3 headlines, each max 25 words. (2) P&L vs Budget vs PY. (3) Cash position and 13-week outlook. (4) Top 3 risks with mitigation status. (5) Decisions required. Golden rule: every number needs a narrative (what, why, so what). The best board packs create 3 decisions in 15 minutes — not confusion over data.'
 };
 
-async function sendTutor(){
+function sendTutor(){
   var inp=document.getElementById('tutorInput');
   var q=inp.value.trim(); if(!q)return;
   inp.value='';
   addMsg(q,'user');
-  var thinking=addMsg('◆ analysing…','ai');
+  var thinking=addMsg('◆ AI CFO analysing…','ai');
   thinking.style.fontFamily='IBM Plex Mono,monospace';
   thinking.style.fontSize='0.58rem';
   thinking.style.color='var(--text3)';
-  setTimeout(function(){
-    thinking.remove();
-    var qL=q.toLowerCase();
-    var resp='As your AI CFO tutor: the finance professionals who combine domain expertise with AI fluency will command 2-3x salary premium by 2028. The key is applying AI to real decisions with real data — not theoretical examples. Ask me about a specific concept, case study, calculation, or career question and I will give you a CFO-level answer with specific numbers.';
-    for(var key in LH_DEMO_RESPONSES){ if(qL.includes(key)){resp=LH_DEMO_RESPONSES[key];break;} }
-    addMsg(resp,'ai');
-  },1100);
+
+  /* Build course-aware context */
+  var courseContext='';
+  if(LH_CURRENT_STAGE>=0 && LH_CURRENT_MOD>=0){
+    var stg=LH_COURSE.stages[LH_CURRENT_STAGE];
+    if(stg && stg.modules){
+      var mod=stg.modules[LH_CURRENT_MOD];
+      if(mod) courseContext='Active module: '+mod.title+'. Concept: '+mod.concept.substring(0,250)+'. Task context: '+mod.task.substring(0,150)+'.';
+    }
+  }
+
+  /* Build compact knowledge base */
+  var kb='Course modules: ';
+  LH_COURSE.stages.forEach(function(s){
+    if(!s.modules)return;
+    s.modules.forEach(function(m){
+      kb+=m.title+' ('+m.tags.join(', ')+') — '+m.concept.substring(0,120)+'. ';
+    });
+  });
+
+  var sys=
+    'You are a world-class CFO and FP&A advisor with 20+ years at FMCG companies including Reckitt, Unilever, P&G and HUL. '
+    +'You are the AI brain of Fincy Intelligence, built by Jitendra Parida, Senior FP&A Analyst at IBM/Reckitt. '
+    +'ANSWER RULES: (1) Check course content first — if the question matches a course topic, use that as your primary source and enrich with your CFO expertise. '
+    +'(2) For any finance question, answer like a high-calibre CFO — precise, data-driven, action-oriented. '
+    +'(3) Always include: specific percentages or rupee figures, an industry benchmark, and one 30-day action step. '
+    +'(4) Structure: KEY INSIGHT | CALCULATION | RISK OR OPPORTUNITY | ACTION STEP. Under 280 words. No filler. '
+    +'(5) Reference Reckitt, Unilever, FMCG, GCC, or supply chain finance examples wherever relevant. '
+    +kb
+    +(courseContext ? ' ' + courseContext : '');
+
+  lhCallGroq(sys, q,
+    function(text){
+      thinking.remove();
+      var out=addMsg(text,'ai');
+      out.style.whiteSpace='pre-wrap';
+    },
+    function(reason){
+      thinking.remove();
+      var qL=q.toLowerCase();
+      var resp='';
+      /* Match course module content */
+      var bestMatch='', bestScore=0;
+      LH_COURSE.stages.forEach(function(s){
+        if(!s.modules)return;
+        s.modules.forEach(function(m){
+          var score=0;
+          var combined=(m.title+' '+m.tags.join(' ')+' '+m.concept.substring(0,200)).toLowerCase();
+          qL.split(' ').forEach(function(w){ if(w.length>3 && combined.includes(w)) score++; });
+          if(score>bestScore){ bestScore=score; bestMatch=m.concept+' Real example: '+m.example.substring(0,200); }
+        });
+      });
+      if(bestScore>=2) resp=bestMatch;
+      /* Demo responses */
+      if(!resp){ for(var key in LH_DEMO_RESPONSES){ if(qL.includes(key)){resp=LH_DEMO_RESPONSES[key];break;} } }
+      /* Final fallback */
+      if(!resp){
+        resp=reason==='NO_KEY'
+          ? 'Add your free Groq API key to FINCY_GROQ_KEY in index.html (get it free at console.groq.com). Without it I use cached answers. Ask about: EBITDA, cash flow, variance, trade promo ROI, reconciliation, pricing elasticity, working capital, FIRE planning — deep CFO answers on all of these.'
+          : 'Ask me about: P&L analysis, EBITDA decomposition, variance root cause, cash flow modelling, working capital, trade promo ROI, pricing strategy, board pack writing, FIRE planning, or AI in finance.';
+      }
+      addMsg(resp,'ai');
+    }
+  );
 }
 
 /* ── Init ────────────────────────────────────────────────────────────── */
