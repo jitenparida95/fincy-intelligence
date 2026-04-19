@@ -1531,13 +1531,17 @@ font-size:0.6rem;letter-spacing:0.1em;color:#4ade80;">
                            merged_out.to_csv(index=False).encode(),
                            "Fincy_Recon_Full.csv", "text/csv")
 
-        # AI CFO — inside the button block so vars are in scope
+        # Store recon context in session_state so AI CFO persists after rerun
         recon_ctx = (f"Reconciliation: {total} records | "
                      f"Matched={matched} ({mrate:.1f}%) | "
                      f"Amount Breaks={breaks} (total diff={t_break:,.0f}) | "
                      f"Missing in B={miss_b} | Missing in A={miss_a} | "
                      f"Key used: {'+'.join([k for k in [mkey,secondary_key,tertiary_key] if k])}")
-        ai_cfo_section(recon_ctx, "recon",
+        st.session_state["recon_ctx"] = recon_ctx
+
+    # ── AI CFO — outside button block so it persists across reruns ───────────
+    if "recon_ctx" in st.session_state:
+        ai_cfo_section(st.session_state["recon_ctx"], "recon",
             "e.g. What caused the missing records? Which breaks need urgent action?")
 
 
