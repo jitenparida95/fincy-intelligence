@@ -1607,21 +1607,64 @@ function lhAskCFO(modId){
   var m=LH_COURSE.stages[stageIdx].modules[modIdx];
   var userInput=document.getElementById('lh-task-'+modId);
   var userText=userInput?userInput.value.trim():'';
-  var fullPrompt=m.ai_prompt+(userText?'\n\nStudent analysis: '+userText:'');
-  var outDiv=document.getElementById('lh-cfo-output-'+modId);
-  outDiv.style.display='block';
-  outDiv.innerHTML='<div class="ai-box" style="line-height:1.85;"><span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;">AI CFO analysing…</span></div>';
+  // Build a rich CFO-level system + user prompt
+  var systemPrompt='You are a Senior CFO and FP&A expert with 20 years of experience in FMCG finance at companies like Reckitt and Unilever. '
+    +'You give precise, data-driven answers with specific numbers, percentages, and ₹ amounts. '
+    +'Format your response with: Key Insight, Calculation/Analysis, Risk or Opportunity, and one concrete Action Step. '
+    +'Be specific — no generic advice. Reference the exact numbers given.';
+  var userPrompt=m.ai_prompt;
+  if(userText) userPrompt+='\n\nStudent has also provided this analysis — review it, correct any errors, and build on it:\n'+userText;
+  // Show tutor widget immediately with thinking state
   document.getElementById('tutorWidget').style.display='block';
   document.getElementById('tutorLabel').textContent='AI CFO — '+m.title;
   var msgs=document.getElementById('tutorMessages');
   msgs.innerHTML='';
-  addMsg('Analysing: '+m.title,'ai');
-  var inp=document.getElementById('tutorInput');
-  inp.value=fullPrompt;
-  sendTutor();
-  inp.value='';
-  outDiv.style.display='none';
+  addMsg(userText?'Reviewing your analysis of: '+m.title:'Analysing: '+m.title,'ai');
+  var thinking=addMsg('◆ AI CFO is calculating…','ai');
+  thinking.style.fontFamily='IBM Plex Mono,monospace';
+  thinking.style.fontSize='0.58rem';
+  thinking.style.color='var(--text3)';
   document.getElementById('tutorWidget').scrollIntoView({behavior:'smooth',block:'nearest'});
+  // Call Anthropic API
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:1000,
+      system:systemPrompt,
+      messages:[{role:'user',content:userPrompt}]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    thinking.remove();
+    var text='';
+    if(data&&data.content&&data.content[0]&&data.content[0].text){
+      text=data.content[0].text;
+    } else if(data&&data.error){
+      text='API error: '+data.error.message;
+    } else {
+      text='Unexpected response format.';
+    }
+    var out=addMsg(text,'ai');
+    out.style.whiteSpace='pre-wrap';
+    // Also show in the module output box
+    var outDiv=document.getElementById('lh-cfo-output-'+modId);
+    if(outDiv){
+      outDiv.style.display='block';
+      outDiv.innerHTML='<div class="ai-box" style="line-height:1.85;white-space:pre-wrap;">'
+        +'<span style="font-family:\'IBM Plex Mono\',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:#4ade80;display:block;margin-bottom:8px;">AI CFO Analysis — '+m.title+'</span>'
+        +text.replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>';
+    }
+  })
+  .catch(function(err){
+    thinking.remove();
+    // Fallback to demo response on network error
+    var fallback=LH_DEMO_RESPONSES[Object.keys(LH_DEMO_RESPONSES).find(function(k){return m.title.toLowerCase().includes(k)||m.ai_prompt.toLowerCase().includes(k);})||'']
+      ||'AI CFO is temporarily offline. Here is a direct answer: '+m.ai_prompt.substring(0,300)+'…';
+    addMsg(fallback,'ai');
+  });
 }
 
 /* ── Certification renderer ──────────────────────────────────────────── */
@@ -1806,17 +1849,49 @@ async function sendTutor(){
   var q=inp.value.trim(); if(!q)return;
   inp.value='';
   addMsg(q,'user');
-  var thinking=addMsg('◆ analysing…','ai');
+  var thinking=addMsg('◆ AI CFO analysing…','ai');
   thinking.style.fontFamily='IBM Plex Mono,monospace';
   thinking.style.fontSize='0.58rem';
   thinking.style.color='var(--text3)';
-  setTimeout(function(){
+  var systemPrompt='You are a Senior CFO and FP&A expert with 20 years of FMCG finance experience at companies like Reckitt and Unilever. '
+    +'You give precise, data-driven answers with specific ₹ numbers and percentages. '
+    +'Keep answers focused, under 250 words, CFO-quality. No padding. Reference exact numbers when given. '
+    +'Structure: Key Insight → Analysis → Action.';
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:600,
+      system:systemPrompt,
+      messages:[{role:'user',content:q}]
+    })
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
     thinking.remove();
+    var text='';
+    if(data&&data.content&&data.content[0]&&data.content[0].text){
+      text=data.content[0].text;
+    } else if(data&&data.error){
+      // API error — fall back to demo
+      var qL=q.toLowerCase();
+      text='';
+      for(var key in LH_DEMO_RESPONSES){ if(qL.includes(key)){text=LH_DEMO_RESPONSES[key];break;} }
+      if(!text) text='AI CFO: '+data.error.message+'. Try rephrasing your question with specific numbers.';
+    }
+    var out=addMsg(text,'ai');
+    out.style.whiteSpace='pre-wrap';
+  })
+  .catch(function(){
+    thinking.remove();
+    // Network fallback — use demo responses
     var qL=q.toLowerCase();
-    var resp='As your AI CFO tutor: the finance professionals who combine domain expertise with AI fluency will command 2-3x salary premium by 2028. The key is applying AI to real decisions with real data — not theoretical examples. Ask me about a specific concept, case study, calculation, or career question and I will give you a CFO-level answer with specific numbers.';
+    var resp='';
     for(var key in LH_DEMO_RESPONSES){ if(qL.includes(key)){resp=LH_DEMO_RESPONSES[key];break;} }
+    if(!resp) resp='As your AI CFO tutor: ask me about EBITDA, cash flow, variance analysis, trade promo ROI, reconciliation, pricing, or any FP&A concept — I will give you a CFO-level answer with specific numbers.';
     addMsg(resp,'ai');
-  },1100);
+  });
 }
 
 /* ── Init ────────────────────────────────────────────────────────────── */
