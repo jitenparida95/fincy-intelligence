@@ -344,7 +344,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
 <nav>
   <a href="#" class="nav-logo">Fincy <em style="color:var(--text2);font-style:normal;font-size:0.9em;">Intelligence</em></a>
   <div class="nav-links">
-    <a href="#features">Platform</a>
+    <a href="#modules">Platform</a>
     <a href="#modules">Modules</a>
     <a href="#learning">Learn</a>
     <a href="#pricing">Pricing</a>
@@ -353,7 +353,6 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   <div class="nav-right">
     <span class="nav-email">jitenparida95@gmail.com</span>
     <button class="btn-ghost" onclick="openModal()">Sign Up Free</button>
-    <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold">Launch App →</a>
   </div>
   <button class="hamburger" id="hamburger" onclick="toggleMob()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -370,7 +369,6 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   <a href="#templates" onclick="toggleMob()">Templates</a>
   <a href="#faq" onclick="toggleMob()">FAQ</a>
   <button class="mob-cta" onclick="toggleMob();openModal();">Sign Up Free</button>
-  <a href="https://fincy-intelligence.streamlit.app/" target="_blank" style="color:var(--gold);border-color:var(--gold);">Launch App →</a>
 </div>
 
 <!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
@@ -390,7 +388,6 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
 
   <div class="hero-btns">
     <button onclick="openModal()" class="btn-gold">Try Free — No Credit Card →</button>
-    <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-ghost">Launch App ↗</a>
   </div>
 
   <div class="stats-row">
@@ -432,57 +429,77 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   </div>
 </div>
 
-<!-- ══ FEATURES ═══════════════════════════════════════════════════════= -->
-<section class="sec" id="features">
-  <div class="ey">Core Capabilities</div>
-  <h2>Built for finance teams.<br><em>Not generic dashboards.</em></h2>
-  <p class="sub">Every feature drawn from real FP&amp;A practice across FMCG, GCC and supply chain finance — IBM, Reckitt, Unilever, ANZ, APAC, MENARP.</p>
-  <div class="feat-grid">
-    <div class="feat">
-      <div class="feat-n">01 / P&amp;L Intelligence</div>
-      <div class="feat-t">Instant P&amp;L Dashboard</div>
-      <div class="feat-d">Revenue, GP, EBITDA, COGS, OPEX — computed instantly from any CSV with benchmark comparisons and board-ready KPI cards.</div>
-      <div class="feat-line"></div>
+<!-- ══ MODULES + AI CFO BRAIN — MERGED ═══════════════════════════════ -->
+<section class="sec" id="modules">
+
+  <div class="ey">Platform · Decision Intelligence</div>
+  <h2>Seven modules. <em>One AI CFO brain.</em></h2>
+  <p class="sub" style="margin-bottom:32px;">Click any module card to launch directly into the app. AI CFO built in — answers in Problem → Insight → Action format.</p>
+
+  <!-- AI CFO Brain decision cards -->
+  <div style="background:var(--s);border:1px solid var(--b);border-left:3px solid var(--gold);padding:26px 26px 20px;margin-bottom:14px;">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">&#9670; AI CFO Brain · Live Decision Signals</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:20px;">
+      <div class="brain-card" style="border-left:3px solid var(--green);">
+        <div class="brain-label" style="color:var(--green);">&#128200; Growth Decision</div>
+        <div class="brain-val">"Cut expenses by 18%"</div>
+        <div class="brain-sub">COGS above benchmark — 3 vendor lines identified</div>
+      </div>
+      <div class="brain-card" style="border-left:3px solid #f97316;">
+        <div class="brain-label" style="color:#f97316;">&#9888; Cash Alert</div>
+        <div class="brain-val">"Cash runway: 5 months"</div>
+        <div class="brain-sub">Accelerate collections · Defer non-critical capex</div>
+      </div>
+      <div class="brain-card" style="border-left:3px solid var(--gold);">
+        <div class="brain-label" style="color:var(--gold);">&#128161; Pricing Opportunity</div>
+        <div class="brain-val">"Increase pricing 12%"</div>
+        <div class="brain-sub">Elasticity model shows low volume risk on top SKUs</div>
+      </div>
+      <div class="brain-card" style="border-left:3px solid var(--green);">
+        <div class="brain-label" style="color:var(--green);">&#9989; Recovery Action</div>
+        <div class="brain-val">"EBITDA recovery +&#8377;8M"</div>
+        <div class="brain-sub">Price + cost actions combined over 90-day horizon</div>
+      </div>
     </div>
-    <div class="feat">
-      <div class="feat-n">02 / AI Engine</div>
-      <div class="feat-t">AI CFO on Demand</div>
-      <div class="feat-d">Ask questions in plain English inside every module. Get CFO-level insights with recommended actions — powered by Groq + Llama 3.1.</div>
-      <div class="feat-line"></div>
-    </div>
-    <div class="feat">
-      <div class="feat-n">03 / Variance</div>
-      <div class="feat-t">Budget vs Actuals</div>
-      <div class="feat-d">RAG-status variance tracker with prior year overlays and trend detection — built directly into FP&amp;A Decision Intelligence.</div>
-      <div class="feat-line"></div>
-    </div>
-    <div class="feat">
-      <div class="feat-n">04 / Reconciliation</div>
-      <div class="feat-t">Auto Reconciliation</div>
-      <div class="feat-d">ERP vs Bank, GL vs Sub-ledger, PO vs Invoice. Composite key matching, flag breaks, download exceptions — zero false positives.</div>
-      <div class="feat-line"></div>
-    </div>
-    <div class="feat">
-      <div class="feat-n">05 / Data Agent</div>
-      <div class="feat-t">Data Analysis Agent</div>
-      <div class="feat-d">Ask anything about any financial dataset in plain English. Auto-profiling, correlation heatmaps, and executive summaries in seconds.</div>
-      <div class="feat-line"></div>
-    </div>
-    <div class="feat">
-      <div class="feat-n">06 / Privacy</div>
-      <div class="feat-t">Session Isolated</div>
-      <div class="feat-d">Your data never leaves your session. No server storage. No cross-tenant leakage. Enterprise-grade privacy — without enterprise pricing.</div>
-      <div class="feat-line"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b);border:1px solid var(--b);">
+      <div style="background:var(--s2);padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:rgba(201,168,76,0.12);line-height:1;flex-shrink:0;-webkit-text-stroke:1px rgba(201,168,76,0.18);">01</span>
+        <div><div style="font-family:'Playfair Display',serif;font-size:0.84rem;font-weight:600;color:var(--white);margin-bottom:3px;">Upload any CSV</div><div style="font-size:0.7rem;color:var(--text2);line-height:1.6;font-weight:300;">P&amp;L, ERP, bank, budget — any column structure. Or use our sample templates.</div></div>
+      </div>
+      <div style="background:var(--s2);padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:rgba(201,168,76,0.12);line-height:1;flex-shrink:0;-webkit-text-stroke:1px rgba(201,168,76,0.18);">02</span>
+        <div><div style="font-family:'Playfair Display',serif;font-size:0.84rem;font-weight:600;color:var(--white);margin-bottom:3px;">AI analyses instantly</div><div style="font-size:0.7rem;color:var(--text2);line-height:1.6;font-weight:300;">Groq + Llama 3.1 detects risks, cost leaks, variance drivers — in under 5 seconds.</div></div>
+      </div>
+      <div style="background:var(--s2);padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">
+        <span style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:rgba(201,168,76,0.12);line-height:1;flex-shrink:0;-webkit-text-stroke:1px rgba(201,168,76,0.18);">03</span>
+        <div><div style="font-family:'Playfair Display',serif;font-size:0.84rem;font-weight:600;color:var(--white);margin-bottom:3px;">Get clear decisions</div><div style="font-size:0.7rem;color:var(--text2);line-height:1.6;font-weight:300;">Cut costs here, protect cash there, raise prices on these SKUs — with expected impact.</div></div>
+      </div>
     </div>
   </div>
-</section>
-<hr class="divider"/>
 
-<!-- ══ MODULES ════════════════════════════════════════════════════════= -->
-<section class="sec" id="modules">
-  <div class="ey">Platform Modules</div>
-  <h2>Seven modules.<br><em>One platform.</em></h2>
-  <p class="sub">AI CFO built into every module — answers in Problem → Insight → Action format. Every module links directly to the app.</p>
+  <!-- Live app embed -->
+  <div class="workspace-chrome" id="workspace" style="margin-bottom:32px;">
+    <div class="workspace-bar">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;"></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.54rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);">AI CFO Workspace — Live</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="openModal()" class="btn-ghost" style="padding:5px 12px;font-size:0.55rem;">Sign Up Free</button>
+      </div>
+    </div>
+    <iframe src="https://fincy-intelligence.streamlit.app/?embed=true" width="100%" height="760" style="border:none;display:block;background:var(--bg);" title="Fincy Intelligence AI CFO Workspace" loading="lazy" allow="clipboard-write"></iframe>
+  </div>
+  <p style="font-size:0.62rem;color:var(--text3);text-align:center;margin-bottom:40px;">Powered by Groq + Llama 3.1 &middot; Your data never leaves your session &middot; Session isolated by design</p>
+
+  <!-- Module cards subheader -->
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--b);">
+    <div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:4px;">Click any module — launches directly in the app</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--white);">7 Modules · Every one AI-powered</div>
+    </div>
+    <button onclick="openModal()" class="btn-gold" style="padding:9px 20px;font-size:0.62rem;">Try All Free &#8594;</button>
+  </div>
 
   <div class="mods-grid">
 
@@ -506,7 +523,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'FP&A Decision Intelligence')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'FP&A Decision Intelligence')">💡 Explain This</button>
       </div>
-      <a href="https://fincy-intelligence.streamlit.app/?m=fpa" target="_blank" class="mod-cta-btn" style="border-color:var(--gold);color:var(--gold);">Launch Module →</a>
+      <button class="mod-cta-btn" style="border-color:var(--gold);color:var(--gold);width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
     </div>
 
     <!-- RECON -->
@@ -529,7 +546,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Reconciliation')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Reconciliation')">💡 Explain This</button>
       </div>
-      <a href="https://fincy-intelligence.streamlit.app/?m=recon" target="_blank" class="mod-cta-btn" style="border-color:#4ade80;color:#4ade80;">Launch Module →</a>
+      <button class="mod-cta-btn" style="border-color:#4ade80;color:#4ade80;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
     </div>
 
     <!-- COST -->
@@ -552,7 +569,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Cost Analysis')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Cost Analysis')">💡 Explain This</button>
       </div>
-      <a href="https://fincy-intelligence.streamlit.app/?m=cost" target="_blank" class="mod-cta-btn" style="border-color:#f97316;color:#f97316;">Launch Module →</a>
+      <button class="mod-cta-btn" style="border-color:#f97316;color:#f97316;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
     </div>
 
     <!-- DATA AGENT -->
@@ -575,7 +592,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Data Analysis')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Data Analysis')">💡 Explain This</button>
       </div>
-      <a href="https://fincy-intelligence.streamlit.app/?m=dataanalyst" target="_blank" class="mod-cta-btn" style="border-color:#22d3ee;color:#22d3ee;">Launch Module →</a>
+      <button class="mod-cta-btn" style="border-color:#22d3ee;color:#22d3ee;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
     </div>
 
     <!-- PERSONAL -->
@@ -598,7 +615,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Personal Finance')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Personal Finance')">💡 Explain This</button>
       </div>
-      <a href="https://fincy-intelligence.streamlit.app/?m=personal" target="_blank" class="mod-cta-btn" style="border-color:#a78bfa;color:#a78bfa;">Launch Module →</a>
+      <button class="mod-cta-btn" style="border-color:#a78bfa;color:#a78bfa;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
     </div>
 
     <!-- CASH FLOW -->
@@ -621,82 +638,10 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyDecisionMode(this,'Cash Flow')">👉 Priority Actions</button>
         <button class="mod-cta-btn" style="border-color:var(--b2);color:var(--text3);font-size:0.52rem;padding:5px 10px;" onclick="fincyExplain(this,'Cash Flow')">💡 Explain This</button>
       </div>
-      <a href="https://fincy-intelligence.streamlit.app/?m=cashflow" target="_blank" class="mod-cta-btn" style="border-color:#06b6d4;color:#06b6d4;">Launch Module →</a>
+      <button class="mod-cta-btn" style="border-color:#06b6d4;color:#06b6d4;width:100%;" onclick="openModal()">Try Free — Sign Up →</button>
     </div>
 
   </div><!-- end mods-grid -->
-
-  <!-- ── AI CFO Brain + How It Works + Live App — all merged ── -->
-  <div style="margin-top:52px;padding-top:44px;border-top:1px solid var(--b);" id="workspace">
-
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
-      <div>
-        <div class="ey" style="margin-bottom:10px;">AI CFO Brain</div>
-        <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:8px;">One system. <em>Every decision.</em></h2>
-        <p style="font-size:0.82rem;color:var(--text2);font-weight:300;max-width:500px;line-height:1.75;">All 7 modules feed into a single unified decision engine. Not just charts — clear actions with expected financial impact, in under 60 seconds.</p>
-      </div>
-      <div style="display:flex;gap:8px;flex-shrink:0;">
-        <button onclick="openModal()" class="btn-ghost" style="padding:9px 18px;font-size:0.62rem;">Sign Up Free</button>
-        <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="padding:9px 18px;font-size:0.62rem;text-decoration:none;">Open App ↗</a>
-      </div>
-    </div>
-
-    <div class="brain-grid" style="margin-bottom:28px;">
-      <div class="brain-card" style="border-left:3px solid var(--green);">
-        <div class="brain-label" style="color:var(--green);">📈 Growth Decision</div>
-        <div class="brain-val">"Cut expenses by 18%"</div>
-        <div class="brain-sub">COGS above benchmark — 3 vendor lines identified</div>
-      </div>
-      <div class="brain-card" style="border-left:3px solid #f97316;">
-        <div class="brain-label" style="color:#f97316;">⚠ Cash Alert</div>
-        <div class="brain-val">"Cash runway: 5 months"</div>
-        <div class="brain-sub">Accelerate collections · Defer non-critical capex</div>
-      </div>
-      <div class="brain-card" style="border-left:3px solid var(--gold);">
-        <div class="brain-label" style="color:var(--gold);">💡 Pricing Opportunity</div>
-        <div class="brain-val">"Increase pricing 12%"</div>
-        <div class="brain-sub">Elasticity model shows low volume risk on top SKUs</div>
-      </div>
-      <div class="brain-card" style="border-left:3px solid var(--green);">
-        <div class="brain-label" style="color:var(--green);">✅ Recovery Action</div>
-        <div class="brain-val">"EBITDA recovery +₹8M"</div>
-        <div class="brain-sub">Price + cost actions combined over 90-day horizon</div>
-      </div>
-    </div>
-
-    <div class="steps" style="margin-bottom:28px;">
-      <div class="step">
-        <div class="step-n">01</div>
-        <div class="step-t">Upload Your Data</div>
-        <div class="step-d">Drop any financial CSV — P&amp;L, ERP, bank statements, budget files. No template required. Or download our sample CSVs below.</div>
-      </div>
-      <div class="step">
-        <div class="step-n">02</div>
-        <div class="step-t">AI Analyses Your Numbers</div>
-        <div class="step-d">Your AI CFO instantly detects risks, cost leaks, cash pressure points, and variance drivers — powered by Groq + Llama 3.1 in under 5 seconds.</div>
-      </div>
-      <div class="step">
-        <div class="step-n">03</div>
-        <div class="step-t">Get Clear Decisions</div>
-        <div class="step-d">Not just charts. Fincy tells you what to do: cut costs here, protect cash there, raise prices on these SKUs — with expected financial impact.</div>
-      </div>
-    </div>
-
-    <div class="workspace-chrome">
-      <div class="workspace-bar">
-        <div style="display:flex;align-items:center;gap:9px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;"></div>
-          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);">AI CFO Workspace — Live</span>
-        </div>
-        <div style="display:flex;gap:8px;">
-          <button onclick="openModal()" class="btn-ghost" style="padding:5px 12px;font-size:0.56rem;">Sign Up Free</button>
-          <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="padding:5px 12px;font-size:0.56rem;text-decoration:none;display:inline-flex;align-items:center;">Open Full App ↗</a>
-        </div>
-      </div>
-      <iframe src="https://fincy-intelligence.streamlit.app/?embed=true" width="100%" height="800" style="border:none;display:block;background:var(--bg);" title="Fincy Intelligence — AI CFO Workspace" loading="lazy" allow="clipboard-write"></iframe>
-    </div>
-    <p style="font-size:0.65rem;color:var(--text3);text-align:center;margin-top:9px;">Powered by Groq + Llama 3.1 · Your data never leaves your session · Session isolated by design</p>
-  </div>
 
 </section>
 
@@ -777,7 +722,8 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <li>PDF &amp; CSV report exports</li>
         <li>Early access to new modules</li>
       </ul>
-      <a href="https://rzp.io/rzp/31aft1h" target="_blank" class="p-btn p-btn-gold" style="text-decoration:none;display:block;">Subscribe via Razorpay →</a>
+      <a href="https://rzp.io/rzp/31aft1h" target="_blank" class="p-btn p-btn-gold" style="text-decoration:none;display:block;text-align:center;">Pay ₹999/month — Razorpay →</a>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:0.46rem;color:var(--text3);text-align:center;margin-top:7px;letter-spacing:0.06em;">UPI · Debit/Credit Cards · NetBanking · Wallets</p>
       <p style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;color:var(--text3);text-align:center;margin-top:8px;">UPI · Debit/Credit Cards · NetBanking · Wallets</p>
     </div>
 
@@ -1072,7 +1018,6 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   <p style="font-size:0.86rem;color:var(--text2);line-height:1.8;max-width:440px;margin:0 auto 28px;font-weight:300;">Upload your P&amp;L CSV. Get your first financial decision in under 60 seconds. No code. No setup. No credit card.</p>
   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
     <button onclick="openModal()" class="btn-gold" style="padding:14px 28px;font-size:0.72rem;">Get Free Access →</button>
-    <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-ghost" style="padding:14px 28px;font-size:0.72rem;">Launch App ↗</a>
   </div>
 </div>
 
@@ -1091,7 +1036,6 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
           <a href="#modules">Modules</a>
           <a href="#learning">Learning Hub</a>
           <a href="#pricing">Pricing</a>
-          <a href="https://fincy-intelligence.streamlit.app/" target="_blank">Launch App ↗</a>
         </div>
       </div>
       <div>
@@ -1157,7 +1101,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
       <span class="modal-success-icon">◆</span>
       <div class="modal-success-title">You're in.</div>
       <div class="modal-success-sub">Taking you to the app now. Use the sample templates to see your AI CFO in action in under 60 seconds.</div>
-      <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="display:inline-block;padding:12px 24px;text-decoration:none;">Open Fincy Intelligence →</a>
+      <button onclick="closeModal()" class="btn-gold" style="display:inline-block;padding:12px 24px;border:none;cursor:pointer;">Got it — Explore Fincy →</button>
     </div>
   </div>
 </div>
