@@ -624,35 +624,80 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
       <a href="https://fincy-intelligence.streamlit.app/?m=cashflow" target="_blank" class="mod-cta-btn" style="border-color:#06b6d4;color:#06b6d4;">Launch Module →</a>
     </div>
 
-  </div>
-</section>
-<hr class="divider"/>
+  </div><!-- end mods-grid -->
 
-<!-- ══ HOW IT WORKS ═══════════════════════════════════════════════════= -->
-<section class="sec" id="how">
-  <div class="ey">How It Works</div>
-  <h2>From CSV to CFO insight<br><em>in 3 steps.</em></h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-n">01</div>
-      <div class="step-t">Upload Your Data</div>
-      <div class="step-d">Drop any financial CSV — P&amp;L, ERP data, bank statements, budget files. No template required. Any column structure works. Or use our sample templates below.</div>
+  <!-- ── AI CFO Brain + How It Works + Live App — all merged ── -->
+  <div style="margin-top:52px;padding-top:44px;border-top:1px solid var(--b);" id="workspace">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+      <div>
+        <div class="ey" style="margin-bottom:10px;">AI CFO Brain</div>
+        <h2 style="font-size:clamp(1.4rem,3vw,2rem);margin-bottom:8px;">One system. <em>Every decision.</em></h2>
+        <p style="font-size:0.82rem;color:var(--text2);font-weight:300;max-width:500px;line-height:1.75;">All 7 modules feed into a single unified decision engine. Not just charts — clear actions with expected financial impact, in under 60 seconds.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button onclick="openModal()" class="btn-ghost" style="padding:9px 18px;font-size:0.62rem;">Sign Up Free</button>
+        <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="padding:9px 18px;font-size:0.62rem;text-decoration:none;">Open App ↗</a>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-n">02</div>
-      <div class="step-t">AI Analyses Your Numbers</div>
-      <div class="step-d">Your AI CFO instantly detects risks, cost leaks, cash pressure points, and variance drivers. Powered by Groq + Llama 3.1 — responses in under 5 seconds.</div>
+
+    <div class="brain-grid" style="margin-bottom:28px;">
+      <div class="brain-card" style="border-left:3px solid var(--green);">
+        <div class="brain-label" style="color:var(--green);">📈 Growth Decision</div>
+        <div class="brain-val">"Cut expenses by 18%"</div>
+        <div class="brain-sub">COGS above benchmark — 3 vendor lines identified</div>
+      </div>
+      <div class="brain-card" style="border-left:3px solid #f97316;">
+        <div class="brain-label" style="color:#f97316;">⚠ Cash Alert</div>
+        <div class="brain-val">"Cash runway: 5 months"</div>
+        <div class="brain-sub">Accelerate collections · Defer non-critical capex</div>
+      </div>
+      <div class="brain-card" style="border-left:3px solid var(--gold);">
+        <div class="brain-label" style="color:var(--gold);">💡 Pricing Opportunity</div>
+        <div class="brain-val">"Increase pricing 12%"</div>
+        <div class="brain-sub">Elasticity model shows low volume risk on top SKUs</div>
+      </div>
+      <div class="brain-card" style="border-left:3px solid var(--green);">
+        <div class="brain-label" style="color:var(--green);">✅ Recovery Action</div>
+        <div class="brain-val">"EBITDA recovery +₹8M"</div>
+        <div class="brain-sub">Price + cost actions combined over 90-day horizon</div>
+      </div>
     </div>
-    <div class="step">
-      <div class="step-n">03</div>
-      <div class="step-t">Get Clear Decisions</div>
-      <div class="step-d">Not just charts. Your AI CFO tells you exactly what to do: cut costs here, protect cash there, raise prices on these SKUs — with expected financial impact.</div>
+
+    <div class="steps" style="margin-bottom:28px;">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-t">Upload Your Data</div>
+        <div class="step-d">Drop any financial CSV — P&amp;L, ERP, bank statements, budget files. No template required. Or download our sample CSVs below.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-t">AI Analyses Your Numbers</div>
+        <div class="step-d">Your AI CFO instantly detects risks, cost leaks, cash pressure points, and variance drivers — powered by Groq + Llama 3.1 in under 5 seconds.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-t">Get Clear Decisions</div>
+        <div class="step-d">Not just charts. Fincy tells you what to do: cut costs here, protect cash there, raise prices on these SKUs — with expected financial impact.</div>
+      </div>
     </div>
+
+    <div class="workspace-chrome">
+      <div class="workspace-bar">
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;"></div>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);">AI CFO Workspace — Live</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="openModal()" class="btn-ghost" style="padding:5px 12px;font-size:0.56rem;">Sign Up Free</button>
+          <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="padding:5px 12px;font-size:0.56rem;text-decoration:none;display:inline-flex;align-items:center;">Open Full App ↗</a>
+        </div>
+      </div>
+      <iframe src="https://fincy-intelligence.streamlit.app/?embed=true" width="100%" height="800" style="border:none;display:block;background:var(--bg);" title="Fincy Intelligence — AI CFO Workspace" loading="lazy" allow="clipboard-write"></iframe>
+    </div>
+    <p style="font-size:0.65rem;color:var(--text3);text-align:center;margin-top:9px;">Powered by Groq + Llama 3.1 · Your data never leaves your session · Session isolated by design</p>
   </div>
-  <div style="text-align:center;margin-top:28px;">
-    <button onclick="openModal()" class="btn-gold" style="padding:12px 26px;font-size:0.7rem;margin-right:10px;">Start Free — No Credit Card →</button>
-    <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-ghost" style="padding:12px 26px;font-size:0.7rem;">Open App ↗</a>
-  </div>
+
 </section>
 
 <!-- ══ QUOTE ══════════════════════════════════════════════════════════= -->
@@ -661,51 +706,6 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
   <div class="q-text">EBITDA is green but <em>cash flow is bleeding.</em><br>Fincy tells you why — before your CFO asks.</div>
   <div class="q-by">Fincy Intelligence · Built by Jitendra Parida · IBM / Reckitt · Capgemini / Unilever</div>
 </div>
-
-<!-- ══ AI BRAIN ═══════════════════════════════════════════════════════= -->
-<section class="sec" id="workspace" style="padding-bottom:56px;">
-  <div class="ey">AI CFO Brain</div>
-  <h2>One system.<br><em>Every decision.</em></h2>
-  <p class="sub" style="margin-bottom:28px;">Combines outputs from all 7 modules — P&amp;L, Cash Flow, Reconciliation, Costs, and more — into a unified financial decision. Not a dashboard. A decision engine.</p>
-
-  <div class="brain-grid">
-    <div class="brain-card" style="border-left:3px solid var(--green);">
-      <div class="brain-label" style="color:var(--green);">📈 Growth Decision</div>
-      <div class="brain-val">"Cut expenses by 18%"</div>
-      <div class="brain-sub">COGS above benchmark — 3 vendor lines identified</div>
-    </div>
-    <div class="brain-card" style="border-left:3px solid #f97316;">
-      <div class="brain-label" style="color:#f97316;">⚠ Cash Alert</div>
-      <div class="brain-val">"Cash runway: 5 months"</div>
-      <div class="brain-sub">Accelerate collections · Defer non-critical capex</div>
-    </div>
-    <div class="brain-card" style="border-left:3px solid var(--gold);">
-      <div class="brain-label" style="color:var(--gold);">💡 Pricing Opportunity</div>
-      <div class="brain-val">"Increase pricing 12%"</div>
-      <div class="brain-sub">Elasticity model shows low volume risk on top SKUs</div>
-    </div>
-    <div class="brain-card" style="border-left:3px solid var(--green);">
-      <div class="brain-label" style="color:var(--green);">✅ Recovery Action</div>
-      <div class="brain-val">"EBITDA recovery +₹8M"</div>
-      <div class="brain-sub">Price + cost actions combined over 90-day horizon</div>
-    </div>
-  </div>
-
-  <div class="workspace-chrome">
-    <div class="workspace-bar">
-      <div style="display:flex;align-items:center;gap:9px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;"></div>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--text2);">AI CFO Workspace — Live</span>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="openModal()" class="btn-ghost" style="padding:5px 12px;font-size:0.56rem;">Sign Up Free</button>
-        <a href="https://fincy-intelligence.streamlit.app/" target="_blank" class="btn-gold" style="padding:5px 12px;font-size:0.56rem;text-decoration:none;display:inline-flex;align-items:center;">Open Full App ↗</a>
-      </div>
-    </div>
-    <iframe src="https://fincy-intelligence.streamlit.app/?embed=true" width="100%" height="800" style="border:none;display:block;background:var(--bg);" title="Fincy Intelligence — AI CFO Workspace" loading="lazy" allow="clipboard-write"></iframe>
-  </div>
-  <p style="font-size:0.65rem;color:var(--text3);text-align:center;margin-top:9px;">Powered by Groq + Llama 3.1 · Your data never leaves your session · Session isolated by design</p>
-</section>
 <hr class="divider"/>
 
 <!-- ══ EARLY ACCESS (replaces fake testimonials) ═══════════════════════ -->
@@ -777,7 +777,7 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
         <li>PDF &amp; CSV report exports</li>
         <li>Early access to new modules</li>
       </ul>
-      <a href="https://rzp.io/l/fincy-analyst" target="_blank" class="p-btn p-btn-gold" style="text-decoration:none;display:block;">Subscribe via Razorpay →</a>
+      <a href="https://rzp.io/rzp/SXkKqxe6" target="_blank" class="p-btn p-btn-gold" style="text-decoration:none;display:block;">Subscribe via Razorpay →</a>
       <p style="font-family:'IBM Plex Mono',monospace;font-size:0.48rem;color:var(--text3);text-align:center;margin-top:8px;">UPI · Debit/Credit Cards · NetBanking · Wallets</p>
     </div>
 
