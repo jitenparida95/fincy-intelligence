@@ -377,6 +377,10 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
 .cert-textarea:focus{border-color:var(--gold);}
 @media(max-width:768px){.lh-mod-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:480px){.lh-mod-grid{grid-template-columns:1fr;}}
+.hero{position:relative;overflow:hidden;}
+.hero-video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.18;pointer-events:none;}
+.hero-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,rgba(10,10,8,0.3) 0%,rgba(10,10,8,0.7) 60%,rgba(10,10,8,1) 100%);z-index:1;pointer-events:none;}
+.hero>*:not(.hero-video):not(.hero-overlay){position:relative;z-index:2;}
 </style>
 </head>
 <body>
@@ -414,6 +418,8 @@ footer{border-top:1px solid var(--b);padding:48px 40px 36px;max-width:1120px;mar
 
 <!-- ══ HERO ══════════════════════════════════════════════════════════════ -->
 <section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline preload="none" src="14471989_3840_2160_30fps.mp4"></video>
+<div class="hero-overlay"></div>
   <div class="hero-ey">Decision Intelligence &amp; AI Learning · Finance</div>
   <h1>Ask Your <em>AI CFO</em><br>What To Do Next.</h1>
   <p class="hero-sub">Upload your financial data. Your AI CFO analyses risks, finds profit leaks, and tells you exactly what to do next — in under 60 seconds. No Excel. No consultant.</p>
