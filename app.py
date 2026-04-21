@@ -2354,6 +2354,189 @@ def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
         return ("AI CFO Engine error: " + err), "UNKNOWN"
 
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# AI CFO ENGINE UPGRADES — Context-Aware, Predictive, Behavioural
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _risk_profile(income, expense, savings, surplus, invest):
+    """Risk score 0-8: LOW / MEDIUM / HIGH."""
+    m_inc      = income / 12 if income > 0 else 1
+    sav_rate   = surplus / m_inc * 100 if m_inc > 0 else 0
+    emerg_mos  = savings / max(expense, 1)
+    spend_pct  = expense / m_inc * 100 if m_inc > 0 else 100
+    invest_pct = invest / max(income, 1) * 100
+    score = 0
+    if sav_rate >= 20:    score += 2
+    elif sav_rate >= 10:  score += 1
+    if emerg_mos >= 6:    score += 2
+    elif emerg_mos >= 3:  score += 1
+    if spend_pct <= 50:   score += 2
+    elif spend_pct <= 65: score += 1
+    if invest_pct >= 10:  score += 2
+    elif invest_pct >= 5: score += 1
+    if score >= 7:   return "LOW RISK",    "#4ade80", score
+    elif score >= 4: return "MEDIUM RISK", "#fbbf24", score
+    else:            return "HIGH RISK",   "#f87171", score
+
+
+def _analyse_spending(expense, fixed, m_income):
+    """Break expense into fixed vs discretionary and flag overruns."""
+    disc     = max(0, expense - fixed)
+    disc_pct = disc / m_income * 100 if m_income > 0 else 0
+    fix_pct  = fixed / m_income * 100 if m_income > 0 else 0
+    flags = []
+    if disc_pct > 30:
+        flags.append(f"Discretionary Rs{disc:,.0f} ({disc_pct:.1f}% of income) — target below 30%")
+    if fix_pct > 50:
+        flags.append(f"Fixed costs Rs{fixed:,.0f} ({fix_pct:.1f}% of income) — dangerously high")
+    if not flags:
+        flags.append(f"Spending structure healthy — discretionary at {disc_pct:.1f}%")
+    return {"fixed": fixed, "fixed_pct": fix_pct,
+            "discretionary": disc, "disc_pct": disc_pct, "flags": flags}
+
+
+def _predict_cashflow(m_income, expense, savings, surplus, months=3):
+    """Project savings at 30/60/90 days. Detect cash drain."""
+    results, run = {}, savings
+    for m in range(1, months + 1):
+        run += surplus
+        results[m * 30] = {
+            "savings":  max(0, run),
+            "burn_days": run / (expense / 30) if expense > 0 else 999,
+        }
+    runway = int(savings / max(expense - m_income, 1) * 30) if expense > m_income else 999
+    scenarios = {
+        "Cut dining 20%":     {"saving": expense * 0.10, "annual": expense * 0.10 * 12},
+        "Stop subscriptions": {"saving": 2000,            "annual": 24000},
+        "Invest surplus":     {"saving": 0, "annual": max(0, surplus) * 12 * 0.08},
+    }
+    return results, runway, scenarios
+
+
+def _generate_budget(m_income, fixed, goal_amount, months_to_goal):
+    """Auto-generate 50/30/20 budget adjusted for the user goal."""
+    needs   = m_income * 0.50
+    wants   = m_income * 0.30
+    save    = m_income * 0.20
+    g_mo    = goal_amount / months_to_goal if months_to_goal > 0 else 0
+    if g_mo > save:
+        wants = max(0, wants - (g_mo - save))
+        save  = g_mo
+    return {
+        "needs": min(needs, m_income - save),
+        "wants": wants, "savings": save, "goal_monthly": g_mo,
+        "buckets": {
+            "Rent / EMI":    min(fixed * 0.6, needs * 0.40),
+            "Groceries":     needs * 0.20,
+            "Transport":     needs * 0.15,
+            "Utilities":     needs * 0.10,
+            "Entertainment": wants * 0.40,
+            "Dining Out":    wants * 0.35,
+            "Personal Care": wants * 0.25,
+            "Investments":   save  * 0.60,
+            "Emergency Fund": save * 0.40,
+        },
+    }
+
+
+def _behaviour_score(expense, fixed, surplus, savings, invest, income):
+    """Financial discipline score 0-100 with badge tier."""
+    m_inc = income / 12 if income > 0 else 1
+    score = 0
+    sr  = surplus / m_inc * 100 if m_inc > 0 else 0
+    em  = savings / max(expense, 1)
+    ip  = invest / max(income, 1) * 100
+    dp  = max(0, expense - fixed) / m_inc * 100 if m_inc > 0 else 100
+    if sr >= 30:   score += 25
+    elif sr >= 20: score += 18
+    elif sr >= 10: score += 10
+    elif sr >= 0:  score += 4
+    if em >= 6:    score += 25
+    elif em >= 3:  score += 15
+    elif em >= 1:  score += 7
+    if ip >= 15:   score += 25
+    elif ip >= 10: score += 17
+    elif ip >= 5:  score += 9
+    if dp <= 20:   score += 25
+    elif dp <= 30: score += 17
+    elif dp <= 40: score += 9
+    score = min(100, score)
+    if score >= 85:   return score, "Elite Saver",     "#c9a84c"
+    elif score >= 70: return score, "Top 15% Saver",   "#4ade80"
+    elif score >= 55: return score, "On Track",         "#818cf8"
+    elif score >= 35: return score, "Building Habits", "#fbbf24"
+    else:             return score, "Needs Action",    "#f87171"
+
+
+def _weekly_planner(m_income, fixed, expense, surplus):
+    """Break monthly budget into 4 weekly targets."""
+    disc = max(0, expense - fixed)
+    wd   = disc / 4
+    ws   = max(0, surplus) / 4
+    weeks = {
+        "Week 1": {"spend": wd * 1.10, "save": ws * 0.90, "note": "Settle bills and fixed costs"},
+        "Week 2": {"spend": wd * 1.00, "save": ws * 1.00, "note": "Track discretionary closely"},
+        "Week 3": {"spend": wd * 0.95, "save": ws * 1.05, "note": "Mid-month review — adjust if over"},
+        "Week 4": {"spend": wd * 0.85, "save": ws * 1.05, "note": "Wind down spending, boost savings"},
+    }
+    return weeks, wd * 4, ws * 4
+
+
+def _goal_planner(goal_text, savings, surplus):
+    """Parse goal text, calculate timeline and monthly requirement."""
+    import re as _re
+    gt = str(goal_text).lower().replace(",", "")
+    goal_amount = 0
+    for pat, mult in [
+        (r"(\d+(?:\.\d+)?)\s*cr(?:ore)?", 1e7),
+        (r"(\d+(?:\.\d+)?)\s*l(?:akh)?",  1e5),
+        (r"(\d+(?:\.\d+)?)\s*k",           1e3),
+        (r"[\u20b9rs]?\s*(\d+(?:\.\d+)?)", 1),
+    ]:
+        m = _re.search(pat, gt)
+        if m:
+            goal_amount = float(m.group(1)) * mult
+            if goal_amount > 1000:
+                break
+    if goal_amount <= 0:
+        return None
+    remaining   = max(0, goal_amount - savings)
+    months_curr = remaining / max(surplus, 1) if surplus > 0 else 999
+    return {
+        "goal_amount":    goal_amount,
+        "already_saved":  min(savings, goal_amount),
+        "remaining":      remaining,
+        "months_current": months_curr,
+        "months_boosted": remaining / max(surplus * 1.25, 1) if surplus > 0 else 999,
+        "on_track":       surplus > 0 and months_curr <= 18,
+    }
+
+
+def _fmt_cfo_card(decision, reason, impact, action):
+    """Standardised Decision | Reason | Impact | Action card."""
+    return (
+        "<div style='background:#101010;border:1px solid #1e1e18;margin-bottom:10px;'>"
+        "<div style='display:grid;grid-template-columns:1fr 1fr;'>"
+        "<div style='padding:10px 14px;border-right:1px solid #1e1e18;border-bottom:1px solid #1e1e18;'>"
+        "<div style='font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.14em;"
+        "text-transform:uppercase;color:#a78bfa;margin-bottom:4px;'>Decision</div>"
+        f"<div style='font-size:0.8rem;color:#e8e2d4;font-weight:600;'>{decision}</div></div>"
+        "<div style='padding:10px 14px;border-bottom:1px solid #1e1e18;'>"
+        "<div style='font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.14em;"
+        "text-transform:uppercase;color:#fbbf24;margin-bottom:4px;'>Reason</div>"
+        f"<div style='font-size:0.78rem;color:#a09880;'>{reason}</div></div>"
+        "<div style='padding:10px 14px;border-right:1px solid #1e1e18;'>"
+        "<div style='font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.14em;"
+        "text-transform:uppercase;color:#4ade80;margin-bottom:4px;'>Impact</div>"
+        f"<div style='font-size:0.78rem;color:#a09880;'>{impact}</div></div>"
+        "<div style='padding:10px 14px;'>"
+        "<div style='font-family:IBM Plex Mono,monospace;font-size:0.44rem;letter-spacing:0.14em;"
+        "text-transform:uppercase;color:#c9a84c;margin-bottom:4px;'>Action Step</div>"
+        f"<div style='font-size:0.78rem;color:#a09880;'>{action}</div></div>"
+        "</div></div>"
+    )
+
 def run_personal():
     with st.sidebar:
         st.markdown("### 💰 Personal Finance")
@@ -2433,7 +2616,7 @@ Supports <strong style="color:#e8e2d4;">K (thousands), lakh, crore</strong> — 
     surplus  = m_income - expense
 
     # ── TAB LAYOUT ────────────────────────────────────────────────────────────
-    tabs = st.tabs(["💬 Decision Engine", "🧾 Tax Advisor", "📈 Wealth Coach", "⚠️ Alerts"])
+    tabs = st.tabs(["💬 Decision Engine", "🧾 Tax Advisor", "📈 Wealth Coach", "⚠️ Alerts", "🎯 Risk Profile", "🔮 Predictions", "💡 Budget Plan", "📅 Weekly Planner", "🏆 My Score"])
 
     # ════════════════════════════════════════════════════════════════
     # TAB 1 — DECISION ENGINE
@@ -2984,6 +3167,337 @@ text-align:center;">
   {"Excellent" if health_score>=80 else "Good" if health_score>=60 else "Needs Attention" if health_score>=40 else "Critical"}</div>
 </div>""", unsafe_allow_html=True)
 
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 5 — RISK PROFILE + SPENDING INTEL
+    # ════════════════════════════════════════════════════════════════
+    with tabs[4]:
+        st.markdown('<div class="sec-label">&#127919; Risk Profile &amp; Spending Intelligence</div>',
+                    unsafe_allow_html=True)
+        _rl, _rc, _rs = _risk_profile(income, m_income * 12, savings, surplus, invest)
+        _sd = _analyse_spending(expense, fixed, m_income)
+
+        st.markdown(
+            f'<div style="background:#101010;border:2px solid {_rc};padding:18px 22px;margin-bottom:16px;">'
+            f'<div style="display:flex;justify-content:space-between;align-items:center;">'
+            f'<div><div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.14em;'
+            f'text-transform:uppercase;color:#5a5648;margin-bottom:6px;">Your Risk Profile</div>'
+            f'<div style="font-family:Playfair Display,serif;font-size:1.6rem;font-weight:900;'
+            f'color:{_rc};">{_rl}</div></div>'
+            f'<div style="text-align:right;"><div style="font-size:2rem;font-weight:900;'
+            f'color:{_rc};">{_rs}/8</div></div></div></div>',
+            unsafe_allow_html=True)
+
+        _c1, _c2 = st.columns(2)
+        with _c1:
+            st.markdown(
+                f'<div class="kpi-card" style="--ac:#f87171;">'
+                f'<div class="kpi-label">Fixed Costs</div>'
+                f'<div class="kpi-value">&#x20b9;{_sd["fixed"]:,.0f}</div>'
+                f'<div class="kpi-delta">{_sd["fixed_pct"]:.1f}% of income</div></div>',
+                unsafe_allow_html=True)
+        with _c2:
+            _dc2 = "#fbbf24" if _sd["disc_pct"] > 30 else "#4ade80"
+            st.markdown(
+                f'<div class="kpi-card" style="--ac:{_dc2};">'
+                f'<div class="kpi-label">Discretionary</div>'
+                f'<div class="kpi-value">&#x20b9;{_sd["discretionary"]:,.0f}</div>'
+                f'<div class="kpi-delta">{_sd["disc_pct"]:.1f}% of income</div></div>',
+                unsafe_allow_html=True)
+
+        for _flag in _sd["flags"]:
+            _fc = "#f87171" if "high" in _flag.lower() else "#fbbf24" if "%" in _flag else "#4ade80"
+            st.markdown(
+                f'<div style="border-left:3px solid {_fc};padding:10px 14px;'
+                f'margin-bottom:6px;font-size:0.78rem;color:#a09880;background:#101010;">{_flag}</div>',
+                unsafe_allow_html=True)
+
+        import plotly.graph_objects as _go_r
+        _fig_r = _go_r.Figure(_go_r.Pie(
+            labels=["Fixed", "Discretionary", "Surplus"],
+            values=[max(0, fixed), max(0, expense - fixed), max(0, surplus)],
+            hole=0.55, marker_colors=["#f87171", "#fbbf24", "#4ade80"],
+            textinfo="label+percent", textfont_size=11))
+        _fig_r.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#a09880", showlegend=False, height=260,
+            margin=dict(t=10, b=10, l=10, r=10))
+        st.plotly_chart(_fig_r, use_container_width=True)
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 6 — PREDICTIVE ENGINE (30/60/90-day forecast)
+    # ════════════════════════════════════════════════════════════════
+    with tabs[5]:
+        st.markdown('<div class="sec-label">&#128302; Predictive Cash Flow — 30 / 60 / 90 Days</div>',
+                    unsafe_allow_html=True)
+        _cfr, _runway, _sc_list = _predict_cashflow(m_income, expense, savings, surplus)
+
+        _p1, _p2, _p3 = st.columns(3)
+        for _pw, _pd in zip([_p1, _p2, _p3], [30, 60, 90]):
+            _pv   = _cfr[_pd]
+            _pcol = "#4ade80" if _pv["savings"] >= savings else "#f87171"
+            _pw.markdown(
+                f'<div class="kpi-card" style="--ac:{_pcol};">'
+                f'<div class="kpi-label">{_pd}-Day Savings</div>'
+                f'<div class="kpi-value" style="color:{_pcol};">&#x20b9;{_pv["savings"]/1000:.1f}K</div>'
+                f'<div class="kpi-delta">Runway: {_pv["burn_days"]:.0f} days</div></div>',
+                unsafe_allow_html=True)
+
+        if _runway < 180:
+            st.markdown(
+                f'<div style="background:rgba(248,113,113,0.08);border:1px solid #f87171;'
+                f'border-left:3px solid #f87171;padding:12px 18px;margin:12px 0;'
+                f'font-size:0.8rem;color:#f87171;">'
+                f'&#x1f6a8; Cash drain alert: savings exhausted in <strong>{_runway} days</strong>.'
+                f'</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(
+                '<div style="border-left:3px solid #4ade80;padding:10px 14px;'
+                'font-size:0.78rem;color:#4ade80;margin:8px 0;background:#101010;">'
+                '&#x2705; Positive cash flow — savings growing every month.</div>',
+                unsafe_allow_html=True)
+
+        _mfwd = list(range(1, 13))
+        _sproj, _rs2 = [], savings
+        for _ in _mfwd:
+            _rs2 += surplus
+            _sproj.append(max(0, _rs2))
+
+        import plotly.graph_objects as _go_p
+        _fig_p = _go_p.Figure()
+        _fig_p.add_trace(_go_p.Scatter(
+            x=[f"M{m}" for m in _mfwd], y=_sproj,
+            mode="lines+markers", line=dict(color="#4ade80", width=2),
+            fill="tozeroy", fillcolor="rgba(74,222,128,0.08)"))
+        _fig_p.add_hline(y=savings, line_dash="dot", line_color="#fbbf24",
+                         annotation_text="Current", annotation_font_color="#fbbf24")
+        _fig_p.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            font_color="#a09880", height=240,
+            xaxis=dict(gridcolor="#1e1e18"), yaxis=dict(gridcolor="#1e1e18"),
+            margin=dict(t=10, b=10, l=10, r=10))
+        st.plotly_chart(_fig_p, use_container_width=True)
+
+        st.markdown('<div class="sec-label">What-If Scenarios</div>', unsafe_allow_html=True)
+        for _sname, _sval in _sc_list.items():
+            if _sval["annual"] > 0:
+                st.markdown(_fmt_cfo_card(
+                    _sname,
+                    f'Monthly saving of &#x20b9;{_sval["saving"]:,.0f}',
+                    f'&#x20b9;{_sval["annual"]:,.0f} extra per year',
+                    "Redirect to SIP or emergency fund immediately"
+                ), unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 7 — SMART BUDGET PLAN (50/30/20)
+    # ════════════════════════════════════════════════════════════════
+    with tabs[6]:
+        st.markdown('<div class="sec-label">&#128161; AI Budget Plan (50/30/20)</div>',
+                    unsafe_allow_html=True)
+        _gd2       = _goal_planner(goal, savings, surplus)
+        _ga2       = _gd2["goal_amount"]              if _gd2 else 0
+        _gmos2     = max(1, int(_gd2["months_current"])) if _gd2 else 12
+        _bud       = _generate_budget(m_income, fixed, _ga2, _gmos2)
+
+        _bb1, _bb2, _bb3 = st.columns(3)
+        _bb1.markdown(
+            f'<div class="kpi-card" style="--ac:#f87171;">'
+            f'<div class="kpi-label">Needs (50%)</div>'
+            f'<div class="kpi-value">&#x20b9;{_bud["needs"]:,.0f}</div>'
+            f'<div class="kpi-delta">Rent, bills, groceries</div></div>',
+            unsafe_allow_html=True)
+        _bb2.markdown(
+            f'<div class="kpi-card" style="--ac:#fbbf24;">'
+            f'<div class="kpi-label">Wants (30%)</div>'
+            f'<div class="kpi-value">&#x20b9;{_bud["wants"]:,.0f}</div>'
+            f'<div class="kpi-delta">Dining, travel, leisure</div></div>',
+            unsafe_allow_html=True)
+        _bb3.markdown(
+            f'<div class="kpi-card" style="--ac:#4ade80;">'
+            f'<div class="kpi-label">Save (20%)</div>'
+            f'<div class="kpi-value">&#x20b9;{_bud["savings"]:,.0f}</div>'
+            f'<div class="kpi-delta">Investments + goal</div></div>',
+            unsafe_allow_html=True)
+
+        st.markdown('<div class="sec-label" style="margin-top:14px;">Category Breakdown</div>',
+                    unsafe_allow_html=True)
+        for _bcat, _bamt in _bud["buckets"].items():
+            _bw  = min(100, int(_bamt / m_income * 100)) if m_income > 0 else 0
+            _bcc = "#f87171" if any(x in _bcat for x in ["Rent","Util"]) else                    "#fbbf24" if any(x in _bcat for x in ["Dining","Entertain"]) else "#4ade80"
+            st.markdown(
+                f'<div style="margin-bottom:6px;">'
+                f'<div style="display:flex;justify-content:space-between;font-size:0.74rem;'
+                f'color:#a09880;margin-bottom:3px;">'
+                f'<span>{_bcat}</span>'
+                f'<span style="color:#e8e2d4;">&#x20b9;{_bamt:,.0f} ({_bamt/m_income*100:.1f}%)</span></div>'
+                f'<div style="background:#1a1a14;height:5px;">'
+                f'<div style="background:{_bcc};height:100%;width:{_bw}%;"></div></div></div>',
+                unsafe_allow_html=True)
+
+        if _gd2:
+            _gtc = "#4ade80" if _gd2["on_track"] else "#fbbf24"
+            st.markdown(
+                f'<div style="border-left:3px solid {_gtc};padding:14px 18px;'
+                f'margin-top:14px;background:#101010;">'
+                f'<div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;'
+                f'text-transform:uppercase;color:{_gtc};margin-bottom:8px;">Goal: {goal}</div>'
+                f'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;'
+                f'font-size:0.76rem;color:#a09880;">'
+                f'<div>Target: <strong>&#x20b9;{_gd2["goal_amount"]/1000:.0f}K</strong></div>'
+                f'<div>Remaining: <strong>&#x20b9;{_gd2["remaining"]/1000:.0f}K</strong></div>'
+                f'<div>Timeline: <strong>{_gd2["months_current"]:.0f} months</strong></div>'
+                f'</div></div>',
+                unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 8 — WEEKLY PLANNER
+    # ════════════════════════════════════════════════════════════════
+    with tabs[7]:
+        st.markdown('<div class="sec-label">&#128197; Weekly Spending Planner</div>',
+                    unsafe_allow_html=True)
+        _wks, _wtd, _wts = _weekly_planner(m_income, fixed, expense, surplus)
+
+        st.markdown(
+            f'<div style="background:#101010;border:1px solid #1e1e18;padding:12px 18px;'
+            f'font-size:0.76rem;color:#a09880;margin-bottom:14px;">'
+            f'Monthly discretionary: <strong style="color:#e8e2d4;">&#x20b9;{_wtd:,.0f}</strong>'
+            f' &nbsp;|&nbsp; Target savings: <strong style="color:#4ade80;">&#x20b9;{_wts:,.0f}</strong></div>',
+            unsafe_allow_html=True)
+
+        for _wkn, _wkd in _wks.items():
+            _wkc = "#4ade80" if _wkd["save"] >= _wts / 4 else "#fbbf24"
+            st.markdown(
+                f'<div style="border-left:3px solid {_wkc};padding:12px 18px;'
+                f'background:#101010;margin-bottom:8px;">'
+                f'<div style="display:flex;justify-content:space-between;margin-bottom:6px;">'
+                f'<div style="font-family:IBM Plex Mono,monospace;font-size:0.56rem;'
+                f'text-transform:uppercase;color:{_wkc};">{_wkn}</div>'
+                f'<div style="font-size:0.68rem;color:#5a5648;">{_wkd["note"]}</div></div>'
+                f'<div style="display:grid;grid-template-columns:1fr 1fr;font-size:0.76rem;color:#a09880;">'
+                f'<div>Spend limit: <strong style="color:#f87171;">&#x20b9;{_wkd["spend"]:,.0f}</strong></div>'
+                f'<div>Save target: <strong style="color:#4ade80;">&#x20b9;{_wkd["save"]:,.0f}</strong></div>'
+                f'</div></div>',
+                unsafe_allow_html=True)
+
+        _wda = _wtd / 4
+        if _wda > m_income * 0.08:
+            st.markdown(_fmt_cfo_card(
+                "Reduce weekly discretionary by 20%",
+                f"Weekly avg Rs{_wda:,.0f} exceeds 8% of monthly income",
+                f"Annual saving Rs{_wda * 0.2 * 52:,.0f}",
+                f"Cap weekend spend at Rs{_wda * 0.8 / 7:,.0f}/day"
+            ), unsafe_allow_html=True)
+        else:
+            st.markdown(
+                '<div style="border-left:3px solid #4ade80;padding:10px 14px;'
+                'font-size:0.78rem;color:#4ade80;background:#101010;">'
+                '&#x2705; Weekly spending targets are within healthy range.</div>',
+                unsafe_allow_html=True)
+
+    # ════════════════════════════════════════════════════════════════
+    # TAB 9 — DISCIPLINE SCORE + BADGES
+    # ════════════════════════════════════════════════════════════════
+    with tabs[8]:
+        st.markdown('<div class="sec-label">&#127942; Financial Discipline Score &amp; Achievements</div>',
+                    unsafe_allow_html=True)
+        _bsc, _bbd, _bbc = _behaviour_score(expense, fixed, surplus, savings, invest, income)
+
+        st.markdown(
+            f'<div style="background:#101010;border:2px solid {_bbc};'
+            f'padding:24px;text-align:center;margin-bottom:20px;">'
+            f'<div style="font-family:IBM Plex Mono,monospace;font-size:0.5rem;letter-spacing:0.16em;'
+            f'text-transform:uppercase;color:#5a5648;margin-bottom:8px;">Financial Discipline Score</div>'
+            f'<div style="font-family:Playfair Display,serif;font-size:3.5rem;font-weight:900;'
+            f'color:{_bbc};">{_bsc}</div>'
+            f'<div style="font-size:0.6rem;color:#5a5648;margin-bottom:12px;">out of 100</div>'
+            f'<div style="font-size:1.1rem;font-weight:700;color:{_bbc};">{_bbd}</div></div>',
+            unsafe_allow_html=True)
+
+        _srd = surplus / m_income * 100 if m_income > 0 else 0
+        _emd = savings / max(expense, 1)
+        _ipd = invest / max(income, 1) * 100
+        _dcd = max(0, expense - fixed) / m_income * 100 if m_income > 0 else 100
+
+        st.markdown('<div class="sec-label">Score Breakdown</div>', unsafe_allow_html=True)
+        for _lbl, _cur, _tgt, _ach, _mpt in [
+            ("Savings Rate",     f"{_srd:.1f}%",  "Target 20%+",  _srd >= 20,  25),
+            ("Emergency Fund",   f"{_emd:.1f}m",  "Target 6 mos", _emd >= 6,   25),
+            ("Investment Rate",  f"{_ipd:.1f}%",  "Target 15%+",  _ipd >= 15,  25),
+            ("Spending Control", f"{_dcd:.1f}%",  "Target <30%",  _dcd <= 30,  25),
+        ]:
+            _ac3 = "#4ade80" if _ach else "#fbbf24"
+            st.markdown(
+                f'<div style="border-left:3px solid {_ac3};padding:10px 14px;'
+                f'background:#101010;margin-bottom:6px;display:flex;justify-content:space-between;">'
+                f'<span style="font-size:0.78rem;color:#a09880;">{"&#x2705;" if _ach else "&#x1f4c8;"} {_lbl}</span>'
+                f'<span style="font-size:0.74rem;color:{_ac3};">{_cur} / {_tgt} '
+                f'&#8212; {_mpt if _ach else 0}/{_mpt} pts</span></div>',
+                unsafe_allow_html=True)
+
+        st.markdown('<div class="sec-label" style="margin-top:14px;">Achievement Badges</div>',
+                    unsafe_allow_html=True)
+        _bdg_list = [
+            ("&#x1f48e; Elite Saver",       _bsc >= 85,         "Score 85+"),
+            ("&#x1f3c6; Top 15% Saver",     _bsc >= 70,         "Score 70+"),
+            ("&#x2b50; On Track",            _bsc >= 55,         "Score 55+"),
+            ("&#x1f6e1;&#xfe0f; Emergency", _emd >= 3,          "3+ months saved"),
+            ("&#x1f4c8; Investor",           _ipd >= 5,          "5%+ in investments"),
+            ("&#x1f3af; Goal Setter",        bool(goal),         "Goal defined"),
+            ("&#x1f512; Fixed Disciplined", fixed < m_income*0.5,"Fixed <50% income"),
+            ("&#x1f4a1; Surplus Builder",   surplus > 5000,     "Rs5K+ surplus"),
+        ]
+        _bg_cols = st.columns(4)
+        for _bi2, (_badge2, _earned2, _cond2) in enumerate(_bdg_list):
+            _bgg  = "#1e2a1e" if _earned2 else "#101010"
+            _btc2 = "#e8e2d4" if _earned2 else "#3a3a2e"
+            _bbd2 = "#c9a84c" if _earned2 else "#2a2a24"
+            _bg_cols[_bi2 % 4].markdown(
+                f'<div style="background:{_bgg};border:1px solid {_bbd2};padding:12px 8px;'
+                f'text-align:center;margin-bottom:8px;opacity:{"1" if _earned2 else "0.4"};">'
+                f'<div style="font-size:1.3rem;">{_badge2.split(";")[0]};</div>'
+                f'<div style="font-size:0.58rem;color:{_btc2};margin-top:4px;'
+                f'font-family:IBM Plex Mono,monospace;">'
+                f'{" ".join(_badge2.split()[1:])}</div>'
+                f'<div style="font-size:0.52rem;color:{_btc2};margin-top:2px;">{_cond2}</div></div>',
+                unsafe_allow_html=True)
+
+        st.markdown('<div class="sec-label" style="margin-top:14px;">30-Day Improvement Roadmap</div>',
+                    unsafe_allow_html=True)
+        _roadmap_shown = False
+        if _srd < 20:
+            _gap_sr = max(0, m_income * 0.20 - surplus)
+            st.markdown(_fmt_cfo_card(
+                "Boost savings rate to 20%",
+                f"Current {_srd:.1f}% — gap {20 - _srd:.1f}pp",
+                f"Adds Rs{_gap_sr:,.0f}/month to long-term wealth",
+                f"Cut discretionary by Rs{_gap_sr:,.0f} this month"
+            ), unsafe_allow_html=True)
+            _roadmap_shown = True
+        if _emd < 6:
+            _gap_em = max(0, expense * 6 - savings)
+            st.markdown(_fmt_cfo_card(
+                "Build emergency fund to 6 months",
+                f"Currently {_emd:.1f} months — Rs{_gap_em:,.0f} gap",
+                "Safety net against job loss or medical emergency",
+                f"Automate Rs{max(int(surplus * 0.3), 2000):,.0f}/month to a separate account"
+            ), unsafe_allow_html=True)
+            _roadmap_shown = True
+        if _ipd < 10:
+            _gap_ip = max(0, income * 0.1 - invest)
+            st.markdown(_fmt_cfo_card(
+                "Increase investments to 10% of income",
+                f"Currently {_ipd:.1f}% — Rs{_gap_ip:,.0f}/yr gap in 80C / SIP",
+                f"Rs{income*0.1/12:,.0f}/month at 8% = significant wealth in 5 years",
+                f"Open ELSS SIP for Rs{max(500, int(income * 0.05 / 12)):,.0f}/month this week"
+            ), unsafe_allow_html=True)
+            _roadmap_shown = True
+        if not _roadmap_shown:
+            st.markdown(
+                '<div style="border-left:3px solid #4ade80;padding:12px 18px;'
+                'font-size:0.8rem;color:#4ade80;background:#101010;">'
+                '&#x1f3c6; Excellent financial profile — you have hit all key targets. '
+                'Focus next on optimising your investment returns.</div>',
+                unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # MODULE 7 — CASH FLOW INTELLIGENCE
 # ══════════════════════════════════════════════════════════════════════════════
