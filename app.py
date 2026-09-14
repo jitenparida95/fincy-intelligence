@@ -903,17 +903,17 @@ letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
     f"FINANCIAL DATA:\n{context_str}\n\n"
     f"USER QUESTION:\n{question.strip()}\n\n"
     "Respond naturally and directly to the question.\n"
-    "Structure the answer with concise headings where useful:\n"
     "Do not stop after describing the financial situation.\n"
-"Always provide specific management actions based on the available data.\n"
-"Always finish with a clear CFO recommendation.\n\n"
-"Use this structure:\n"
-"1. CFO View — 2-3 sentences\n"
-"2. Key Drivers — 3-4 specific points\n"
-"3. Risk / Opportunity — explain the financial implication\n"
-"4. Recommended Actions — 2-3 concrete actions management should take\n"
-"5. Expected Impact — quantify the impact only when the data supports it\n"
-"6. CFO Recommendation — one clear CEO-level recommendation"
+    "Always provide specific management actions based on the available data.\n"
+    "Always finish with a clear CFO recommendation.\n\n"
+    "Use this structure:\n"
+    "1. CFO View — 2-3 sentences\n"
+    "2. Key Drivers — 3-4 specific points\n"
+    "3. Risk / Opportunity — explain the financial implication\n"
+    "4. Recommended Actions — 2-3 concrete actions management should take\n"
+    "5. Expected Impact — quantify the impact only when the data supports it\n"
+    "6. CFO Recommendation — one clear CEO-level recommendation"
+)
                 import hashlib as _hl
                 @st.cache_data(ttl=300, show_spinner=False)
                 def _groq_ent(k, p):
