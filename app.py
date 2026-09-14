@@ -624,7 +624,7 @@ def show_global_chat():
                         msgs.append({"role": "assistant", "content": ha})
                     msgs.append({"role": "user", "content": chat_q.strip()})
                     resp = Groq(api_key=api_key).chat.completions.create(
-                        model="openai/gpt-oss-20b",
+                        model="openai/gpt-oss-120b",
                         messages=msgs,
                         max_tokens=250,
                         temperature=0.3
@@ -889,24 +889,35 @@ letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
             try:
                 from groq import Groq
                 prompt = (
-                    "Senior CFO advisor. Data-driven. Reference specific numbers only.\n"
-                    f"DATA: {context_str}\n"
-                    f"Q: {question.strip()}\n\n"
-                    "Reply:\n"
-                    "Key Insights (3 max, numbered, with % or Rs)\n"
-                    "Risks: [magnitude]\n"
-                    "Opportunities: [estimated Rs/% impact]\n"
-                    "👉 Problem: | Insight: | Action: [30-day target]\n"
-                    "Recommendation: [one CEO-level sentence]"
-                )
+    "You are the AI CFO of Fincy Intelligence, acting as a senior FP&A "
+    "and business finance advisor.\n\n"
+    "Use the financial data provided below to answer the user's question "
+    "like a real CFO would in a management review. Think through the numbers "
+    "before answering. Do not simply repeat the data.\n\n"
+    "Your analysis should identify the most relevant drivers, explain WHY "
+    "something is happening, highlight risks or opportunities, and recommend "
+    "a practical business action.\n\n"
+    "Use specific numbers, percentages and variances from the data whenever "
+    "they are relevant. Do not invent figures that are not supported by the data. "
+    "If the data is insufficient to answer something, clearly say so.\n\n"
+    f"FINANCIAL DATA:\n{context_str}\n\n"
+    f"USER QUESTION:\n{question.strip()}\n\n"
+    "Respond naturally and directly to the question.\n"
+    "Structure the answer with concise headings where useful:\n"
+    "• CFO View\n"
+    "• What is driving it\n"
+    "• Risk / Opportunity\n"
+    "• Recommended Action\n"
+    "End with one clear management recommendation."
+)
                 import hashlib as _hl
                 @st.cache_data(ttl=300, show_spinner=False)
                 def _groq_ent(k, p):
                     from groq import Groq as _G
                     r = _G(api_key=_get_groq_key()).chat.completions.create(
-                        model="openai/gpt-oss-20b",
+                        model="openai/gpt-oss-120b",
                         messages=[{"role":"user","content":p}],
-                        max_tokens=450, temperature=0.25)
+                        max_tokens=700, temperature=0.45)
                     return r.choices[0].message.content
                 _ck = _hl.md5(prompt.encode()).hexdigest()
                 ans = _groq_ent(_ck, prompt)
@@ -2326,7 +2337,7 @@ def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
     def _groq_cached(key: str, _prompt: str):
         from groq import Groq
         r = Groq(api_key=_get_groq_key()).chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": _prompt}],
             max_tokens=420,
             temperature=0.25
