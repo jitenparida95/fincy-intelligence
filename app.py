@@ -624,7 +624,7 @@ def show_global_chat():
                         msgs.append({"role": "assistant", "content": ha})
                     msgs.append({"role": "user", "content": chat_q.strip()})
                     resp = Groq(api_key=api_key).chat.completions.create(
-                        model="llama-3.1-8b-instant",
+                        model="openai/gpt-oss-20b",
                         messages=msgs,
                         max_tokens=250,
                         temperature=0.3
@@ -904,7 +904,7 @@ letter-spacing:0.12em;text-transform:uppercase;">AI CFO</span><br>
                 def _groq_ent(k, p):
                     from groq import Groq as _G
                     r = _G(api_key=_get_groq_key()).chat.completions.create(
-                        model="llama-3.1-8b-instant",
+                        model="openai/gpt-oss-20b",
                         messages=[{"role":"user","content":p}],
                         max_tokens=450, temperature=0.25)
                     return r.choices[0].message.content
@@ -2326,7 +2326,7 @@ def _call_ai_cfo_engine(mode, user_data, question="", extra_context=""):
     def _groq_cached(key: str, _prompt: str):
         from groq import Groq
         r = Groq(api_key=_get_groq_key()).chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": _prompt}],
             max_tokens=420,
             temperature=0.25
