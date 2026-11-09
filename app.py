@@ -12,7 +12,7 @@ from io import BytesIO
 
 # ── PAGE CONFIG ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Fincy Intelligence | AI CFO Platform",
+    page_title="Fincy AI CFO Workspace | Launch App",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="collapsed",   # collapsed on mobile
