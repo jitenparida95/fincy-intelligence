@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jitenparida95.github.io/fincy-intelligence/sitemap.xml
